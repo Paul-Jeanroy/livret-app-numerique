@@ -6,7 +6,7 @@
     - ...
 */
 
-export function profil(){
+export default function Profil(){
 
     return(
         <div>

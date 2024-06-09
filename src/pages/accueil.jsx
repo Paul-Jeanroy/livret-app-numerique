@@ -6,7 +6,7 @@
     - ...
 */
 
-export function accueil(){
+export default function Accueil(){
 
     return(
         <div>

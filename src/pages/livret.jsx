@@ -6,7 +6,7 @@
     - ...
 */
 
-export function livret(){
+export default function Livret(){
 
     return(
         <div>

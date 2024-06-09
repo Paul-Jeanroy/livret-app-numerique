@@ -1,0 +1,27 @@
+header {
+    height: 100px;
+    background-color: azure;
+    border-bottom: 2px solid;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.div_titre_site {
+    position: relative;
+    font-size: 40px;
+    font-family: "Franklin Gothic Medium", "Arial Narrow", Arial, sans-serif;
+    z-index: 1;
+}
+
+.div_titre_site::after {
+    content: "";
+    background-color: orange;
+    height: 15px;
+    position: absolute;
+    left: 10px;
+    top: 25px;
+    z-index: -1 !important;
+    width: 100%;
+}

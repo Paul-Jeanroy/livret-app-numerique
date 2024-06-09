@@ -6,7 +6,7 @@
     - ...
 */
 
-export function configUtilisateur(){
+export function ConfigUtilisateur(){
 
     return(
         <div>
