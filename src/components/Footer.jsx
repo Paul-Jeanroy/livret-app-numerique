@@ -18,7 +18,11 @@ export default function Footer(){
                 <a href="/profil" className="footer-link">Profil</a>
                 <a href="/notification" className="footer-link">Notification</a>
             </nav>
-            <div className="footer-border"></div>
+            
+            <div className="footer-border">
+            <span className="footer-text">@2024 Laib-Jeanroy</span>
+            </div>
+            
         </footer>
     )
 } 
