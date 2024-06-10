@@ -7,7 +7,8 @@ import { useNavigate } from "react-router-dom";
         - valider_formulaire : fonction qui permet de valider le formulaire de connexion.
 
 */
-("use client");
+"use client"
+
 import { useState } from "react";
 import "../styles/connexion.css";
 
@@ -56,7 +57,7 @@ export default function Connexion() {
                     )}
 
                 </section>
-                <footer>
+                <footer className="footer-connexion">
                     <img className="img-rs" src="region-sud.png" alt="Region Sud" />
                     <img className="img-ep" src="ecole-pratique.png" alt="Ecole Pratique" />
                     <img className="img-esiee" src="logo-esiee.png" alt="ESIEE" />

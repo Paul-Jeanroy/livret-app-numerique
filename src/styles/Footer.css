@@ -1,55 +1,86 @@
-footer {
-    background-color: azure;
+.footer {
+    position: absolute;
+    bottom: 0;
+    height: 150px;
+    background-color: #ffffff;
     width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.div_container_footer {
     display: flex;
     flex-direction: column;
-    align-items: flex-start; /* Aligne les éléments à gauche */
-    justify-content: center;
-    position: relative;
-    padding: 10px 20px; /* Ajoute du padding pour espacer les éléments du bord */
-}
-
-.footer-title {
-    position: relative;
-    font-size: 20px; /* Plus petit que le titre du header */
-    font-family: "Franklin Gothic Medium", "Arial Narrow", Arial, sans-serif;
-    margin: 0; /* Supprime les marges par défaut */
-}
-
-.footer-title::after {
-    content: "";
-    background-color: orange; /* Couleur du trait orange */
-    height: 7.5px; /* Hauteur du trait orange */
-    position: absolute;
-    left: 0; /* Ajuste le trait pour s'étendre sur toute la largeur */
-    bottom: -10px; /* Positionne le trait orange juste en dessous du texte */
+    height: 100%;
     width: 100%;
 }
 
-.footer-border {
-    position: absolute;
-    bottom: 0; /* Positionne la bordure noire en bas du footer */
-    left: 0;
-    width: 100%;
-    height: 2px; /* Hauteur du trait noir */
-    background-color: black; /* Couleur du trait noir */
+.div_nav_footer{
+    border-bottom: 1px solid;
 }
 
-.footer-nav {
+.h3_titre_site {
+    height: 100%;
     display: flex;
-    gap: 15px; /* Espacement entre les liens */
-    margin-top: 20px; /* Espace entre le titre et les liens */
+    position: relative;
+    font-size: 20px;
+    font-family: "Franklin Gothic Medium", "Arial Narrow", Arial, sans-serif;
+    z-index: 1;
+    min-width: 40%;
+    align-items: center;
+    padding-left: 50px;
 }
 
-.footer-link {
-    color: #61dafb;
-    text-decoration: none;
-    font-size: 16px;
-    transition: color 0.3s;
+.h3_titre_site::after {
+    content: "";
+    background-color: #C4A2FC;
+    height: 7px;
+    margin-left: 5px;
+    position: absolute;
+    z-index: -1 !important;
+    width: 290px;
+    margin-top: 15px;
 }
 
-.footer-link:hover {
-    color: #21a1f1;
+.nav_footer {
+    display: flex;
+    justify-content: start;
+    align-items: center;
+    text-align: center;
+    height: 100%;
+    width: 100%;
+    padding-left: 50px;
+    min-height: 50px;
+}
+
+.nav_footer div:not(:last-child){
+    margin-right: 50px;
 }
 
 
+.div_pub_footer{
+    display: flex;
+    align-items: center;
+    text-align: center;
+    height: 100%;
+    width: 100%;
+    min-height: 50px;
+}
+
+.div_realisation {
+    width: 50%;
+    display: flex;
+    justify-content: start;
+}
+
+.div_pub{
+    width: 50%;
+    height: 50%;
+    display: flex;
+    justify-content: end;
+}
+
+.div_pub img{
+    margin-right: 50px;
+}

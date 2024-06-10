@@ -6,24 +6,36 @@
     - ...
     
 */
-import '../styles/Footer.css'
+import "../styles/Footer.css";
 
-export default function Footer(){
-
-    return(
-        <footer>
-            <h1 className="footer-title">Livret Numérique</h1>
-            <nav className="footer-nav">
-                <a href="/accueil" className="footer-link">Accueil</a>
-                <a href="/livret" className="footer-link">Livret</a>
-                <a href="/profil" className="footer-link">Profil</a>
-                <a href="/notification" className="footer-link">Notification</a>
-            </nav>
-            
-            <div className="footer-border">
-            <span className="footer-text">@2024 Laib-Jeanroy</span>
+export default function Footer() {
+    return (
+        <footer className="footer">
+            <div className="div_container_footer">
+                <h3 className="h3_titre_site">Livret d'apprentissage numérique</h3>
+                <div className="div_nav_footer">
+                    <nav className="nav_footer">
+                        <div className="div_nav_acceuil_footer">
+                            <a href={"/accueil"}>Accueil</a>
+                        </div>
+                        <div className="div_nav_livret">
+                            <a href={"/livret"}>Livret</a>
+                        </div>
+                        <div className="div_nav_profil">
+                            <a href={"/profil"}>Profil</a>
+                        </div>
+                    </nav>
+                </div>
+                <div className="div_pub_footer">
+                    <div className="div_realisation">@2024 Laib - Jeanroy</div>
+                    <div className="div_pub">
+                        <img src="/region-sud.png"></img>
+                        <img src="/ecole-pratique.png"></img>
+                        <img src="/cci-aix-mars.png"></img>
+                        <img src="/logo-esiee.png"></img>
+                    </div>
+                </div>
             </div>
-            
         </footer>
-    )
-} 
+    );
+}
