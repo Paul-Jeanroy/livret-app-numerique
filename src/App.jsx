@@ -12,9 +12,9 @@ import Livret from "./pages/livret";
 const App = () => {
   const navigate = useNavigate();
 
-  useEffect(() => {
-    navigate("/accueil");
-  }, []);
+  // useEffect(() => {
+  //   navigate("/accueil");
+  // }, []);
 
   return (
     <Routes>
