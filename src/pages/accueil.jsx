@@ -9,13 +9,12 @@
 import Footer from "../components/Footer";
 import Header from "../components/Header";
 
-export default function Accueil(){
-
-    return(
-        <div>
-            <Header></Header>
+export default function Accueil() {
+    return (
+        <main>
+            <Header />
             <h1>Accueil</h1>
-            <Footer></Footer>
-        </div>
-    )
-} 
+            <Footer />
+        </main>
+    );
+}

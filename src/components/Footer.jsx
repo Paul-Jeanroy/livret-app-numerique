@@ -4,6 +4,7 @@
 
     Fonctionnalités :
     - ...
+    
 */
 import '../styles/Footer.css'
 
