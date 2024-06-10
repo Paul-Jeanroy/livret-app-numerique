@@ -1,0 +1,114 @@
+.main-container-popup-notif {
+    position: relative;
+    align-items: end;
+    display: flex;
+    justify-content: end;
+    font-family: monospace;
+}
+
+.div-container-popup-notif {
+    position: relative;
+    top: -20px;
+    min-height: 200px;
+    max-width: 300px;
+    min-width: 300px;
+    padding: 10px;
+    background-color: #e1e1e1;
+    border-radius: 20px;
+    display: flex;
+    flex-direction: column;
+}
+
+.div-container-popup-notif .header-notif{
+    display: flex;
+}
+
+.div-container-popup-notif .header-notif img {
+    position: absolute;
+    right: 25px;
+    top: 20px;
+    cursor: pointer;
+}
+
+
+.div-container-popup-notif::after {
+    content: "";
+    position: fixed;
+    top: 56px;
+    right: 211px;
+    display: inline-block;
+    height: 20px;
+    width: 0;
+    border-right: 22px solid transparent;
+    border-bottom: 18px solid #e1e1e1;
+    border-left: 24px solid transparent;
+}
+
+.div-container-popup-notif h1 {
+    font-size: 18px;
+    display: flex;
+    justify-content: flex-start;
+    position: relative;
+    margin-left: 20px;
+    z-index: 1;
+}
+
+.div-container-popup-notif h1::after {
+    content: "";
+    background-color: #c4a2fc;
+    height: 12px;
+    position: absolute;
+    left: 10px;
+    z-index: -1;
+    width: 115px;
+    margin-top: 10px;
+}
+
+.div-container-popup-notif span.new-notif {
+    z-index: 3 !important;
+    position: relative;
+    background: #e1e1e1;
+    padding: 0px 15px 0px 5px;
+}
+
+.div-container-popup-notif span {
+    z-index: 3 !important;
+    position: relative;
+    background: #e1e1e1;
+    padding: 0px 5px;
+}
+
+.div-container-popup-notif h2 {
+    margin-left: 40px;
+    font-size: 16px;
+    position: relative;
+}
+
+.div-container-popup-notif span.new-notif::before {
+    position: absolute;
+    content: "";
+    height: 5px;
+    right: 5px;
+    top: 9px;
+    width: 5px;
+    z-index: 0;
+    border-radius: 50%;
+    background-color: red;
+}
+
+.div-container-popup-notif span::after {
+    position: absolute;
+    content: "";
+    height: 1px;
+    left: -20px;
+    top: 11px;
+    width: 120%;
+    z-index: -1;
+    background-color: black;
+}
+
+.div-container-popup-notif p {
+    font-size: 12px;
+    display: flex;
+    place-content: center;
+}
