@@ -13,7 +13,7 @@ const App = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    navigate("/connexion");
+    navigate("/accueil");
   }, []);
 
   return (

@@ -5,7 +5,8 @@ header {
     width: 100%;
     display: flex;
     align-items: center;
-    justify-content: center;
+    justify-content: space-between; /* Aligne les éléments de manière égale entre les bords */
+    padding: 0 20px; /* Ajoute du padding aux côtés */
 }
 
 .div_titre_site {
@@ -24,4 +25,81 @@ header {
     top: 25px;
     z-index: -1 !important;
     width: 100%;
+}
+
+.nav-links {
+    display: flex;
+    gap: 10px; /* Ajoute de l'espace entre les éléments de navigation */
+    align-items: center;
+    margin-left: auto; /* Pousse le conteneur vers la droite */
+}
+
+.nav-item {
+    display: flex;
+    align-items: center;
+}
+
+.nav-link {
+    color: #61dafb;
+    text-decoration: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    font-size: 1rem;
+    transition: background-color 0.3s, color 0.3s;
+}
+
+.nav-link.no-border {
+    border: none; /* Supprime la bordure */
+    padding: 0; /* Retire le padding pour ces éléments */
+}
+
+.nav-link:hover {
+    background-color: #21a1f1;
+    color: white;
+}
+
+.nav-button {
+    background-color: #61dafb;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 10px;
+    color: #282c34;
+    cursor: pointer;
+    font-size: 1rem;
+    transition: background-color 0.3s;
+}
+
+.nav-button:hover {
+    background-color: #21a1f1;
+}
+
+.nav-button:focus {
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(97, 218, 251, 0.5);
+}
+
+.accueil-image {
+    width: 20px; /* Ajuste la taille de l'image Accueil */
+    height: 20px;
+    margin-right: 10px; /* Ajoute un espace entre l'image et le lien */
+}
+
+.livret-image {
+    width: 20px; /* Ajuste la taille de l'image Livret */
+    height: 20px;
+    margin-right: 10px; /* Ajoute un espace entre l'image et le lien */
+}
+
+.profile-image {
+    width: 40px; /* Taille spécifique de l'image Profil */
+    height: 40px;
+    border-radius: 50%; /* Donne à l'image une forme de cercle */
+    margin-right: 10px; /* Ajoute un espace entre l'image et le lien */
+}
+
+.notification-image {
+    width: 25px; /* Ajuste la taille de l'image Notification */
+    height: 25px;
+    margin-right: 10px; /* Ajoute un espace entre l'image et le bouton de déconnexion */
+    cursor: pointer; /* Change le curseur pour indiquer que c'est cliquable */
 }
