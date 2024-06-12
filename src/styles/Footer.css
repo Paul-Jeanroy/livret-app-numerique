@@ -1,6 +1,4 @@
 .footer {
-    position: absolute;
-    bottom: 0;
     height: 150px;
     background-color: #ffffff;
     width: 100%;
@@ -49,7 +47,6 @@
     align-items: center;
     text-align: center;
     height: 100%;
-    width: 100%;
     padding-left: 50px;
     min-height: 50px;
 }
@@ -57,7 +54,6 @@
 .nav_footer div:not(:last-child){
     margin-right: 50px;
 }
-
 
 .div_pub_footer{
     display: flex;
