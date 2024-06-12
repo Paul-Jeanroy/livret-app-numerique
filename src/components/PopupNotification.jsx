@@ -1,8 +1,6 @@
-<<<<<<< HEAD
+
 import { useEffect, useRef } from "react";
-=======
-import  { useEffect, useRef } from "react";
->>>>>>> 01fe0284cf183d8575a7612e3165107f8a6cf59c
+
 import "../styles/PopupNotification.css";
 
 export default function PopupNotification({ setOpenNotif }) {
