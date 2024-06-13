@@ -6,11 +6,19 @@
     - ...
 */
 
-export default function Livret(){
+import Header from "../components/Header";
+import Footer from "../components/Footer";
 
-    return(
-        <div>
-            <h1>Livret</h1>
-        </div>
-    )
-} 
+import "../styles/livret.css";
+
+export default function Livret() {
+    return (
+        <>
+            <Header />
+            <main>
+                <h1>Livret</h1>
+            </main>
+            <Footer />
+        </>
+    );
+}

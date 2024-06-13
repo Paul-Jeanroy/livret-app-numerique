@@ -15,7 +15,7 @@ export default function Footer() {
                 <h3 className="h3_titre_site">Livret d'apprentissage numérique</h3>
                 <div className="div_nav_footer">
                     <nav className="nav_footer">
-                        <div className="div_nav_acceuil_footer">
+                        <div className="div_nav_accueil_footer">
                             <a href={"/accueil"}>Accueil</a>
                         </div>
                         <div className="div_nav_livret">

@@ -47,6 +47,7 @@
     font-size: 1rem;
     font-weight: 400;
     margin-bottom: 20px;
+    line-height: 30px;
 }
 
 #section-home-1 button {
@@ -112,6 +113,7 @@
     font-size: 14px;
     font-family: monospace;
     max-width: 85%;
+    line-height: 40px;
 }
 
 #section-home-3 button{
@@ -129,6 +131,6 @@
 
 
 #section-home-3 .div-partie-droite{
-    width: 30%;
+    width: 36%;
     height: 500px;
 }

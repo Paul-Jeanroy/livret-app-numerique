@@ -12,6 +12,21 @@ header a {
     text-decoration: none;
     color: black;
     font-size: 15px;
+    font-family: monospace;
+    font-weight: 700;
+    position: relative;
+    z-index: 1;
+}
+
+.selected::after{
+    position: absolute;
+    content: "";
+    height: 5px;
+    background-color: #C4A2FC;
+    width: 100%;
+    top: 10px;
+    left: 5px;
+    z-index: -1;
 }
 
 .div_container_header {
@@ -65,10 +80,11 @@ header a {
 .nav_header img {
     height: 25px;
     width: 25px;
-    margin-right: 5px;
+    margin-bottom: 3px;
+    margin-right: 10px;
 }
 
-.div_nav_acceuil {
+.div_nav_accueil {
     display: flex;
     align-items: center;
     font-weight: 500;
@@ -84,23 +100,6 @@ header a {
     display: flex;
     align-items: center;
     font-weight: 500;
-}
-
-.div_contour_avatar {
-    border-radius: 50%;
-    border: 0.5px solid #000000;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    overflow: hidden;
-    padding: 3px;
-    margin-right: 5px;
-}
-
-.div_contour_avatar img {
-    margin-right: 0px !important;
-    height: 20px;
-    width: 20px;
 }
 
 .btn_notif {
@@ -123,6 +122,8 @@ header a {
     padding: 10px;
     color: #ffffff;
     min-width: 140px;
+    font-weight: 600;
+    font-family: monospace;
 }
 
 /* GESTION PETIT ECRAN  */

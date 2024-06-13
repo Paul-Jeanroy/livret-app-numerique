@@ -1,0 +1,97 @@
+.section-gestion-livret{
+    position: relative;
+    width: 100%;
+    max-width: 1800px;
+    margin: 100px auto;
+    border-radius: 20px;
+    overflow: hidden;
+    font-family: monospace; 
+}
+
+.titre_page{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    font-size: 40px;
+    font-family: monospace;
+}
+
+.main-container-suivi-livret {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    background-color: #fcfaff;
+    margin: 50px 100px 100px 100px;
+    border-radius: 20px;
+    border: 1px solid black;
+    min-height: 200px;
+    position: relative;
+}
+
+.main-container-suivi-livret:not(:last-child) {
+    margin-right: -50px;
+}
+
+.div-header-suivi-livret {
+    display: flex;
+    width: 100%;
+    height: 50px;
+    border-bottom: 1px solid gray;
+    position: absolute;
+    top: 0;
+    justify-content: center;
+    align-items: center;
+}
+
+.div-header-suivi-livret h1 {
+    width: 90%;
+    font-size: 16px;
+    z-index: 1;
+    position: relative;
+}
+
+.div-header-suivi-livret img {
+    justify-content: end;
+    width: 20px;
+    height: 20px;
+    cursor: pointer;
+}
+
+.container-suivi-livret{
+    margin-top: 45px;
+    width: 100%;
+}
+
+.div-ligne-suivi-livret{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    width: 100%;
+    position: relative;
+}
+
+.div-ligne-suivi-livret:not(:last-child){
+    border-bottom: 1px solid gray;
+}
+
+.div-ligne-suivi-livret img{
+    height: 15px;
+    width: 15px;
+    display: flex;
+    justify-content: end;
+    transform: rotate(-90deg);
+    position: absolute;
+    right: 20px;
+}
+
+.div-nom-livret{
+    display: flex;
+    margin-left: 15px;
+}
+
+.div-nom-livret p:not(:last-child){
+    margin-right: 20px;
+}

@@ -1,9 +1,11 @@
 .main-container-popup-notif {
-    position: relative;
+    position: fixed;
     align-items: end;
     display: flex;
     justify-content: end;
     font-family: monospace;
+    right: 50px;
+    z-index: 999;
 }
 
 .div-container-popup-notif {

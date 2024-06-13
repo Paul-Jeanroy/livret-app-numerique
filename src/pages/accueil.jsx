@@ -51,7 +51,7 @@ export default function Accueil() {
                     </div>
                     <div>
                         <img src="/forcompagny-image.png" />
-                        <h1>Pour les Entreprise</h1>
+                        <h1>Pour les Entreprises</h1>
                         <p>Un suivi de votre livret pour suivre les alternants.</p>
                     </div>
                 </section>
@@ -69,7 +69,7 @@ export default function Accueil() {
                         <button onClick={() => setOpenPopupHome(true)}>En savoir plus</button>
                     </div>
                     <div className="div-partie-droite">
-                        <img src="/forschool-image.png" />
+                        <img src="/entreprise.png" />
                     </div>
                 </section>
             </main>
