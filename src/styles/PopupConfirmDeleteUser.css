@@ -1,0 +1,78 @@
+/* Styles pour la pop-up */
+.div-delete-new-user {
+    background: #fff;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    width: 90%;
+    max-width: 500px;
+    z-index: 1001;
+}
+
+.div-delete-new-user-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid #ddd;
+    padding-bottom: 10px;
+    margin-bottom: 20px;
+}
+
+.div-delete-new-user-header h1 {
+    margin: 0;
+    font-size: 24px;
+}
+
+.div-delete-new-user-header img {
+    cursor: pointer;
+}
+
+.div-delete-new-user button {
+    width: 120px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-family: monospace;
+    font-size: 16px;
+    border: none;
+    border-radius: 12px;
+    padding: 5px;
+    color: white;
+    cursor: pointer;
+}
+
+.div-delete-new-user button img{
+    width: 20px;
+    margin-left: 10px;
+    margin-top: 4px;
+}
+
+.div-btn-delete-new-user{
+    display: flex;
+    justify-content: end;
+    margin-top: 10px;
+}
+
+
+.div-container-confirm {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.div-container-btn-suppr-user{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 30px;
+}
+
+
+.btn-annuler{
+    background-color: #F44336;
+}
+
+.btn-valider{
+    background-color: #4CAF50;
+}

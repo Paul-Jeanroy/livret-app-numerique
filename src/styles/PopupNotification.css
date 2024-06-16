@@ -6,6 +6,7 @@
     font-family: monospace;
     right: 50px;
     z-index: 999;
+    top: 106px;
 }
 
 .div-container-popup-notif {
@@ -31,7 +32,6 @@
     top: 20px;
     cursor: pointer;
 }
-
 
 .div-container-popup-notif::after {
     content: "";

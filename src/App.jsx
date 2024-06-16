@@ -8,6 +8,8 @@ import Connexion from "./pages/Connexion";
 import Profil from "./pages/profil";
 import Livret from "./pages/livret";
 import GestionLivret from "./pages/gestionLivret"
+import GestionUtilisateur from "./pages/gestionUtilisateur";
+import CreationTitre from "./pages/creationTitre";
 
 const App = () => {
 
@@ -19,6 +21,8 @@ const App = () => {
       <Route path="/profil" element={<Profil />} />
       <Route path="/livret" element={<Livret />} />
       <Route path="/gestionLivret" element={<GestionLivret />} />
+      <Route path="/gestionUtilisateur" element={<GestionUtilisateur />} />
+      <Route path="/creationTitre" element={<CreationTitre />} />
       <Route path="*" element={<NotFound />} />
     </Routes>
   );

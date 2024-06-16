@@ -24,10 +24,9 @@
     align-items: center;
     width: 100%;
     background-color: #fcfaff;
-    margin: 50px 100px 100px 100px;
+    margin: 0px 100px 100px 100px;
     border-radius: 20px;
     border: 1px solid black;
-    min-height: 200px;
     position: relative;
 }
 
@@ -85,6 +84,17 @@
     transform: rotate(-90deg);
     position: absolute;
     right: 20px;
+}
+
+.div-header-suivi-livret h1::after{
+    position: absolute;
+    width: 15px;
+    height: 5px;
+    left: 5px;
+    top: 10px;
+    background-color: #C4A2FC;
+    content: "";
+    z-index: -1;
 }
 
 .div-nom-livret{

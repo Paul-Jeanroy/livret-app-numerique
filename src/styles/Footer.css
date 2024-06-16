@@ -5,6 +5,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
+    margin-bottom: 30px;
 }
 
 .div_container_footer {
@@ -14,7 +15,7 @@
     width: 100%;
 }
 
-.div_nav_footer{
+.div_nav_footer {
     border-bottom: 1px solid;
 }
 
@@ -32,7 +33,7 @@
 
 .h3_titre_site::after {
     content: "";
-    background-color: #C4A2FC;
+    background-color: #c4a2fc;
     height: 7px;
     margin-left: 5px;
     position: absolute;
@@ -49,13 +50,25 @@
     height: 100%;
     padding-left: 50px;
     min-height: 50px;
+    text-decoration: none;
+    color: black;
+
 }
 
-.nav_footer div:not(:last-child){
+.nav_footer a {
+    color: black;
+    text-decoration: none;
+}
+
+.nav_footer a:hover {
+    text-decoration: underline;
+}
+
+.nav_footer div:not(:last-child) {
     margin-right: 50px;
 }
 
-.div_pub_footer{
+.div_pub_footer {
     display: flex;
     align-items: center;
     text-align: center;
@@ -67,16 +80,19 @@
 .div_realisation {
     width: 50%;
     display: flex;
+    margin-left: 45px;
     justify-content: start;
+    font-size: 14px;
+    font-style: italic;
 }
 
-.div_pub{
+.div_pub {
     width: 50%;
     height: 50%;
     display: flex;
     justify-content: end;
 }
 
-.div_pub img{
+.div_pub img {
     margin-right: 50px;
 }
