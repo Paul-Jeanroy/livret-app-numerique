@@ -1,0 +1,182 @@
+.main-connexion {
+    width: 100%;
+    max-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    font-family: monospace;
+}
+
+.main-connexion h1 {
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 50px;
+    margin-bottom: 100px;
+    margin-top: 80px;
+    position: relative;
+    z-index: 1;
+}
+
+.main-connexion h1::after {
+    content: "";
+    position: absolute;
+    height: 20px;
+    left: 15px;
+    top: 30px;
+    background-color: #C4A2FC;
+    width: 100%;
+    z-index: -1;
+}
+
+.container-connexion {
+    border: 1px solid black;
+    border-radius: 20px;
+    background-color: #f1f1f1;
+    padding: 10px;
+    height: 40%;
+    width: 20%;
+    position: relative;
+    padding: 40px;
+    min-height: 200px;
+    min-width: 300px;
+}
+
+.container-connexion h2 {
+    display: flex;
+    text-align: center;
+    align-items: center;
+    justify-content: center;
+    font-size: 32px;
+    margin-top: 0px;
+}
+
+.container-connexion form {
+    display: flex;
+    place-content: center;
+    flex-direction: column;
+}
+
+.container-connexion input {
+    height: 20px;
+    display: flex;
+    place-content: center;
+    padding: 8px;
+    border: 1px solid grey;
+    border-radius: 8px;
+    margin-bottom: 20px;
+}
+
+.container-connexion input:last-child {
+    margin-bottom: 10px;
+}
+
+.container-connexion span {
+    margin-bottom: 15px;
+    width: 100%;
+    display: flex;
+    justify-content: end;
+    color: gray;
+    cursor: pointer;
+}
+
+.container-connexion form button {
+    display: flex;
+    place-content: center;
+    padding: 10px;
+    margin-bottom: 20px;
+    border-radius: 8px;
+    background-color: black;
+    color: white;
+    border: none;
+    cursor: pointer;
+}
+
+.container-google span {
+    margin-bottom: 15px;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    color: gray;
+    position: relative;
+    background-color: transparent;
+    z-index: 1;
+    cursor: pointer;
+}
+
+.container-connexion span.span-gg::after {
+    content: "";
+    position: absolute;
+    width: 100%;
+    height: 2px;
+    background: #e3e3e3;
+    top: 8px;
+    z-index: -1;
+}
+
+.container-google button {
+    display: flex;
+    place-content: center;
+    padding: 10px;
+    margin-bottom: 20px;
+    border-radius: 8px;
+    background-color: #e3e3e3;
+    color: white;
+    border: none;
+    width: 100%;
+    color: black;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.footer-connexion {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 50px;
+    width: 70%;
+    position: absolute;
+    bottom: 0px;
+    margin-bottom: 50px;
+}
+
+.img-rs {
+    width: 80px;
+    height: 40px;
+}
+
+.img-ep {
+    width: 100px;
+    height: 35px;
+}
+
+.img-esiee {
+    width: 120px;
+    height: 30px;
+}
+
+.img-aixmars {
+    width: 140px;
+    height: 30px;
+}
+
+.reset-passw-btn{
+    display: flex;
+    width: 100%;
+    justify-content: space-between;
+    margin-top: 20px;
+}
+
+.reset-passw-btn button:first-child{
+    background-color: red;
+}
+
+.error-message{
+    color: red;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 12px;
+    font-style: italic;
+    text-align: center;
+    margin-bottom: 10px;
+    margin-top: -10px;
+}
