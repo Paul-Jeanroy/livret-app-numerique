@@ -1,6 +1,18 @@
+import os
 import requests
+from flask import Flask, Blueprint, jsonify, request
+from flask_cors import CORS
+from flask_jwt_extended import JWTManager
 from bs4 import BeautifulSoup
-from flask import Blueprint, jsonify, request
+import fitz  # PyMuPDF
+import re
+
+app = Flask(__name__)
+CORS(app)
+
+# Configure your JWT secret key
+app.config['JWT_SECRET_KEY'] = 'your_jwt_secret_key'
+jwt = JWTManager(app)
 
 livret_bp = Blueprint('livret', __name__)
 
@@ -11,26 +23,50 @@ def get_info_formation():
         if not code_rncp:
             return jsonify({'error': 'w_codeRncp parameter is required'}), 400
 
-        url = "https://www.francecompetences.fr/recherche/rncp/" + code_rncp
+        url = f"https://www.francecompetences.fr/recherche/rncp/{code_rncp}"
 
         response = requests.get(url)
         response.raise_for_status()
 
         soup = BeautifulSoup(response.text, 'html.parser')
 
-        content_to_get = soup.find('div', class_='accordion-content--fcpt-certification--skills')
+        content_to_get = soup.find('main', class_='main')
         if not content_to_get:
             return jsonify({'error': 'Aucun contenu à récupérer'}), 404
 
-        titre_bloc = [titre.get_text(strip=True) for titre in content_to_get.find_all('p', class_='text--fcpt-certification__title')]
+        etat_element = content_to_get.find('p', class_='tag--fcpt-certification green')
+        etat = etat_element.find('span', class_='tag--fcpt-certification__status font-bold').get_text(strip=True) if etat_element else 'N/A'
+        
+        if etat and 'Active' in etat:
+            code_element = content_to_get.find('span', class_='tag--fcpt-certification__status font-bold')
+            titre_element = content_to_get.find('h1', class_='title--page--generic')
+            niveau_element = content_to_get.find('span', class_='list--fcpt-certification--essential--desktop__line__text--highlighted')
+            
+            fichier_pdf_element = None
+            for a in content_to_get.find_all('a'):
+                if 'Référentiel d’activité, de compétences et d’évaluation' in a.text:
+                    fichier_pdf_element = a
+                    break
+            
+            nom_formation = titre_element.get_text(strip=True) if titre_element else 'N/A'
+            niveau = niveau_element.get_text(strip=True) if niveau_element else 'N/A'
+            fichier_pdf = fichier_pdf_element['href'] if fichier_pdf_element else 'N/A'
+            code = code_element.get_text(strip=True) if code_element else 'N/A'
 
-        tables = content_to_get.find_all('table', class_='table--fcpt-certification')
-        compétences = [table.find('td', class_='table--fcpt-certification__body__cell').get_text(strip=True) for table in tables]
+            return jsonify({
+                'nom': nom_formation,
+                "niveau": niveau,
+                "code": code,
+                "fichier_pdf": fichier_pdf,
+                "etat": etat
+            })
 
-        return jsonify({
-            'titres bloc': titre_bloc,
-            'compétences': compétences
-        })
+        else:
+            return jsonify({'error': 'Formation non active'}), 404
 
     except Exception as e:
-        return jsonify({'error': str(e)}), 500
+        return jsonify({'error': str(e), 'details': repr(e)}), 500
+
+
+if __name__ == '__main__':
+    app.run(debug=True)
