@@ -17,6 +17,11 @@ export default function Header() {
     const [f_openNotif, setOpenNotif] = useState(false);
     const { menuSelect, setMenuSelect } = useMenuSelect();
 
+    const sp_deconnexion = () => {
+        localStorage.removeItem('roleUser');
+        localStorage.removeItem('token');
+    }
+
     return (
         <>
             <header>
@@ -47,7 +52,7 @@ export default function Header() {
                             <img src="/icon-notif.png"></img>
                         </button>
                         <button className="btn_deco">
-                            <a href={"/Connexion"} onClick={() => localStorage.removeItem('token')}>Se déconnecter</a>
+                            <a href={"/Connexion"} onClick={() => sp_deconnexion()}>Se déconnecter</a>
                         </button>
                     </div>
                 </div>

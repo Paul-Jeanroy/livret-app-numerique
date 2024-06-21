@@ -1,7 +1,7 @@
 #section-home-1 {
     position: relative;
     width: 100%;
-    max-width: 1200px;
+    max-width: 1400px;
     margin: 100px auto;
     border-radius: 20px;
     overflow: hidden;
@@ -64,7 +64,7 @@
 #section-home-2 {
     position: relative;
     width: 100%;
-    max-width: 1500px;
+    max-width: 1400px;
     margin: 100px auto;
     overflow: hidden;
     display: flex;
@@ -93,7 +93,7 @@
 #section-home-3{
     position: relative;
     width: 100%;
-    max-width: 1500px;
+    max-width: 1400px;
     margin: 100px auto;
     overflow: hidden;
     display: flex;

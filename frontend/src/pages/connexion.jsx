@@ -1,7 +1,7 @@
-// pages/connexion.jsx
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "../styles/connexion.css";
+import { useUserRole } from "../hooks/useUserRole.jsx"; // Assurez-vous que l'extension est correcte
 
 export default function Connexion() {
     const navigate = useNavigate();
@@ -9,6 +9,8 @@ export default function Connexion() {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [errorMessage, setErrorMessage] = useState('');
+
+    const { setRoleUser } = useUserRole();
 
     const valider_formulaire = async (e) => {
         e.preventDefault();
@@ -27,17 +29,15 @@ export default function Connexion() {
             }
 
             const data = await response.json();
-            const token = data.access_token;
-            localStorage.setItem('token', token);
-
-            navigate('/accueil'); // Redirige vers la page d'accueil après la connexion
+            setRoleUser(data.role);
+            localStorage.setItem('token', data.access_token);
+            navigate('/accueil');
 
         } catch (error) {
             console.error('Erreur lors de la connexion :', error.message);
             setErrorMessage('Email ou mot de passe incorrect');
         }
     };
-
 
     return (
         <>

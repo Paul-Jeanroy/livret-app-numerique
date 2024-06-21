@@ -1,4 +1,5 @@
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import { UserRoleProvider, useUserRole } from './hooks/useUserRole.jsx'; // Assurez-vous que l'extension est correcte
 
 import Accueil from './pages/accueil';
 import NotFound from './pages/notFound';
@@ -9,39 +10,29 @@ import GestionLivret from './pages/gestionLivret';
 import GestionUtilisateur from './pages/gestionUtilisateur';
 import CreationTitre from './pages/creationTitre';
 
-
-const ROLE_UTILISATEUR = {
-    APPRENTI : "apprenti",
-    MAITRE_APPRENTISSAGE : "maitre d'apprentissage",
-    COORDINATEUR : "coordonateur de filière",
-    GERANT_FORMATION : "admin"
-}
-
-const APPRENTI_ROLE_UTILISATEUR = ROLE_UTILISATEUR.APPRENTI
-const MAITRE_APPRENTISSAGE_ROLE_UTILISATEUR = ROLE_UTILISATEUR.MAITRE_APPRENTISSAGE
-const COORDINATEUR_ROLE_UTILISATEUR = ROLE_UTILISATEUR.COORDINATEUR
-const GERANT_FORMATION_ROLE_UTILISATEUR = ROLE_UTILISATEUR.GERANT_FORMATION
-
-
-
 const App = () => {
-    return (    
+    const { roleUser } = useUserRole();
+    console.log("le role du user est : ", roleUser);
+
+    return (
         <Routes>
             <Route path="/connexion" element={<Connexion />} />
-            <Route path="/accueil" element={<Accueil />} />
-            <Route path="/profil" element={<Profil />} />
-            <Route path="/livret" element={<Livret />} />
-            <Route path="/gestionLivret" element={<GestionLivret />} />
-            <Route path="/gestionUtilisateur" element={<GestionUtilisateur />} />
-            <Route path="/creationTitre" element={<CreationTitre />} />
-            <Route path="*" element={<NotFound />} />
+            <Route path="/accueil" element={roleUser !== "" ? <Accueil /> : <Navigate to="/connexion" />} />
+            <Route path="/profil" element={roleUser !== "" ? <Profil /> : <Navigate to="/connexion" />} />
+            <Route path="/livret" element={roleUser !== "" ? <Livret /> : <Navigate to="/connexion" />} />
+            <Route path="/gestionLivret" element={roleUser === "coordinateur" ? <GestionLivret /> : <Navigate to="/accueil" />} />
+            <Route path="/gestionUtilisateur" element={roleUser === "coordinateur" ? <GestionUtilisateur /> : <Navigate to="/accueil" />} />
+            <Route path="/creationTitre" element={roleUser === "coordinateur" ? <CreationTitre /> : <Navigate to="/accueil" />} />
+            <Route path="*" element={roleUser !== "" ? <NotFound /> : <Navigate to="/connexion" />} />
         </Routes>
     );
 };
 
 const Root = () => (
     <Router>
-        <App />
+        <UserRoleProvider>
+            <App />
+        </UserRoleProvider>
     </Router>
 );
 

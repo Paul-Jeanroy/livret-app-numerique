@@ -8,10 +8,6 @@ from user_routes import user_bp
 from livret_routes import livret_bp
 import secrets
 
-import pymysql
-pymysql.install_as_MySQLdb()
-
-
 app = Flask(__name__)
 CORS(app, resources={r"/*": {"origins": "http://localhost:5173"}})
 

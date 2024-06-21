@@ -1,4 +1,3 @@
-import { useNavigate } from 'react-router-dom'
 /* 
     fichier configUtilisateur.jsx
     Créer le 08/06 par PJ
