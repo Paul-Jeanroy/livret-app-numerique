@@ -10,7 +10,7 @@ export default function Connexion() {
     const [password, setPassword] = useState('');
     const [errorMessage, setErrorMessage] = useState('');
 
-    const { setRoleUser } = useUserRole();
+    const { setRoleUser, setUserId } = useUserRole();
 
     const valider_formulaire = async (e) => {
         e.preventDefault();
@@ -30,6 +30,8 @@ export default function Connexion() {
 
             const data = await response.json();
             setRoleUser(data.role);
+            setUserId(data.id_user)
+            console.log("id_user dans la co", data.id_user);
             localStorage.setItem('token', data.access_token);
             navigate('/accueil');
 

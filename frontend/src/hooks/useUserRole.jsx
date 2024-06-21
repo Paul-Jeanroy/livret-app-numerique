@@ -7,12 +7,20 @@ export const UserRoleProvider = ({ children }) => {
         return localStorage.getItem('roleUser') || '';
     });
 
+    const [userId, setUserId] = useState(() => {
+        return localStorage.getItem('userId') || '';
+    });
+
     useEffect(() => {
         localStorage.setItem('roleUser', roleUser);
     }, [roleUser]);
 
+    useEffect(() => {
+        localStorage.setItem('userId', userId);
+    }, [userId]);
+
     return (
-        <UserRoleContext.Provider value={{ roleUser, setRoleUser }}>
+        <UserRoleContext.Provider value={{ roleUser, setRoleUser, userId, setUserId }}>
             {children}
         </UserRoleContext.Provider>
     );

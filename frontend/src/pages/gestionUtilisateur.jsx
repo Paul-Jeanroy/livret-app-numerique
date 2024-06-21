@@ -2,9 +2,13 @@ import { useEffect, useState } from "react";
 import Footer from "../components/Footer";
 import Header from "../components/Header";
 import ContainerGestionUtilisateur from "../components/ContainerGestionUtilisateur";
+import { useUserRole } from "../hooks/useUserRole";
+
 
 export default function GestionUtilisateur() {
     const [w_tt_data_user, setDataUserByFormation] = useState([]);
+    const {userId } = useUserRole();
+    console.log("id_user dans gestion utilisateur", userId);
 
     useEffect(() => {
         const getUserByFormation = async (id_formation) => {
@@ -29,7 +33,7 @@ export default function GestionUtilisateur() {
             }
         };
 
-        getUserByFormation(1);
+        getUserByFormation(userId);
     }, []);
 
     // Regroupement des utilisateurs par année
