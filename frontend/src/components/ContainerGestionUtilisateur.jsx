@@ -5,7 +5,7 @@ import PopupAjouterUser from "./PopupAjouterUser";
 import PopupModifierUser from "./PopupModifierUser";
 import PopupConfirmDeleteUser from "./PopupConfirmDeleteUser";
 
-export default function ContainerGestionUtilisateur(props) {
+export default function ContainerGestionUtilisateur({ annee, users }) {
     const [f_addNewUser, setAddNewUser] = useState(false);
     const [f_modifUser, setModifUser] = useState(false);
     const [f_deleteUser, setDeleteUser] = useState(false);
@@ -21,7 +21,7 @@ export default function ContainerGestionUtilisateur(props) {
                 }}
             >
                 <div className="div-header-suivi-utilisateur">
-                    <h1>{props.annee}</h1>
+                    <h1>{annee}</h1>
                     <img className="img-add-user" onClick={() => setAddNewUser(true)} src="/add.svg" alt="Ajouter utilisateur" />
                     <img
                         className="img-manage-section"
@@ -36,14 +36,14 @@ export default function ContainerGestionUtilisateur(props) {
                 </div>
                 {f_containerVisible && (
                     <div className="container-suivi-utilisateur">
-                        {props.data.map((item, index) => (
+                        {users.map((user, index) => (
                             <div key={index} className="div-ligne-suivi-utilisateur">
                                 <div className="div-nom-utilisateur">
-                                    <p>{item.nom}</p>
-                                    <p>{item.prenom}</p>
+                                    <p>{user.nom}</p>
+                                    <p>{user.prenom}</p>
                                 </div>
-                                <img className="img-modif" src="/icon-chevron.png" alt="Détails utilisateur" onClick={() => setModifUser(true)}/>
-                                <img className="img-suppr" onClick={() => setDeleteUser(true)} src="/delete.svg" alt="supprimer utilisateur"/>
+                                <img className="img-modif" src="/icon-chevron.png" alt="Détails utilisateur" onClick={() => setModifUser(true)} />
+                                <img className="img-suppr" onClick={() => setDeleteUser(true)} src="/delete.svg" alt="supprimer utilisateur" />
                             </div>
                         ))}
                     </div>

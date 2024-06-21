@@ -10,10 +10,6 @@ import re
 app = Flask(__name__)
 CORS(app)
 
-# Configure your JWT secret key
-app.config['JWT_SECRET_KEY'] = 'your_jwt_secret_key'
-jwt = JWTManager(app)
-
 livret_bp = Blueprint('livret', __name__)
 
 @livret_bp.route('/getInfoFormation', methods=['GET'])
@@ -66,6 +62,35 @@ def get_info_formation():
 
     except Exception as e:
         return jsonify({'error': str(e), 'details': repr(e)}), 500
+
+
+
+
+
+# @livret_bp.route('/setInfoFormation', methods=['POST'])
+# def set_info_formation():
+#     try:
+#         data = request.get_json()
+#         nom_formation = data.get('nom')
+#         code = data.get('code')
+#         niveau = data.get('niveau')
+
+#         if not nom_formation or not niveau or not code:
+#             return jsonify({'error': 'Il manque des arguements'}), 400
+
+#         cur = mysql.connection.cursor()
+#         sql_query = "INSERT INTO formation (nom_formation, code, niveau) VALUES (%s, %s, %s)"
+#         cur.execute(sql_query, (nom_formation, code, niveau))
+#         mysql.connection.commit()
+#         cur.close()
+
+#         return jsonify({'message': 'Formation enregistrées avec succès'}), 200
+
+#     except Exception as e:
+#         return jsonify({'error': str(e), 'details': repr(e)}), 500
+
+
+
 
 
 if __name__ == '__main__':

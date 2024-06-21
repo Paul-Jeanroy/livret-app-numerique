@@ -11,8 +11,6 @@ user_bp = Blueprint('user', __name__)
 def get_user():
     user_id = get_jwt_identity()
 
-    print("userid : ", user_id)
-
     try:
         if not isinstance(user_id, int):
             return jsonify({'error': 'Identifiant utilisateur invalide'}), 400
@@ -46,30 +44,45 @@ def setUser():
         email = data.get('email')
         password = data.get('password')
 
-        # Debug: Affichage des données reçues
-        print(f"Nouvel utilisateur à envoyer : {data}")
-
         if not nom or not prenom or not role or not email or not password:
             return jsonify({'error': 'Tous les champs sont requis'}), 400
 
         hashed_password = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt()).decode('utf-8')
 
         cur = mysql.connection.cursor()
-
-        # Debug: Affichage de la requête SQL
         sql_query = "INSERT INTO utilisateurs (nom, prenom, password, role, email) VALUES (%s, %s, %s, %s, %s)"
-        print(f"Executing SQL query: {sql_query} with values ({nom}, {prenom}, {hashed_password}, {role}, {email})")
-
         cur.execute(sql_query, (nom, prenom, hashed_password, role, email))
         mysql.connection.commit()
         cur.close()
 
-        # Debug: Succès de l'ajout d'utilisateur
-        print("Utilisateur ajouté avec succès")
 
         return jsonify({'message': 'Utilisateur ajouté avec succès'}), 201
 
     except Exception as e:
-        # Debug: Affichage de l'erreur
-        print(f"Erreur lors de l'ajout de l'utilisateur : {str(e)}")
+        return jsonify({'error': str(e)}), 500
+    
+    
+    
+# route pour récupérer un utilisateur avvec l'id de la formation 
+@user_bp.route('/getIdFormationByUser' , methods=['GET'])
+def getIdFormationByUser():
+    
+    id_formation = request.args.get('id_formation')
+    
+    if not id_formation:
+        return jsonify({'error': 'id_formation parameter is required'}), 400
+
+    try:
+        with mysql.connection.cursor() as cur:
+            cur.execute("SELECT * FROM utilisateurs WHERE id_formation = %s", (id_formation, ))
+            userInFormation = cur.fetchall()
+
+            if userInFormation:
+                return jsonify(userInFormation), 200
+            else:
+                return jsonify({'error': 'Aucune utilisateur dans la formation'}), 404
+
+    except mysql.Error as e:
+        return jsonify({'error': f'Erreur MySQL : {str(e)}'}), 500
+    except Exception as e:
         return jsonify({'error': str(e)}), 500

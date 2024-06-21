@@ -9,8 +9,23 @@ import GestionLivret from './pages/gestionLivret';
 import GestionUtilisateur from './pages/gestionUtilisateur';
 import CreationTitre from './pages/creationTitre';
 
+
+const ROLE_UTILISATEUR = {
+    APPRENTI : "apprenti",
+    MAITRE_APPRENTISSAGE : "maitre d'apprentissage",
+    COORDINATEUR : "coordonateur de filière",
+    GERANT_FORMATION : "admin"
+}
+
+const APPRENTI_ROLE_UTILISATEUR = ROLE_UTILISATEUR.APPRENTI
+const MAITRE_APPRENTISSAGE_ROLE_UTILISATEUR = ROLE_UTILISATEUR.MAITRE_APPRENTISSAGE
+const COORDINATEUR_ROLE_UTILISATEUR = ROLE_UTILISATEUR.COORDINATEUR
+const GERANT_FORMATION_ROLE_UTILISATEUR = ROLE_UTILISATEUR.GERANT_FORMATION
+
+
+
 const App = () => {
-    return (
+    return (    
         <Routes>
             <Route path="/connexion" element={<Connexion />} />
             <Route path="/accueil" element={<Accueil />} />
