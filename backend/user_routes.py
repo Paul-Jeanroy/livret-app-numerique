@@ -59,6 +59,7 @@ def setUser():
         return jsonify({'message': 'Utilisateur ajouté avec succès'}), 201
 
     except Exception as e:
+<<<<<<< HEAD
         return jsonify({'error': str(e)}), 500
     
     
@@ -81,6 +82,30 @@ def getIdFormationByUser():
                 return jsonify(userInFormation), 200
             else:
                 return jsonify({'error': 'Aucune utilisateur dans la formation'}), 404
+=======
+        # Debug: Affichage de l'erreur
+        print(f"Erreur lors de l'ajout de l'utilisateur : {str(e)}")
+        return jsonify({'error': str(e)}), 500
+
+#dhdkdkhdkd
+
+@user_bp.route('/getUsersByFormationId', methods=['GET'])
+@jwt_required()
+def get_user():
+   
+
+    try:
+        formation_id = request.args.get('formationId')
+
+        with mysql.connection.cursor() as cur:
+            cur.execute("SELECT * FROM utilisateurs WHERE id_formation = %s", (formation_id,))
+            user = cur.fetchone()
+
+            if user:
+                return jsonify(user), 200
+            else:
+                return jsonify({'error': 'Aucun utilisateur trouvé pour la formation', formation_id}), 404
+>>>>>>> e4031d3da63009ec6bbdd2884ea9c8bdab058fc6
 
     except mysql.Error as e:
         return jsonify({'error': f'Erreur MySQL : {str(e)}'}), 500
