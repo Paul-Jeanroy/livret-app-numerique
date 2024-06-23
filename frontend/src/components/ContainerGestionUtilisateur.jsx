@@ -11,6 +11,8 @@ export default function ContainerGestionUtilisateur({ annee, users }) {
     const [f_deleteUser, setDeleteUser] = useState(false);
     const [f_containerVisible, setContainerVisible] = useState(true);
 
+    console.log(annee, users);
+
     return (
         <>
             <main
@@ -36,16 +38,32 @@ export default function ContainerGestionUtilisateur({ annee, users }) {
                 </div>
                 {f_containerVisible && (
                     <div className="container-suivi-utilisateur">
-                        {users.map((user, index) => (
-                            <div key={index} className="div-ligne-suivi-utilisateur">
+                        {users.length > 0 ? (
+                            users.map((user, index) => (
+                                user.id_user !== null ? (
+                                    <div key={index} className="div-ligne-suivi-utilisateur">
+                                        <div className="div-nom-utilisateur">
+                                            <p>{user.nom}</p>
+                                            <p>{user.prenom}</p>
+                                        </div>
+                                        <img className="img-modif" src="/icon-chevron.png" alt="Détails utilisateur" onClick={() => setModifUser(true)} />
+                                        <img className="img-suppr" onClick={() => setDeleteUser(true)} src="/delete.svg" alt="supprimer utilisateur" />
+                                    </div>
+                                ) : (
+                                    <div key={index} className="div-ligne-suivi-utilisateur">
+                                        <div className="div-nom-utilisateur">
+                                            <p>Aucun utilisateur</p>
+                                        </div>
+                                    </div>
+                                )
+                            ))
+                        ) : (
+                            <div className="div-ligne-suivi-utilisateur">
                                 <div className="div-nom-utilisateur">
-                                    <p>{user.nom}</p>
-                                    <p>{user.prenom}</p>
+                                    <p>Aucun utilisateur</p>
                                 </div>
-                                <img className="img-modif" src="/icon-chevron.png" alt="Détails utilisateur" onClick={() => setModifUser(true)} />
-                                <img className="img-suppr" onClick={() => setDeleteUser(true)} src="/delete.svg" alt="supprimer utilisateur" />
                             </div>
-                        ))}
+                        )}
                     </div>
                 )}
             </main>

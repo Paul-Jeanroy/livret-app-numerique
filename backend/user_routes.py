@@ -67,20 +67,28 @@ def setUser():
 # route pour récupérer un utilisateur avvec l'id de la formation 
 @user_bp.route('/getIdFormationByUser', methods=['GET'])
 def getIdFormationByUser():
-    id_formation = request.args.get('id_formation')
+    id_gerant = request.args.get('userId')
+    print(id_gerant)
     
-    if not id_formation:
-        return jsonify({'error': 'id_formation parameter is required'}), 400
+    if not id_gerant:
+        return jsonify({'error': 'id_gerant parameter is required'}), 400
 
     try:
         with mysql.connection.cursor() as cur:
-            cur.execute("SELECT * FROM utilisateurs WHERE id_gerant = %s AND role = 'apprenti'", (id_formation,))
-            userInFormation = cur.fetchall()
+            query = """
+            SELECT a.annee, u.id_user, u.nom, u.prenom, u.email, u.role
+            FROM formation f
+            JOIN annees a ON f.id_formation = a.id_formation
+            LEFT JOIN utilisateurs u ON a.id_annee = u.id_annee
+            WHERE f.id_gerant_formation = %s;
+            """
+            cur.execute(query, (id_gerant,))
+            result = cur.fetchall()
 
-            if userInFormation:
-                return jsonify(userInFormation), 200
+            if result:
+                return jsonify(result), 200
             else:
-                return jsonify({'error': 'Aucun utilisateur avec le rôle apprenti dans la formation'}), 404
+                return jsonify({'error': 'Aucune donnée trouvée pour ce gérant'}), 404
 
     except pymysql.MySQLError as e:
         return jsonify({'error': f'Erreur MySQL : {str(e)}'}), 500

@@ -11,9 +11,10 @@ export default function GestionUtilisateur() {
     console.log("id_user dans gestion utilisateur", userId);
 
     useEffect(() => {
-        const getUserByFormation = async (id_formation) => {
+        const getUserByFormation = async (userId) => {
+            console.log("userId", userId);
             try {
-                const response = await fetch(`http://localhost:5000/user/getIdFormationByUser?id_formation=${id_formation}`, {
+                const response = await fetch(`http://localhost:5000/user/getIdFormationByUser?userId=${userId}`, {
                     method: 'GET',
                     headers: {
                         'Content-Type': 'application/json',
@@ -33,7 +34,9 @@ export default function GestionUtilisateur() {
             }
         };
 
-        getUserByFormation(userId);
+        if (userId) {
+            getUserByFormation(userId);
+        }
     }, []);
 
     // Regroupement des utilisateurs par année
