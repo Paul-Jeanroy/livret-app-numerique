@@ -3,9 +3,8 @@ import "../styles/ContainerGestionUtilisateur.css";
 
 import PopupAjouterUser from "./PopupAjouterUser";
 import PopupModifierUser from "./PopupModifierUser";
-import PopupConfirmDeleteUser from "./PopupConfirmDeleteUser";
 
-export default function ContainerGestionUtilisateur({ annee, users }) {
+export default function ContainerGestionUtilisateur({ annee, users, onDeleteUser }) {
     const [f_addNewUser, setAddNewUser] = useState(false);
     const [f_modifUser, setModifUser] = useState(false);
     const [f_deleteUser, setDeleteUser] = useState(false);
@@ -18,7 +17,7 @@ export default function ContainerGestionUtilisateur({ annee, users }) {
             <main
                 className="main-container-suivi-utilisateur"
                 style={{
-                    height: f_containerVisible ? "auto" : "50px",
+                    height: f_containerVisible ? "100%" : "50px",
                     overflow: "hidden",
                 }}
             >
@@ -47,7 +46,7 @@ export default function ContainerGestionUtilisateur({ annee, users }) {
                                             <p>{user.prenom}</p>
                                         </div>
                                         <img className="img-modif" src="/icon-chevron.png" alt="Détails utilisateur" onClick={() => setModifUser(true)} />
-                                        <img className="img-suppr" onClick={() => setDeleteUser(true)} src="/delete.svg" alt="supprimer utilisateur" />
+                                        <img className="img-suppr" onClick={() => onDeleteUser(user)} src="/delete.svg" alt="supprimer utilisateur" />
                                     </div>
                                 ) : (
                                     <div key={index} className="div-ligne-suivi-utilisateur">

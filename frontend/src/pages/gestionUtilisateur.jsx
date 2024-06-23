@@ -1,52 +1,37 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import Footer from "../components/Footer";
 import Header from "../components/Header";
 import ContainerGestionUtilisateur from "../components/ContainerGestionUtilisateur";
 import { useUserRole } from "../hooks/useUserRole";
-
+import useUsersByFormation from "../hooks/useUsersByFormation";
+import PopupConfirmDeleteUser from "../components/PopupConfirmDeleteUser";
 
 export default function GestionUtilisateur() {
-    const [w_tt_data_user, setDataUserByFormation] = useState([]);
-    const {userId } = useUserRole();
-    console.log("id_user dans gestion utilisateur", userId);
+    const { userId } = useUserRole();
+    const { users, loading, error, setUsers } = useUsersByFormation(userId);
+    const [showDeletePopup, setShowDeletePopup] = useState(false);
+    const [userToDelete, setUserToDelete] = useState(null);
 
-    useEffect(() => {
-        const getUserByFormation = async (userId) => {
-            console.log("userId", userId);
-            try {
-                const response = await fetch(`http://localhost:5000/user/getIdFormationByUser?userId=${userId}`, {
-                    method: 'GET',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                });
+    const handleDeleteUser = (userId) => {
+        setUsers((prevUsers) => prevUsers.filter(user => user.id_user !== userId));
+    };
 
-                if (!response.ok) {
-                    const errorText = await response.text();
-                    throw new Error('Erreur HTTP, statut : ' + response.status + ', message : ' + errorText);
-                }
-
-                const data = await response.json();
-                setDataUserByFormation(data);
-
-            } catch (error) {
-                console.error('Erreur lors de la récupération des utilisateurs:', error.message);
-            }
-        };
-
-        if (userId) {
-            getUserByFormation(userId);
-        }
-    }, []);
+    const openDeletePopup = (user) => {
+        setUserToDelete(user);
+        setShowDeletePopup(true);
+    };
 
     // Regroupement des utilisateurs par année
-    const usersByYear = w_tt_data_user.reduce((acc, user) => {
+    const usersByYear = users.reduce((acc, user) => {
         if (!acc[user.annee]) {
             acc[user.annee] = [];
         }
         acc[user.annee].push(user);
         return acc;
     }, {});
+
+    if (loading) return <div>Loading...</div>;
+    if (error) return <div>Error: {error}</div>;
 
     return (
         <>
@@ -55,11 +40,24 @@ export default function GestionUtilisateur() {
                 <h1 className="titre_page"><span>Gestion des utilisateurs</span></h1>
                 <main className="main-gestion-utilisateur" style={{ display: "flex" }}>
                     {Object.keys(usersByYear).map((annee) => (
-                        <ContainerGestionUtilisateur key={annee} annee={annee} users={usersByYear[annee]} />
+                        <ContainerGestionUtilisateur 
+                            key={annee} 
+                            annee={annee} 
+                            users={usersByYear[annee]} 
+                            onDeleteUser={openDeletePopup}
+                        />
                     ))}
                 </main>
             </section>
             <Footer />
+
+            {showDeletePopup && (
+                <PopupConfirmDeleteUser 
+                    setDeleteUser={setShowDeletePopup} 
+                    w_tt_data_delet_user={userToDelete} 
+                    onDelete={handleDeleteUser} 
+                />
+            )}
         </>
     );
 }

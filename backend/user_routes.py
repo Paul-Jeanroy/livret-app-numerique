@@ -68,8 +68,7 @@ def setUser():
 @user_bp.route('/getIdFormationByUser', methods=['GET'])
 def getIdFormationByUser():
     id_gerant = request.args.get('userId')
-    print(id_gerant)
-    
+
     if not id_gerant:
         return jsonify({'error': 'id_gerant parameter is required'}), 400
 
@@ -79,10 +78,10 @@ def getIdFormationByUser():
             SELECT a.annee, u.id_user, u.nom, u.prenom, u.email, u.role
             FROM formation f
             JOIN annees a ON f.id_formation = a.id_formation
-            LEFT JOIN utilisateurs u ON a.id_annee = u.id_annee
+            LEFT JOIN utilisateurs u ON a.id_annee = u.id_annee AND u.role = 'apprenti' AND u.id_gerant = %s
             WHERE f.id_gerant_formation = %s;
             """
-            cur.execute(query, (id_gerant,))
+            cur.execute(query, (id_gerant,id_gerant))
             result = cur.fetchall()
 
             if result:
@@ -94,3 +93,30 @@ def getIdFormationByUser():
         return jsonify({'error': f'Erreur MySQL : {str(e)}'}), 500
     except Exception as e:
         return jsonify({'error': str(e)}), 500
+    
+    
+    
+# Route pour supprimer un utilisateur
+@user_bp.route('/deleteUser', methods=['DELETE'])
+
+def delete_user():
+    user_id = request.args.get('user_id')
+    print(user_id)
+    try:
+        if not user_id:
+            return jsonify({'error': 'Identifiant utilisateur invalide'}), 400
+
+        with mysql.connection.cursor() as cur:
+            cur.execute("DELETE FROM utilisateurs WHERE id_user = %s", (user_id,))
+            mysql.connection.commit()
+
+            if cur.rowcount > 0:
+                return jsonify({'message': 'Utilisateur supprimé avec succès'}), 200
+            else:
+                return jsonify({'error': 'Utilisateur non trouvé'}), 404
+
+    except mysql.Error as e:
+        return jsonify({'error': f'Erreur MySQL : {str(e)}'}), 500
+    except Exception as e:
+        return jsonify({'error': str(e)}), 50
+
