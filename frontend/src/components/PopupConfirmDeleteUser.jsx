@@ -8,7 +8,6 @@ export default function PopupConfirmDeleteUser({ setDeleteUser, w_tt_data_delet_
                 method: 'DELETE',
                 headers: {
                     'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${localStorage.getItem('token')}`
                 }
             });
 
@@ -17,8 +16,10 @@ export default function PopupConfirmDeleteUser({ setDeleteUser, w_tt_data_delet_
                 throw new Error('Erreur HTTP, statut : ' + response.status + ', message : ' + errorText);
             }
 
-            setDeleteUser(false);
-            onDelete(w_tt_data_delet_user.id_user);
+            const data = await response.json();
+            console.log(data.message); 
+
+            onDelete(w_tt_data_delet_user.id_user); // Appelez la fonction de suppression
 
         } catch (error) {
             console.error('Erreur lors de la suppression de l’utilisateur:', error.message);

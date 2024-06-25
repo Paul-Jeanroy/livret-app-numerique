@@ -3,14 +3,24 @@ import "../styles/ContainerGestionUtilisateur.css";
 
 import PopupAjouterUser from "./PopupAjouterUser";
 import PopupModifierUser from "./PopupModifierUser";
+import PopupConfirmDeleteUser from "./PopupConfirmDeleteUser";
 
-export default function ContainerGestionUtilisateur({ annee, users, onDeleteUser }) {
+export default function ContainerGestionUtilisateur({ annee, users, onDeleteUser, onAddUser }) {
     const [f_addNewUser, setAddNewUser] = useState(false);
     const [f_modifUser, setModifUser] = useState(false);
     const [f_deleteUser, setDeleteUser] = useState(false);
+    const [userToDelete, setUserToDelete] = useState(null);
     const [f_containerVisible, setContainerVisible] = useState(true);
 
-    console.log(annee, users);
+    const handleDeleteClick = (user) => {
+        setUserToDelete(user);
+        setDeleteUser(true);
+    };
+
+    const handleDeleteUser = (userId) => {
+        onDeleteUser(userId);
+        setDeleteUser(false);
+    };
 
     return (
         <>
@@ -46,7 +56,7 @@ export default function ContainerGestionUtilisateur({ annee, users, onDeleteUser
                                             <p>{user.prenom}</p>
                                         </div>
                                         <img className="img-modif" src="/icon-chevron.png" alt="Détails utilisateur" onClick={() => setModifUser(true)} />
-                                        <img className="img-suppr" onClick={() => onDeleteUser(user)} src="/delete.svg" alt="supprimer utilisateur" />
+                                        <img className="img-suppr" onClick={() => handleDeleteClick(user)} src="/delete.svg" alt="supprimer utilisateur" />
                                     </div>
                                 ) : (
                                     <div key={index} className="div-ligne-suivi-utilisateur">
@@ -57,7 +67,7 @@ export default function ContainerGestionUtilisateur({ annee, users, onDeleteUser
                                 )
                             ))
                         ) : (
-                            <div className="div-ligne-suivi-utilisateur">
+                            <div className="div-ligne-suivi-utilisateur" style={{cursor: "normal !important"}}>
                                 <div className="div-nom-utilisateur">
                                     <p>Aucun utilisateur</p>
                                 </div>
@@ -67,9 +77,9 @@ export default function ContainerGestionUtilisateur({ annee, users, onDeleteUser
                 )}
             </main>
 
-            {f_addNewUser && <PopupAjouterUser setAddNewUser={setAddNewUser} />}
+            {f_addNewUser && <PopupAjouterUser setAddNewUser={setAddNewUser} annee={annee} onAddUser={onAddUser} />}
             {f_modifUser && <PopupModifierUser setModifUser={setModifUser} />}
-            {f_deleteUser && <PopupConfirmDeleteUser setDeleteUser={setDeleteUser} />}
+            {f_deleteUser && <PopupConfirmDeleteUser setDeleteUser={setDeleteUser} w_tt_data_delet_user={userToDelete} onDelete={handleDeleteUser} />}
         </>
     );
 }

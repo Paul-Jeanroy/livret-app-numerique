@@ -44,23 +44,53 @@ def setUser():
         role = data.get('role')
         email = data.get('email')
         password = data.get('password')
+        id_gerant = data.get('userId')
+        annee = data.get('annee')
+        est_valide = 1
 
-        if not nom or not prenom or not role or not email or not password:
+        # Vérification des champs requis
+        if not nom or not prenom or not role or not email or not password or not annee:
+            print('Champs requis manquants:', nom, prenom, role, email, password, annee)
             return jsonify({'error': 'Tous les champs sont requis'}), 400
 
-        hashed_password = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt()).decode('utf-8')
-
         cur = mysql.connection.cursor()
-        sql_query = "INSERT INTO utilisateurs (nom, prenom, password, role, email) VALUES (%s, %s, %s, %s, %s)"
-        cur.execute(sql_query, (nom, prenom, hashed_password, role, email))
+
+        # Récupération de l'id_formation en utilisant id_gerant
+        cur.execute("SELECT id_formation FROM formation WHERE id_gerant_formation = %s", (id_gerant,))
+        id_formation = cur.fetchone()
+        if not id_formation:
+            print('Aucune formation trouvée pour le gérant:', id_gerant)
+            return jsonify({'error': "L'utilisateur n'est gérant d'aucune formation"}), 400
+        id_formation = id_formation['id_formation']
+        print('Formation trouvée:', id_formation)
+        
+        # Récupération de l'id_annee
+        cur.execute("SELECT id_annee FROM annees WHERE id_formation = %s AND annee = %s", (id_formation, annee,))
+        id_annee = cur.fetchone()
+        if not id_annee:
+            print('Aucune année trouvée pour la formation:', id_formation, 'et l\'année:', annee)
+            return jsonify({'error': "L'année spécifiée n'existe pas"}), 400
+        id_annee = id_annee['id_annee']
+        print('Année trouvée:', id_annee)
+
+        hashed_password = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt()).decode('utf-8')
+        print('Mot de passe haché:', hashed_password)
+
+        # Insertion de l'utilisateur avec l'id de l'année et l'id de la formation
+        sql_query = "INSERT INTO utilisateurs (nom, prenom, password, role, email, id_gerant, id_annee, id_formation, est_valide) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)"
+        cur.execute(sql_query, (nom, prenom, hashed_password, role, email, id_gerant, int(id_annee), int(id_formation), est_valide))
         mysql.connection.commit()
         cur.close()
-
+        print('Utilisateur ajouté avec succès')
 
         return jsonify({'message': 'Utilisateur ajouté avec succès'}), 201
 
     except Exception as e:
+        print('Erreur lors de l\'ajout de l\'utilisateur:', str(e))
         return jsonify({'error': str(e)}), 500
+
+
+
     
     
     

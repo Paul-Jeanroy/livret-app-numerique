@@ -5,20 +5,30 @@ import ContainerGestionUtilisateur from "../components/ContainerGestionUtilisate
 import { useUserRole } from "../hooks/useUserRole";
 import useUsersByFormation from "../hooks/useUsersByFormation";
 import PopupConfirmDeleteUser from "../components/PopupConfirmDeleteUser";
+import PopupAjouterUser from "../components/PopupAjouterUser";
 
 export default function GestionUtilisateur() {
     const { userId } = useUserRole();
     const { users, loading, error, setUsers } = useUsersByFormation(userId);
     const [showDeletePopup, setShowDeletePopup] = useState(false);
+    const [showAddPopup, setShowAddPopup] = useState(false);
     const [userToDelete, setUserToDelete] = useState(null);
 
     const handleDeleteUser = (userId) => {
         setUsers((prevUsers) => prevUsers.filter(user => user.id_user !== userId));
     };
 
+    const handleAddUser = (newUser) => {
+        setUsers((prevUsers) => [...prevUsers, newUser]);
+    };
+
     const openDeletePopup = (user) => {
         setUserToDelete(user);
         setShowDeletePopup(true);
+    };
+
+    const openAddPopup = () => {
+        setShowAddPopup(true);
     };
 
     // Regroupement des utilisateurs par année
@@ -44,12 +54,21 @@ export default function GestionUtilisateur() {
                             key={annee} 
                             annee={annee} 
                             users={usersByYear[annee]} 
-                            onDeleteUser={openDeletePopup}
+                            onDeleteUser={handleDeleteUser}
+                            onAddUser={handleAddUser} // Passez onAddUser ici
                         />
                     ))}
                 </main>
             </section>
             <Footer />
+
+            {showAddPopup && (
+                <PopupAjouterUser 
+                    setAddNewUser={setShowAddPopup} 
+                    annee={Object.keys(usersByYear)} 
+                    onAddUser={handleAddUser} 
+                />
+            )}
 
             {showDeletePopup && (
                 <PopupConfirmDeleteUser 

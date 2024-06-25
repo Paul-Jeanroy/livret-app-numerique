@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "../styles/connexion.css";
-import { useUserRole } from "../hooks/useUserRole.jsx"; // Assurez-vous que l'extension est correcte
+import { useUserRole } from "../hooks/useUserRole.jsx";
 
 export default function Connexion() {
     const navigate = useNavigate();
