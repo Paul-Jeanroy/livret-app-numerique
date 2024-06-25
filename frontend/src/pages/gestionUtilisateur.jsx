@@ -5,6 +5,7 @@ import ContainerGestionUtilisateur from "../components/ContainerGestionUtilisate
 import { useUserRole } from "../hooks/useUserRole";
 import useUsersByFormation from "../hooks/useUsersByFormation";
 import PopupConfirmDeleteUser from "../components/PopupConfirmDeleteUser";
+import PopupAjouterUser from "../components/PopupAjouterUser";
 
 
 
@@ -12,6 +13,7 @@ export default function GestionUtilisateur() {
     const { userId } = useUserRole();
     const { users, loading, error, setUsers, fetchUsers } = useUsersByFormation(userId);
     const [showDeletePopup, setShowDeletePopup] = useState(false);
+    const [showAddPopup, setShowAddPopup] = useState(false);
     const [userToDelete, setUserToDelete] = useState(null);
 
     const handleDeleteUser = (userId) => {
@@ -19,14 +21,23 @@ export default function GestionUtilisateur() {
         setShowDeletePopup(false); // Fermer la popup après suppression
     };
 
+    const handleAddUser = (newUser) => {
+        setUsers((prevUsers) => [...prevUsers, newUser]);
+    };
+
     const openDeletePopup = (user) => {
         setUserToDelete(user);
         setShowDeletePopup(true);
     };
 
+<<<<<<< HEAD
     // updateUser
     const handleUpdateUser = (updatedUser) => {
         setUsers((prevUsers) => prevUsers.map(user => user.id_user === updatedUser.id_user ? updatedUser : user));
+=======
+    const openAddPopup = () => {
+        setShowAddPopup(true);
+>>>>>>> caa163a838f44080d57fe7da675b1cc916d940d5
     };
 
     // Regroupement des utilisateurs par année
@@ -52,14 +63,27 @@ export default function GestionUtilisateur() {
                             key={annee} 
                             annee={annee} 
                             users={usersByYear[annee]} 
+<<<<<<< HEAD
                             onDeleteUser={openDeletePopup}
                             onUpdateUser={handleUpdateUser} 
                             fetchUsers={fetchUsers}
+=======
+                            onDeleteUser={handleDeleteUser}
+                            onAddUser={handleAddUser} // Passez onAddUser ici
+>>>>>>> caa163a838f44080d57fe7da675b1cc916d940d5
                         />
                     ))}
                 </main>
             </section>
             <Footer />
+
+            {showAddPopup && (
+                <PopupAjouterUser 
+                    setAddNewUser={setShowAddPopup} 
+                    annee={Object.keys(usersByYear)} 
+                    onAddUser={handleAddUser} 
+                />
+            )}
 
             {showDeletePopup && (
                 <PopupConfirmDeleteUser 

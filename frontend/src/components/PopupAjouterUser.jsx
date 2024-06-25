@@ -1,21 +1,28 @@
 import { useState } from "react";
+import { useUserRole } from "../hooks/useUserRole";
 import "../styles/PopupAjouterUser.css";
+import useUsersByFormation from "../hooks/useUsersByFormation";
 
-export default function PopupAjouterUser({ setAddNewUser }) {
+export default function PopupAjouterUser({ setAddNewUser, annee, onAddUser }) {
     const [nom, setNom] = useState("");
     const [prenom, setPrenom] = useState("");
-    const [role, setRole] = useState("");
+    const [role, setRole] = useState("apprenti");
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
+
+    const { userId } = useUserRole();
+    const { users, loading, error, setUsers } = useUsersByFormation(userId);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
         const newUser = {
             nom,
             prenom,
-            role,
             email,
             password,
+            role,
+            userId,
+            annee,
         };
 
         try {
@@ -35,11 +42,17 @@ export default function PopupAjouterUser({ setAddNewUser }) {
                 throw new Error("Erreur HTTP, statut : " + response.status);
             }
 
-            setAddNewUser(false); // Fermer la popup après l'ajout
+            const data = await response.json();
+
+            setAddNewUser(false);
+            onAddUser(newUser); // Ajoutez l'utilisateur à la liste existante
         } catch (error) {
             console.error("Erreur lors de l'ajout de l'utilisateur :", error.message);
         }
     };
+
+    if (loading) return <div>Loading...</div>;
+    if (error) return <div>Error: {error}</div>;
 
     return (
         <div className="overlay">
@@ -78,6 +91,7 @@ export default function PopupAjouterUser({ setAddNewUser }) {
                                 value={role}
                                 onChange={(e) => setRole(e.target.value)}
                                 required
+                                disabled
                             />
                         </div>
                         <div className="div-input-add-new-user">
