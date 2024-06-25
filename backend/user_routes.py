@@ -37,6 +37,7 @@ def setUser():
     if request.method == 'OPTIONS':
         return '', 204
 
+    print('Je passse dans le requete')
     try:
         data = request.get_json()
         nom = data.get('nom')

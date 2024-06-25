@@ -17,9 +17,7 @@ export default function PopupConfirmDeleteUser({ setDeleteUser, w_tt_data_delet_
             }
 
             const data = await response.json();
-            console.log(data.message); 
-
-            onDelete(w_tt_data_delet_user.id_user); // Appelez la fonction de suppression
+            onDelete(w_tt_data_delet_user.id_user);
 
         } catch (error) {
             console.error('Erreur lors de la suppression de l’utilisateur:', error.message);

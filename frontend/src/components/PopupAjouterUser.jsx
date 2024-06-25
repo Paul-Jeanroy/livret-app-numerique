@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { useUserRole } from "../hooks/useUserRole";
 import "../styles/PopupAjouterUser.css";
-import useUsersByFormation from "../hooks/useUsersByFormation";
 
 export default function PopupAjouterUser({ setAddNewUser, annee, onAddUser }) {
     const [nom, setNom] = useState("");
@@ -9,9 +8,7 @@ export default function PopupAjouterUser({ setAddNewUser, annee, onAddUser }) {
     const [role, setRole] = useState("apprenti");
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
-
     const { userId } = useUserRole();
-    const { users, loading, error, setUsers } = useUsersByFormation(userId);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -26,8 +23,6 @@ export default function PopupAjouterUser({ setAddNewUser, annee, onAddUser }) {
         };
 
         try {
-            console.log("Nouvel utilisateur à envoyer :", newUser);
-
             const response = await fetch("http://localhost:5000/user/setUser", {
                 method: "POST",
                 headers: {
@@ -36,23 +31,16 @@ export default function PopupAjouterUser({ setAddNewUser, annee, onAddUser }) {
                 body: JSON.stringify(newUser),
             });
 
-            console.log("Réponse du serveur :", response);
-
             if (!response.ok) {
                 throw new Error("Erreur HTTP, statut : " + response.status);
             }
 
-            const data = await response.json();
-
             setAddNewUser(false);
-            onAddUser(newUser); // Ajoutez l'utilisateur à la liste existante
+            onAddUser(newUser);
         } catch (error) {
             console.error("Erreur lors de l'ajout de l'utilisateur :", error.message);
         }
     };
-
-    if (loading) return <div>Loading...</div>;
-    if (error) return <div>Error: {error}</div>;
 
     return (
         <div className="overlay">

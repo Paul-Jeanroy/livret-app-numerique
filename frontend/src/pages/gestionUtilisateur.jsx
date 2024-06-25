@@ -7,18 +7,16 @@ import useUsersByFormation from "../hooks/useUsersByFormation";
 import PopupConfirmDeleteUser from "../components/PopupConfirmDeleteUser";
 import PopupAjouterUser from "../components/PopupAjouterUser";
 
-
-
 export default function GestionUtilisateur() {
     const { userId } = useUserRole();
-    const { users, loading, error, setUsers, fetchUsers } = useUsersByFormation(userId);
+    const { users, setUsers, fetchUsers } = useUsersByFormation(userId);
     const [showDeletePopup, setShowDeletePopup] = useState(false);
     const [showAddPopup, setShowAddPopup] = useState(false);
     const [userToDelete, setUserToDelete] = useState(null);
 
     const handleDeleteUser = (userId) => {
         setUsers((prevUsers) => prevUsers.filter(user => user.id_user !== userId));
-        setShowDeletePopup(false); // Fermer la popup après suppression
+        setShowDeletePopup(false);
     };
 
     const handleAddUser = (newUser) => {
@@ -30,14 +28,9 @@ export default function GestionUtilisateur() {
         setShowDeletePopup(true);
     };
 
-<<<<<<< HEAD
     // updateUser
     const handleUpdateUser = (updatedUser) => {
         setUsers((prevUsers) => prevUsers.map(user => user.id_user === updatedUser.id_user ? updatedUser : user));
-=======
-    const openAddPopup = () => {
-        setShowAddPopup(true);
->>>>>>> caa163a838f44080d57fe7da675b1cc916d940d5
     };
 
     // Regroupement des utilisateurs par année
@@ -48,9 +41,6 @@ export default function GestionUtilisateur() {
         acc[user.annee].push(user);
         return acc;
     }, {});
-
-    if (loading) return <div>Loading...</div>;
-    if (error) return <div>Error: {error}</div>;
 
     return (
         <>
@@ -63,14 +53,10 @@ export default function GestionUtilisateur() {
                             key={annee} 
                             annee={annee} 
                             users={usersByYear[annee]} 
-<<<<<<< HEAD
                             onDeleteUser={openDeletePopup}
                             onUpdateUser={handleUpdateUser} 
+                            onAddUser={handleAddUser}
                             fetchUsers={fetchUsers}
-=======
-                            onDeleteUser={handleDeleteUser}
-                            onAddUser={handleAddUser} // Passez onAddUser ici
->>>>>>> caa163a838f44080d57fe7da675b1cc916d940d5
                         />
                     ))}
                 </main>
@@ -80,7 +66,7 @@ export default function GestionUtilisateur() {
             {showAddPopup && (
                 <PopupAjouterUser 
                     setAddNewUser={setShowAddPopup} 
-                    annee={Object.keys(usersByYear)} 
+                    annee={usersByYear} 
                     onAddUser={handleAddUser} 
                 />
             )}
