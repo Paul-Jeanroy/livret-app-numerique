@@ -75,7 +75,7 @@ def getIdFormationByUser():
     try:
         with mysql.connection.cursor() as cur:
             query = """
-            SELECT a.annee, u.id_user, u.nom, u.prenom, u.email, u.role
+            SELECT a.annee, u.id_user, u.nom, u.prenom, u.email, u.role, u.password
             FROM formation f
             JOIN annees a ON f.id_formation = a.id_formation
             LEFT JOIN utilisateurs u ON a.id_annee = u.id_annee AND u.role = 'apprenti' AND u.id_gerant = %s
@@ -89,8 +89,8 @@ def getIdFormationByUser():
             else:
                 return jsonify({'error': 'Aucune donnée trouvée pour ce gérant'}), 404
 
-    except pymysql.MySQLError as e:
-        return jsonify({'error': f'Erreur MySQL : {str(e)}'}), 500
+    # except pymysql.MySQLError as e:
+    #     return jsonify({'error': f'Erreur MySQL : {str(e)}'}), 500
     except Exception as e:
         return jsonify({'error': str(e)}), 500
     
@@ -119,4 +119,47 @@ def delete_user():
         return jsonify({'error': f'Erreur MySQL : {str(e)}'}), 500
     except Exception as e:
         return jsonify({'error': str(e)}), 50
+
+
+# route pour modifier un utilisateur
+@user_bp.route('/updateUser', methods=['PUT'])
+def update_user():
+    user_id = request.args.get('user_id')
+    print(user_id)
+    
+    
+    try:
+        data = request.get_json()
+        print("Données reçues :", data)
+
+        nom = data.get('nom')
+        prenom = data.get('prenom')
+        role = data.get('role')
+        email = data.get('email')
+        password = data.get('password')
+
+        if not nom or not prenom or not role or not email:
+            print('Tous les champs requis ne sont pas fournis')
+            return jsonify({'error': 'Tous les champs sont requis'}), 400
+
+        cur = mysql.connection.cursor()
+
+        if password:
+            hashed_password = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt()).decode('utf-8')
+            sql_query = "UPDATE utilisateurs SET nom=%s, prenom=%s, role=%s, email=%s, password=%s WHERE id_user=%s"
+            cur.execute(sql_query, (nom, prenom, role, email, hashed_password, user_id))
+        else:
+            sql_query = "UPDATE utilisateurs SET nom=%s, prenom=%s, role=%s, email=%s WHERE id_user=%s"
+            cur.execute(sql_query, (nom, prenom, role, email, user_id))
+        
+        mysql.connection.commit()
+        cur.close()
+
+        return jsonify({'message': 'Utilisateur mis à jour avec succès'}), 200
+
+    
+    
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
 

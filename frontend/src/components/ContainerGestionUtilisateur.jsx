@@ -4,12 +4,18 @@ import "../styles/ContainerGestionUtilisateur.css";
 import PopupAjouterUser from "./PopupAjouterUser";
 import PopupModifierUser from "./PopupModifierUser";
 
-export default function ContainerGestionUtilisateur({ annee, users, onDeleteUser }) {
+
+export default function ContainerGestionUtilisateur({ annee, users, onDeleteUser, onUpdateUser, fetchUsers }) { // j'ai rajouté onUpdateUser
     const [f_addNewUser, setAddNewUser] = useState(false);
     const [f_modifUser, setModifUser] = useState(false);
     const [f_deleteUser, setDeleteUser] = useState(false);
     const [f_containerVisible, setContainerVisible] = useState(true);
+    const [selectedUser, setSelectedUser] = useState(null); // Ajout pour gérer l'utilisateur sélectionné
 
+    const handleUpdateUser = (updatedUser) => {
+        onUpdateUser(updatedUser);
+        setModifUser(false);
+    };
     console.log(annee, users);
 
     return (
@@ -45,7 +51,7 @@ export default function ContainerGestionUtilisateur({ annee, users, onDeleteUser
                                             <p>{user.nom}</p>
                                             <p>{user.prenom}</p>
                                         </div>
-                                        <img className="img-modif" src="/icon-chevron.png" alt="Détails utilisateur" onClick={() => setModifUser(true)} />
+                                        <img className="img-modif" src="/icon-chevron.png" alt="Détails utilisateur" onClick={() => {setModifUser(true); setSelectedUser(user);}} />
                                         <img className="img-suppr" onClick={() => onDeleteUser(user)} src="/delete.svg" alt="supprimer utilisateur" />
                                     </div>
                                 ) : (
@@ -68,7 +74,7 @@ export default function ContainerGestionUtilisateur({ annee, users, onDeleteUser
             </main>
 
             {f_addNewUser && <PopupAjouterUser setAddNewUser={setAddNewUser} />}
-            {f_modifUser && <PopupModifierUser setModifUser={setModifUser} />}
+            {f_modifUser && <PopupModifierUser setModifUser={setModifUser} user={selectedUser} onUpdateUser={handleUpdateUser} fetchUsers={fetchUsers}/>}
             {f_deleteUser && <PopupConfirmDeleteUser setDeleteUser={setDeleteUser} />}
         </>
     );
