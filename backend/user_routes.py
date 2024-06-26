@@ -193,5 +193,41 @@ def update_user():
     
     except Exception as e:
         return jsonify({'error': str(e)}), 500
+    
+# Nouvelle route pour récupérer les informations de l'utilisateur pour la page de profil
+@user_bp.route('/updateProfile', methods=['PUT'])
+@jwt_required()
+def update_profile():
+    user_id = get_jwt_identity()
 
+    try:
+        data = request.get_json()
+        print("Données reçues :", data)
 
+        nom = data.get('nom')
+        prenom = data.get('prenom')
+        role = data.get('role')
+        email = data.get('email')
+        password = data.get('password')
+
+        if not nom or not prenom or not role or not email:
+            print('Tous les champs requis ne sont pas fournis')
+            return jsonify({'error': 'Tous les champs sont requis'}), 400
+
+        cur = mysql.connection.cursor()
+
+        if password:
+            hashed_password = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt()).decode('utf-8')
+            sql_query = "UPDATE utilisateurs SET nom=%s, prenom=%s, role=%s, email=%s, password=%s WHERE id_user=%s"
+            cur.execute(sql_query, (nom, prenom, role, email, hashed_password, user_id))
+        else:
+            sql_query = "UPDATE utilisateurs SET nom=%s, prenom=%s, role=%s, email=%s WHERE id_user=%s"
+            cur.execute(sql_query, (nom, prenom, role, email, user_id))
+        
+        mysql.connection.commit()
+        cur.close()
+
+        return jsonify({'message': 'Profil utilisateur mis à jour avec succès'}), 200
+
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
