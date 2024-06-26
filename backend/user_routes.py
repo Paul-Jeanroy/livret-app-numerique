@@ -47,7 +47,7 @@ def setUser():
         password = data.get('password')
         id_gerant = data.get('userId')
         annee = data.get('annee')
-        est_valide = 1
+        est_valide = 0
 
         # Vérification des champs requis
         if not nom or not prenom or not role or not email or not password or not annee:
@@ -189,6 +189,7 @@ def update_user():
         return jsonify({'message': 'Utilisateur mis à jour avec succès'}), 200
 
     
+
     
     except Exception as e:
         return jsonify({'error': str(e)}), 500

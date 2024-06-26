@@ -25,9 +25,33 @@ def login():
             access_token = create_access_token(identity=user['id_user'])
             role = user['role']
             id_user = user['id_user']
-            return jsonify({'access_token': access_token, 'role': role, 'id_user': id_user}), 200
+            est_valide = user['est_valide']
+            return jsonify({'access_token': access_token, 'role': role, 'id_user': id_user, 'est_valide': est_valide}), 200
         else:
             return jsonify({'error': 'Invalid credentials'}), 401
 
     except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+@auth_bp.route('/validationUser', methods=['POST'])
+def validation_user():
+    try:
+        data = request.get_json()
+        user_id = data.get('user_id')
+        password = data.get('password')
+
+        if not user_id or not password:
+            return jsonify({'error': "L'id de l'utilisateur et le nouveau mot de passe sont obligatoires"}), 400
+
+        hashed_password = bcrypt.generate_password_hash(password).decode('utf-8')
+
+        cur = mysql.connection.cursor()
+        cur.execute("UPDATE utilisateurs SET est_valide = %s, password = %s WHERE id_user = %s", (1, hashed_password, user_id))
+        mysql.connection.commit()
+        cur.close()
+
+        return jsonify({'message': "l'utilisateur est validé !"}), 200
+
+    except Exception as e:
+        print(f"Erreur: {str(e)}")
         return jsonify({'error': str(e)}), 500

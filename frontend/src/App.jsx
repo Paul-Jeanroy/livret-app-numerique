@@ -12,7 +12,6 @@ import CreationTitre from './pages/creationTitre';
 
 const App = () => {
     const { roleUser } = useUserRole();
-    console.log("le role du user est : ", roleUser);
 
     return (
         <Routes>
