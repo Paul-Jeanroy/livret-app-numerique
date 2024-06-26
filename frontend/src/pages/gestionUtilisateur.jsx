@@ -6,10 +6,11 @@ import { useUserRole } from "../hooks/useUserRole";
 import useUsersByFormation from "../hooks/useUsersByFormation";
 import PopupConfirmDeleteUser from "../components/PopupConfirmDeleteUser";
 import PopupAjouterUser from "../components/PopupAjouterUser";
+import Loader from "../components/Loader";
 
 export default function GestionUtilisateur() {
     const { userId } = useUserRole();
-    const { users, setUsers, fetchUsers } = useUsersByFormation(userId);
+    const { users, loading, error, setUsers, fetchUsers } = useUsersByFormation(userId);
     const [showDeletePopup, setShowDeletePopup] = useState(false);
     const [showAddPopup, setShowAddPopup] = useState(false);
     const [userToDelete, setUserToDelete] = useState(null);
@@ -41,6 +42,9 @@ export default function GestionUtilisateur() {
         acc[user.annee].push(user);
         return acc;
     }, {});
+
+    if (loading) return <Loader />;
+    if (error) return <div>Error: {error}</div>;
 
     return (
         <>

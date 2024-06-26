@@ -13,6 +13,7 @@ export default function Profil() {
         email: false,
         password: false,
     });
+
     const [formData, setFormData] = useState({
         nom: '',
         prenom: '',
@@ -111,81 +112,94 @@ export default function Profil() {
     };
 
     return (
-        <div className="page-container">
+        <>
             <Header />
             <div className="content-wrap">
-                <h1 className="title">Profil</h1>
-                <div className="avatar-container">
-                    <img src="/user.svg" alt="Avatar" className="avatar" />
-                    <input type="file" id="avatar-input" className="change-avatar-button" />
-                </div>
-                <div className="info-container">
-                    {user ? (
-                        <form onSubmit={handleSubmit}>
-                            <div className="info-item">
-                                <label>Nom:</label>
-                                {isEditing.nom ? (
-                                    <input type="text" name="nom" value={formData.nom} onChange={handleChange} />
-                                ) : (
-                                    <>
-                                        <span>{user.nom}</span>
-                                        <img src="/pencil-edit.svg" alt="Edit" className="edit-icon" onClick={() => handleEditClick('nom')} />
-                                    </>
-                                )}
-                            </div>
-                            <div className="info-item">
-                                <label>Prénom:</label>
-                                {isEditing.prenom ? (
-                                    <input type="text" name="prenom" value={formData.prenom} onChange={handleChange} />
-                                ) : (
-                                    <>
-                                        <span>{user.prenom}</span>
-                                        <img src="/pencil-edit.svg" alt="Edit" className="edit-icon" onClick={() => handleEditClick('prenom')} />
-                                    </>
-                                )}
-                            </div>
-                            <div className="info-item">
-                                <label>Rôle:</label>
-                                {isEditing.role ? (
-                                    <input type="text" name="role" value={formData.role} onChange={handleChange} />
-                                ) : (
-                                    <>
-                                        <span>{user.role}</span>
-                                        <img src="/pencil-edit.svg" alt="Edit" className="edit-icon" onClick={() => handleEditClick('role')} />
-                                    </>
-                                )}
-                            </div>
-                            <div className="info-item">
-                                <label>Email:</label>
-                                {isEditing.email ? (
-                                    <input type="email" name="email" value={formData.email} onChange={handleChange} />
-                                ) : (
-                                    <>
-                                        <span>{user.email}</span>
-                                        <img src="/pencil-edit.svg" alt="Edit" className="edit-icon" onClick={() => handleEditClick('email')} />
-                                    </>
-                                )}
-                            </div>
-                            <div className="info-item">
-                                <label>Mot de passe:</label>
-                                {isEditing.password ? (
-                                    <input type="password" name="password" value={formData.password} onChange={handleChange} />
-                                ) : (
-                                    <>
-                                        <span>•••••••••••</span>
-                                        <img src="/pencil-edit.svg" alt="Edit" className="edit-icon" onClick={() => handleEditClick('password')} />
-                                    </>
-                                )}
-                            </div>
-                            <button type="submit">Enregistrer les modifications</button>
-                        </form>
-                    ) : (
-                        <p>Chargement en cours...</p>
-                    )}
-                </div>
+                <main className="main-container">
+                    <div className="div-container">
+                        <h1 className="title">Profil</h1>
+                        <div className="info-container">
+                            {user ? (
+                                <form className="form-modif-profil" onSubmit={handleSubmit}>
+                                    <div className="info-item">
+                                        <label>Nom :</label>
+                                        {isEditing.nom ? (
+                                            <div className="div-modif-info">
+                                                <input type="text" name="nom" value={formData.nom} onChange={handleChange} />
+                                                <button type="submit">Enregistrer les modifications</button>
+                                            </div>
+                                        ) : (
+                                            <>
+                                                <span>{user.nom}</span>
+                                                <img src="/pencil-edit.svg" alt="Edit" className="edit-icon" onClick={() => handleEditClick('nom')} />
+                                            </>
+                                        )}
+                                    </div>
+                                    <div className="info-item">
+                                        <label>Prénom :</label>
+                                        {isEditing.prenom ? (
+                                            <div className="div-modif-info">
+                                                <input type="text" name="prenom" value={formData.prenom} onChange={handleChange} />
+                                                <button type="submit">Enregistrer les modifications</button>
+                                            </div>
+                                        ) : (
+                                            <>
+                                                <span>{user.prenom}</span>
+                                                <img src="/pencil-edit.svg" alt="Edit" className="edit-icon" onClick={() => handleEditClick('prenom')} />
+                                            </>
+                                        )}
+                                    </div>
+                                    <div className="info-item">
+                                        <label>Rôle :</label>
+                                        {isEditing.role ? (
+                                            <div className="div-modif-info">
+                                                <input type="text" name="role" value={formData.role} onChange={handleChange} />
+                                                <button type="submit">Enregistrer les modifications</button>
+                                            </div>
+                                        ) : (
+                                            <>
+                                                <span>{user.role}</span>
+                                                <img src="/pencil-edit.svg" alt="Edit" className="edit-icon" onClick={() => handleEditClick('role')} />
+                                            </>
+                                        )}
+                                    </div>
+                                    <div className="info-item">
+                                        <label>Email :</label>
+                                        {isEditing.email ? (
+                                            <div className="div-modif-info">
+                                                <input type="email" name="email" value={formData.email} onChange={handleChange} />
+                                                <button type="submit">Enregistrer les modifications</button>
+                                            </div>
+                                        ) : (
+                                            <>
+                                                <span>{user.email}</span>
+                                                <img src="/pencil-edit.svg" alt="Edit" className="edit-icon" onClick={() => handleEditClick('email')} />
+                                            </>
+                                        )}
+                                    </div>
+                                    <div className="info-item">
+                                        <label>Mot de passe :</label>
+                                        {isEditing.password ? (
+                                            <div className="div-modif-info">
+                                                <input type="password" name="password" value={formData.password} onChange={handleChange} />
+                                                <button type="submit">Enregistrer les modifications</button>
+                                            </div>
+                                        ) : (
+                                            <>
+                                                <span>•••••••••••</span>
+                                                <img src="/pencil-edit.svg" alt="Edit" className="edit-icon" onClick={() => handleEditClick('password')} />
+                                            </>
+                                        )}
+                                    </div>
+                                </form>
+                            ) : (
+                                <p>Chargement en cours...</p>
+                            )}
+                        </div>
+                    </div>
+                </main>
+                <Footer />
             </div>
-            <Footer />
-        </div>
+        </>
     );
 }
-

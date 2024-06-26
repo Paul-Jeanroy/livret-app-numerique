@@ -1,14 +1,14 @@
-.section-gestion-utilisateur{
+.section-gestion-utilisateur {
     position: relative;
     width: 100%;
     max-width: 1800px;
     margin: 100px auto;
     border-radius: 20px;
     overflow: hidden;
-    font-family: monospace; 
+    font-family: monospace;
 }
 
-.titre_page{
+.titre_page {
     display: flex;
     justify-content: center;
     align-items: center;
@@ -54,7 +54,7 @@
     position: relative;
 }
 
-.div-header-suivi-utilisateur h1::after{
+.div-header-suivi-utilisateur h1::after {
     position: absolute;
     width: 15px;
     height: 5px;
@@ -72,12 +72,12 @@
     cursor: pointer;
 }
 
-.container-suivi-utilisateur{
+.container-suivi-utilisateur {
     margin-top: 45px;
     width: 100%;
 }
 
-.div-ligne-suivi-utilisateur{
+.div-ligne-suivi-utilisateur {
     display: flex;
     flex-direction: row;
     align-items: center;
@@ -86,12 +86,12 @@
     cursor: pointer;
 }
 
-.div-ligne-suivi-utilisateur:not(:last-child){
+.div-ligne-suivi-utilisateur:not(:last-child) {
     border-bottom: 1px solid gray;
 }
 
 
-.div-ligne-suivi-utilisateur .img-modif{
+.div-ligne-suivi-utilisateur .img-modif {
     height: 15px;
     width: 15px;
     display: flex;
@@ -101,7 +101,7 @@
     right: 40px;
 }
 
-.div-ligne-suivi-utilisateur .img-suppr{
+.div-ligne-suivi-utilisateur .img-suppr {
     height: 15px;
     width: 15px;
     display: flex;
@@ -110,15 +110,19 @@
     right: 15px;
 }
 
-.div-nom-utilisateur{
+.div-nom-utilisateur {
     display: flex;
     margin-left: 15px;
 }
 
-.div-nom-utilisateur p:not(:last-child){
+.div-nom-utilisateur p:not(:last-child) {
     margin-right: 20px;
 }
 
-.img-manage-section{
+.img-manage-section {
     margin-left: 20px;
+}
+
+.main-container {
+    flex: 1;
 }
