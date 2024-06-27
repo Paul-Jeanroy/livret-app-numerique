@@ -1,0 +1,66 @@
+/* GrilleEvaluationLivret.css */
+.grille-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 20px 50px;
+    border-radius: 12px;
+  }
+  
+  .evaluation-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-family: Arial, sans-serif;
+  }
+  
+  .header-cell {
+    background-color: #cce5ff;
+    text-align: center;
+    font-weight: bold;
+    padding: 10px;
+    border: 1px solid;
+  }
+  
+  .evaluation-cell {
+    text-align: center;
+    padding: 10px;
+    border: 1px solid black;
+  }
+  
+  .competence-cell {
+    background-color: #b3d7ff;
+    padding: 10px;
+    border: 1px solid black;
+    max-width: 10px;
+    text-align: center;
+}
+
+.competence-cell-user{
+    background-color: #b3d7ff;
+    padding: 10px;
+    border: 1px solid black;
+    min-width: 150px;
+    text-align: center;
+}
+  
+  .score-cell {
+    background-color: #fff;
+    text-align: center;
+    padding: 10px;
+    border: 1px solid black;
+    width: 100px;
+    max-height: 10px;
+  }
+  
+  .validation-cell {
+    background-color: #b3d7ff;
+    text-align: center;
+    padding: 10px;
+    border: 1px solid black;
+    max-width: 50px;
+  }
+  
+  .validation-cell input{
+    height: 20px;
+    width: 50%;
+  }

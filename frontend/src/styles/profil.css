@@ -1,18 +1,7 @@
 .div-container {
-    flex: 1;
-    padding: 20px;
     text-align: center;
     display: flex;
-    flex-direction: column !important;
-
-}
-
-.title {
-    font-size: 2em;
-    margin-bottom: 20px;
-    display: inline-block;
-    position: relative;
-    padding-bottom: 10px;
+    flex-direction: column;
 }
 
 .info-container {
@@ -100,8 +89,4 @@
     border: none;
     border-radius: 12px;
     cursor: pointer;
-}
-
-.main-container {
-    flex: 1;
 }

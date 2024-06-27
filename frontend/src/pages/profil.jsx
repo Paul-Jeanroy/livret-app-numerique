@@ -117,7 +117,7 @@ export default function Profil() {
             <div className="content-wrap">
                 <main className="main-container">
                     <div className="div-container">
-                        <h1 className="title">Profil</h1>
+                        <h1 className="titre_page">Profil</h1>
                         <div className="info-container">
                             {user ? (
                                 <form className="form-modif-profil" onSubmit={handleSubmit}>
