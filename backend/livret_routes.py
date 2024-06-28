@@ -1,4 +1,3 @@
-import os
 import requests
 from flask import Flask, Blueprint, jsonify, request
 from flask_cors import CORS
@@ -6,16 +5,27 @@ from flask_jwt_extended import JWTManager
 import pdfplumber
 import tempfile
 from bs4 import BeautifulSoup
+import openai
 from dotenv import load_dotenv
-from openai import OpenAI
+import os
 
+# Load environment variables from .env file
+load_dotenv()
 
-client = OpenAI()
+# Retrieve the API key from environment variables
+api_key = os.getenv("OPENAI_API_KEY")
+
+# Raise an error if the API key is not set
+if api_key is None:
+    raise ValueError("The OPENAI_API_KEY environment variable is not set.")
+
+# Initialize the OpenAI API key
+openai.api_key = api_key
+
 app = Flask(__name__)
 CORS(app)
 
 livret_bp = Blueprint('livret', __name__)
-
 
 @livret_bp.route('/getInfoFormation', methods=['GET'])
 def get_info_formation():
@@ -134,12 +144,6 @@ def get_bloc_competence_from_pdf():
     except Exception as e:
         return jsonify({'error': str(e), 'details': repr(e)}), 500
 
-app.register_blueprint(livret_bp, url_prefix='/livret')
-
-load_dotenv()
-
-# clé API OpenAI
-openai.api_key = os.getenv('OPENAI_API_KEY')
 
 @livret_bp.route('/raccourcie-comp-ai', methods=['POST'])
 def raccourcir_competence():
@@ -155,19 +159,23 @@ def raccourcir_competence():
         print("Compétences à raccourcir :", competences)
         shortened_competences = []
 
-        for competence in competences:
-            print(f"Appel à l'API OpenAI pour la compétence : {competence}")
-            response = openai.Completion.create(
-                engine="text-davinci-003",
-                prompt=f"Raccourcissez cette compétence : {competence}",
-                max_tokens=50
-            )
-            shortened_competence = response.choices[0].text.strip()
-            print(f"Compétence raccourcie : {shortened_competence}")
-            shortened_competences.append({
-                "original": competence,
-                "raccourcie": shortened_competence
-            })
+        # Only test with the first competence
+        competence = competences[0]
+        print(f"Appel à l'API OpenAI pour la compétence : {competence}")
+        response = openai.ChatCompletion.create(
+            model="gpt-3.5-turbo",
+            messages=[
+                {"role": "system", "content": "You are a helpful assistant."},
+                {"role": "user", "content": f"Raccourcissez cette compétence : {competence}"}
+            ],
+            max_tokens=50
+        )
+        shortened_competence = response.choices[0].message['content'].strip()
+        print(f"Compétence raccourcie : {shortened_competence}")
+        shortened_competences.append({
+            "original": competence,
+            "raccourcie": shortened_competence
+        })
         
         return jsonify({'shortened_competences': shortened_competences})
     
@@ -175,8 +183,8 @@ def raccourcir_competence():
         print(f"Error: {str(e)}")
         return jsonify({'error': str(e), 'details': repr(e)}), 500
 
+# Register blueprint only after all routes are defined
+app.register_blueprint(livret_bp, url_prefix='/livret')
 
 if __name__ == '__main__':
     app.run(debug=True)
-    
-    

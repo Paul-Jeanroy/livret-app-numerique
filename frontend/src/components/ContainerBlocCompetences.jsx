@@ -10,11 +10,21 @@ export default function ContainerBlocCompetences({ data }) {
                 if (blocData.competences && blocData.competences.length > 0) {
                     try {
                         const response = await fetch('http://localhost:5000/livret/raccourcie-comp-ai', {
-                            competences: blocData.competences,
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                            },
+                            body: JSON.stringify({ competences: blocData.competences }),
                         });
+
+                        if (!response.ok) {
+                            throw new Error(`HTTP error! status: ${response.status}`);
+                        }
+
+                        const responseData = await response.json();
                         setShortenedCompetences(prev => ({
                             ...prev,
-                            [blocTitle]: response.data.shortened_competences,
+                            [blocTitle]: responseData.shortened_competences,
                         }));
                     } catch (error) {
                         console.error('Error fetching shortened competences:', error);

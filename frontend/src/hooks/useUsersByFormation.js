@@ -1,5 +1,4 @@
 import { useState, useEffect } from 'react';
-import Loader from '../components/Loader.jsx';
 
 const useUsersByFormation = (userId) => {
     const [users, setUsers] = useState([]);

@@ -54,7 +54,7 @@ const GrilleEvaluationLivret = () => {
                             [Nom du bloc]
                         </td>
                         <td className="competence-cell">
-                            <input type="" />
+                            [Compétences ......]
                         </td>
                         <td className="score-cell">
                             <input type="checkbox" />
@@ -80,7 +80,7 @@ const GrilleEvaluationLivret = () => {
                     </tr>
                     <tr>
                         <td className="competence-cell">
-                            <input type="" />
+                            [Compétences ......]
                         </td>
                         <td className="score-cell">
                             <input type="checkbox" />
@@ -106,7 +106,7 @@ const GrilleEvaluationLivret = () => {
                     </tr>
                     <tr>
                         <td className="competence-cell">
-                            <input type="" />
+                            [Compétences ......]
                         </td>
                         <td className="score-cell">
                             <input type="checkbox" />

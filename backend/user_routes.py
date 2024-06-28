@@ -213,3 +213,28 @@ def update_profile():
 
     except Exception as e:
         return jsonify({'error': str(e)}), 500
+
+
+
+@user_bp.route('/getInfoFormationByUserId', methods=['GET'])
+def get_info_formation_by_userId():
+    user_id = request.args.get('user_id')
+
+    try:
+        with mysql.connection.cursor() as cur:
+            query = """
+                SELECT f.*
+                FROM formation f
+                JOIN utilisateurs u ON f.id_formation = u.id_formation
+                WHERE u.id_user = %s;
+            """
+            cur.execute(query, (user_id, ))
+            result = cur.fetchone()
+
+            if result:
+                return jsonify(result), 200
+            else:
+                return jsonify({'error': 'Aucune donnée trouvée pour cet utilisateur'}), 404
+
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
