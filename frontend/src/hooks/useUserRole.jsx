@@ -1,26 +1,44 @@
-import { createContext, useContext, useState, useEffect } from 'react';
+import React, { createContext, useContext, useState, useEffect } from 'react';
 
 const UserRoleContext = createContext();
 
 export const UserRoleProvider = ({ children }) => {
-    const [roleUser, setRoleUser] = useState(() => {
-        return localStorage.getItem('roleUser') || '';
-    });
-
-    const [userId, setUserId] = useState(() => {
-        return localStorage.getItem('userId') || '';
-    });
+    const [roleUser, setRoleUser] = useState('');
+    const [userId, setUserId] = useState('');
+    const [isLoading, setIsLoading] = useState(true);
 
     useEffect(() => {
-        localStorage.setItem('roleUser', roleUser);
-    }, [roleUser]);
+        const fetchUserRole = async () => {
+            const token = localStorage.getItem('token');
+            if (token) {
+                try {
+                    const response = await fetch('http://localhost:5000/auth/verify-user', {
+                        headers: {
+                            'Authorization': `Bearer ${token}`
+                        }
+                    });
 
-    useEffect(() => {
-        localStorage.setItem('userId', userId);
-    }, [userId]);
+                    if (!response.ok) {
+                        throw new Error("Erreur lors de la vérification de l'utilisateur");
+                    }
+
+                    const data = await response.json();
+                    setRoleUser(data.role);
+                    setUserId(data.id);
+                } catch (error) {
+                    console.error("Erreur lors de la vérification de l'utilisateur:", error);
+                } finally {
+                    setIsLoading(false);
+                }
+            } else {
+                setIsLoading(false);
+            }
+        };
+        fetchUserRole();
+    }, []);
 
     return (
-        <UserRoleContext.Provider value={{ roleUser, setRoleUser, userId, setUserId }}>
+        <UserRoleContext.Provider value={{ roleUser, setRoleUser, userId, setUserId, isLoading }}>
             {children}
         </UserRoleContext.Provider>
     );

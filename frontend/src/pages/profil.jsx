@@ -5,8 +5,8 @@ import Header from "../components/Header";
 import "../styles/profil.css";
 
 export default function Profil() {
-    const [user, setUser] = useState(null);
-    const [isEditing, setIsEditing] = useState({
+    const [o_user, setUser] = useState(null);
+    const [f_modifUser, setModifUser] = useState({
         nom: false,
         prenom: false,
         role: false,
@@ -14,7 +14,7 @@ export default function Profil() {
         password: false,
     });
 
-    const [formData, setFormData] = useState({
+    const [o_newValeurUser, setNewValeurUser] = useState({
         nom: '',
         prenom: '',
         role: '',
@@ -27,7 +27,7 @@ export default function Profil() {
             try {
                 const token = localStorage.getItem('token');
                 if (!token) {
-                    throw new Error('No token found');
+                    throw new Error('Pas de token trouvé !');
                 }
 
                 const response = await fetch('http://localhost:5000/user/getUser', {
@@ -40,14 +40,15 @@ export default function Profil() {
                     throw new Error('Erreur HTTP, statut : ' + response.status);
                 }
 
-                const userData = await response.json();
-                setUser(userData);
-                setFormData({
-                    nom: userData.nom,
-                    prenom: userData.prenom,
-                    role: userData.role,
-                    email: userData.email,
-                    password: '', // Laisser vide au départ
+                const reponse = await response.json();
+                setUser(reponse);
+
+                setNewValeurUser({
+                    nom: reponse.nom,
+                    prenom: reponse.prenom,
+                    role: reponse.role,
+                    email: reponse.email,
+                    password: '',
                 });
             } catch (error) {
                 console.error('Erreur lors de la récupération des données utilisateur :', error.message);
@@ -57,30 +58,31 @@ export default function Profil() {
         fetchUser();
     }, []);
 
-    const handleEditClick = (field) => {
-        setIsEditing({ ...isEditing, [field]: true });
+    const sp_modifier_valeur = (field) => {
+        setModifUser({ ...f_modifUser, [field]: true });
     };
 
-    const handleChange = (e) => {
+    const sp_modifier_user = (e) => {
         const { name, value } = e.target;
-        setFormData({
-            ...formData,
+        console.log(name, value);
+        setNewValeurUser({
+            ...o_newValeurUser,
             [name]: value
         });
     };
 
-    const handleSubmit = async (e) => {
+    const sp_valider_modification = async (e) => {
         e.preventDefault();
-        const updatedUser = { ...formData };
+        const updatedUser = { ...o_newValeurUser };
 
-        if (!formData.password) {
+        if (!o_newValeurUser.password) {
             delete updatedUser.password;
         }
 
         try {
             const token = localStorage.getItem('token');
             if (!token) {
-                throw new Error('No token found');
+                throw new Error('pas de token trouvé');
             }
 
             const response = await fetch('http://localhost:5000/user/updateProfile', {
@@ -97,9 +99,8 @@ export default function Profil() {
                 throw new Error('Erreur HTTP, statut : ' + response.status + ', message : ' + errorText);
             }
 
-            const result = await response.json();
-            setUser({ ...user, ...updatedUser });
-            setIsEditing({
+            setUser({ ...o_user, ...updatedUser });
+            setModifUser({
                 nom: false,
                 prenom: false,
                 role: false,
@@ -119,75 +120,75 @@ export default function Profil() {
                     <div className="div-container">
                         <h1 className="titre_page">Profil</h1>
                         <div className="info-container">
-                            {user ? (
-                                <form className="form-modif-profil" onSubmit={handleSubmit}>
+                            {o_user ? (
+                                <form className="form-modif-profil" onSubmit={sp_valider_modification}>
                                     <div className="info-item">
                                         <label>Nom :</label>
-                                        {isEditing.nom ? (
+                                        {f_modifUser.nom ? (
                                             <div className="div-modif-info">
-                                                <input type="text" name="nom" value={formData.nom} onChange={handleChange} />
+                                                <input type="text" name="nom" value={o_newValeurUser.nom} onChange={sp_modifier_user} />
                                                 <button type="submit">Enregistrer les modifications</button>
                                             </div>
                                         ) : (
                                             <>
-                                                <span>{user.nom}</span>
-                                                <img src="/pencil-edit.svg" alt="Edit" className="edit-icon" onClick={() => handleEditClick('nom')} />
+                                                <span>{o_user.nom}</span>
+                                                <img src="/pencil-edit.svg" alt="Edit" className="edit-icon" onClick={() => sp_modifier_valeur('nom')} />
                                             </>
                                         )}
                                     </div>
                                     <div className="info-item">
                                         <label>Prénom :</label>
-                                        {isEditing.prenom ? (
+                                        {f_modifUser.prenom ? (
                                             <div className="div-modif-info">
-                                                <input type="text" name="prenom" value={formData.prenom} onChange={handleChange} />
+                                                <input type="text" name="prenom" value={o_newValeurUser.prenom} onChange={sp_modifier_user} />
                                                 <button type="submit">Enregistrer les modifications</button>
                                             </div>
                                         ) : (
                                             <>
-                                                <span>{user.prenom}</span>
-                                                <img src="/pencil-edit.svg" alt="Edit" className="edit-icon" onClick={() => handleEditClick('prenom')} />
+                                                <span>{o_user.prenom}</span>
+                                                <img src="/pencil-edit.svg" alt="Edit" className="edit-icon" onClick={() => sp_modifier_valeur('prenom')} />
                                             </>
                                         )}
                                     </div>
                                     <div className="info-item">
                                         <label>Rôle :</label>
-                                        {isEditing.role ? (
+                                        {f_modifUser.role ? (
                                             <div className="div-modif-info">
-                                                <input type="text" name="role" value={formData.role} onChange={handleChange} />
+                                                <input type="text" name="role" value={o_newValeurUser.role} onChange={sp_modifier_user} />
                                                 <button type="submit">Enregistrer les modifications</button>
                                             </div>
                                         ) : (
                                             <>
-                                                <span>{user.role}</span>
-                                                <img src="/pencil-edit.svg" alt="Edit" className="edit-icon" onClick={() => handleEditClick('role')} />
+                                                <span>{o_user.role}</span>
+                                                <img src="/pencil-edit.svg" alt="Edit" className="edit-icon" onClick={() => sp_modifier_valeur('role')} />
                                             </>
                                         )}
                                     </div>
                                     <div className="info-item">
                                         <label>Email :</label>
-                                        {isEditing.email ? (
+                                        {f_modifUser.email ? (
                                             <div className="div-modif-info">
-                                                <input type="email" name="email" value={formData.email} onChange={handleChange} />
+                                                <input type="email" name="email" value={o_newValeurUser.email} onChange={sp_modifier_user} />
                                                 <button type="submit">Enregistrer les modifications</button>
                                             </div>
                                         ) : (
                                             <>
-                                                <span>{user.email}</span>
-                                                <img src="/pencil-edit.svg" alt="Edit" className="edit-icon" onClick={() => handleEditClick('email')} />
+                                                <span>{o_user.email}</span>
+                                                <img src="/pencil-edit.svg" alt="Edit" className="edit-icon" onClick={() => sp_modifier_valeur('email')} />
                                             </>
                                         )}
                                     </div>
                                     <div className="info-item">
                                         <label>Mot de passe :</label>
-                                        {isEditing.password ? (
+                                        {f_modifUser.password ? (
                                             <div className="div-modif-info">
-                                                <input type="password" name="password" value={formData.password} onChange={handleChange} />
+                                                <input type="password" name="password" value={o_newValeurUser.password} onChange={sp_modifier_user} />
                                                 <button type="submit">Enregistrer les modifications</button>
                                             </div>
                                         ) : (
                                             <>
                                                 <span>•••••••••••</span>
-                                                <img src="/pencil-edit.svg" alt="Edit" className="edit-icon" onClick={() => handleEditClick('password')} />
+                                                <img src="/pencil-edit.svg" alt="Edit" className="edit-icon" onClick={() => sp_modifier_valeur('password')} />
                                             </>
                                         )}
                                     </div>

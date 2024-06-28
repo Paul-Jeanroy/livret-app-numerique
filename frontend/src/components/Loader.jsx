@@ -1,3 +1,8 @@
+/* 
+    composant Loader.jsx
+    Créer le 26/06 par PJ
+*/
+
 import React from 'react';
 import '../styles/loader.css';
 

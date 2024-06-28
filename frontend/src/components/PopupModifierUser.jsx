@@ -1,3 +1,13 @@
+/* 
+    composant PopupModifierUser.jsx
+    Créer le 08/06 par PJ-HL
+
+    Fonctionnalité :
+    - sp_modifier_user : fonction qui permet de modifier un utilisateur dans la page gestion utilisateur
+    - ...
+    
+*/
+
 import { useState } from "react";
 import "../styles/PopupModifierUser.css";
 
@@ -7,10 +17,8 @@ export default function PopupModifierUser({ setModifUser, user, onUpdateUser, fe
     const [role, setRole] = useState(user.role);
     const [email, setEmail] = useState(user.email);
     const [password, setPassword] = useState(user.password);
-    
-    console.log(user)
 
-       const handleSubmit = async (e) => {
+    const sp_modifier_user = async (e) => {
         e.preventDefault();
         const updateUser = {
             nom,
@@ -20,15 +28,12 @@ export default function PopupModifierUser({ setModifUser, user, onUpdateUser, fe
             password,
         }
 
-       
-        
-
         try {
             const response = await fetch(`http://localhost:5000/user/updateUser?user_id=${user.id_user}`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
-                    
+
                 },
                 body: JSON.stringify(updateUser)
             });
@@ -37,17 +42,13 @@ export default function PopupModifierUser({ setModifUser, user, onUpdateUser, fe
             if (response.ok) {
                 fetchUsers();
                 onUpdateUser(updateUser);
-                console.log(result);
                 setModifUser(false);
-                
+
             } else {
-                alert(result.error);
-                console.log(result.error);
-                
+                console.error(result.error)
             }
         } catch (error) {
-            console.error('Erreur:', error);
-            alert('Une erreur est survenue');
+            console.error('Une erreur est survenue:', error);
         }
     };
 
@@ -59,7 +60,7 @@ export default function PopupModifierUser({ setModifUser, user, onUpdateUser, fe
                     <img src="/icon-croix.png" onClick={() => setModifUser(false)} alt="Fermer" />
                 </div>
                 <div className="div-add-modif-user-body">
-                
+
                     <div className="div-input-add-modif-user">
                         <label htmlFor="nom">Nom</label>
                         <input type="text" id="nom" value={nom} onChange={(e) => setNom(e.target.value)} required
@@ -82,12 +83,12 @@ export default function PopupModifierUser({ setModifUser, user, onUpdateUser, fe
                         <input type="password" id="password" value={password} onChange={(e) => setPassword(e.target.value)} />
                     </div>
                     <div className="div-btn-add-modif-user">
-                        <button type="submit" onClick={handleSubmit}>
+                        <button type="submit" onClick={sp_modifier_user}>
                             Valider les modifications
                             <img src="/add-user.svg" />
                         </button>
                     </div>
-                   
+
                 </div>
             </div>
         </div>

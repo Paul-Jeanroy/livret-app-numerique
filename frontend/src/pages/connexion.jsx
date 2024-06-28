@@ -54,7 +54,7 @@ export default function Connexion() {
     return (
         <>
             {f_isValidUser ? (
-                <ValidationUser setValidationUser={setValidationUser} />
+                <ValidationUser />
             ) : (
                 <main className="main-connexion">
                     <h1>Livret d'apprentissage Numérique</h1>

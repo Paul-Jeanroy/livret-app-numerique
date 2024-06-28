@@ -1,3 +1,13 @@
+/* 
+    composant PopupHome.jsx
+    Créer le 08/06 par PJ
+
+    Fonctionnalité :
+    - sp_detect_clique_outside : fonction qui permet de détecter un cliquer user en dehors de la popup pour la fermer
+    - ...
+    
+*/
+
 import { useEffect, useRef } from "react";
 import "../styles/PopupHome.css";
 
@@ -5,16 +15,16 @@ export default function PopupHome({ setOpenPopupHome }) {
     const popupHomeRef = useRef(null);
 
     useEffect(() => {
-        function handleClickOutside(event) {
+        function sp_detect_clique_outside(event) {
             if (popupHomeRef.current && !popupHomeRef.current.contains(event.target)) {
                 setOpenPopupHome(false);
             }
         }
 
-        document.addEventListener("mousedown", handleClickOutside);
+        document.addEventListener("mousedown", sp_detect_clique_outside);
 
         return () => {
-            document.removeEventListener("mousedown", handleClickOutside);
+            document.removeEventListener("mousedown", sp_detect_clique_outside);
         };
     }, [setOpenPopupHome]);
 

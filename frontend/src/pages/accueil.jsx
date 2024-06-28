@@ -45,7 +45,11 @@ export default function Accueil() {
                     <section id="section-home-3">
                         <div className="div-partie-gauche">
                             <h1>Facilitez, Organisez et Optimisez Votre Apprentissage</h1>
-                            <p>Ce livret est un passeport d'apprentissage numérique...</p>
+                            <p>Ce livret est un passeport d'apprentissage numérique qui aide les étudiants, les écoles et les entreprises à se connecter
+                                et à échanger des informations plus facilement. Les écoles et les entreprises peuvent utiliser le livret numérique pour
+                                obtenir une vue complète des notes obtenues, le suivi des comptences réalisé en entreprise, le tout en un seul endroit.
+                                Il est ainsi plus facile pour les entreprises, les écoles et les étudiants de communiquer afin de s’assurer de la
+                                réussite de l’éleve.</p>
                             <button onClick={() => setOpenPopupHome(true)}>En savoir plus</button>
                         </div>
                         <div className="div-partie-droite">

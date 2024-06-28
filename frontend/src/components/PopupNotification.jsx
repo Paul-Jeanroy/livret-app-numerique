@@ -1,22 +1,31 @@
 
-import { useEffect, useRef } from "react";
+/* 
+    composant popupNotification.jsx
+    Créer le 08/06 par PJ-HL
+
+    Fonctionnalité :
+    - sp_detect_clique_outside : fonction qui permet de detecter un clique en dehors de la popup pour la fermer
+    - ...
+    
+*/
 
 import "../styles/PopupNotification.css";
+import { useEffect, useRef } from "react";
 
 export default function PopupNotification({ setOpenNotif }) {
     const popupNotifRef = useRef(null);
 
     useEffect(() => {
-        function handleClickOutside(event) {
+        function sp_detect_clique_outside(event) {
             if (popupNotifRef.current && !popupNotifRef.current.contains(event.target)) {
                 setOpenNotif(false);
             }
         }
 
-        document.addEventListener("mousedown", handleClickOutside);
+        document.addEventListener("mousedown", sp_detect_clique_outside);
 
         return () => {
-            document.removeEventListener("mousedown", handleClickOutside);
+            document.removeEventListener("mousedown", sp_detect_clique_outside);
         };
     }, [setOpenNotif]);
 

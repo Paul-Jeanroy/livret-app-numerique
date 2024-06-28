@@ -1,3 +1,13 @@
+
+/* 
+    composant GrilleEvalutationLivret.jsx
+    Créer le 26/06 par PJ
+
+    Fonctionnalité :
+    - ...
+    
+*/
+
 import "../styles/grilleEvaluationLivret.css";
 
 const GrilleEvaluationLivret = () => {

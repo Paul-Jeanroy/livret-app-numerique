@@ -26,8 +26,6 @@ app.register_blueprint(auth_bp, url_prefix='/auth')
 app.register_blueprint(user_bp, url_prefix='/user')
 app.register_blueprint(livret_bp, url_prefix='/livret')
 
-# Configurer le logger pour capturer plus de détails
-logging.basicConfig(level=logging.DEBUG)
 
 if __name__ == '__main__':
     app.run(debug=True)

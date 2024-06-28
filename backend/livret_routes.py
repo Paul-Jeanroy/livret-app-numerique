@@ -6,11 +6,16 @@ from flask_jwt_extended import JWTManager
 import pdfplumber
 import tempfile
 from bs4 import BeautifulSoup
+from dotenv import load_dotenv
+from openai import OpenAI
 
+
+client = OpenAI()
 app = Flask(__name__)
 CORS(app)
 
 livret_bp = Blueprint('livret', __name__)
+
 
 @livret_bp.route('/getInfoFormation', methods=['GET'])
 def get_info_formation():
@@ -67,6 +72,7 @@ def get_info_formation():
 @livret_bp.route('/getBlocCompetencesFromPDF', methods=['GET'])
 def get_bloc_competence_from_pdf():
     try:
+        # Récupération du liens du pdf
         pdf_url = request.args.get('pdf_path')
         
         # Télécharger le PDF
@@ -78,24 +84,25 @@ def get_bloc_competence_from_pdf():
             tmp_file.write(response.content)
             tmp_file_path = tmp_file.name
         
-        # Ouvrir le fichier PDF avec pdfplumber
+        # Iniatilisation des variables
         blocs_competences = {}
         current_bloc = None
         bloc_text = ""
         capture_bloc_text = False
 
+        # Ouvrir le fichier PDF avec pdfplumber
         with pdfplumber.open(tmp_file_path) as pdf:
             for page in pdf.pages:
                 table = page.extract_table()
 
                 if table:
                     for row in table:
-                        bloc = row[0]  # Première colonne pour les blocs
-                        competence = row[1]  # Deuxième colonne pour les compétences
+                        bloc = row[0]  # Première colonne concerne les blocs
+                        competence = row[1]  # Deuxième colonne concerne les compétences
 
-                        # Check for new block
+                        # Vérification si il y a des blocs
                         if bloc and bloc.startswith("BLOC"):
-                            current_bloc = " ".join(bloc.strip().split()[:4])  # Capture only the first 4 words of the block
+                            current_bloc = " ".join(bloc.strip().split())
                             if current_bloc not in blocs_competences:
                                 blocs_competences[current_bloc] = {"bloc": "", "competences": []}
                             capture_bloc_text = True
@@ -104,33 +111,72 @@ def get_bloc_competence_from_pdf():
                         elif capture_bloc_text and bloc and bloc.startswith("A"):
                             capture_bloc_text = False
 
-                        # Continue capturing the block text
-                        if capture_bloc_text and bloc and not bloc.startswith("BLOC"):
-                            blocs_competences[current_bloc]["bloc"] += " " + bloc.strip()
-
-                        # Add competence to current block
+                        # Récupération des compétences dans le texte extrait
                         if competence and current_bloc:
                             competencies = [c.strip() for c in competence.split("C") if c.strip()]
                             for c in competencies:
-                                if c and c[0].isdigit():
+                                if c and c[0].isdigit(): # si le bloc de compétence commence par "A suivi dun nombre..."
                                     blocs_competences[current_bloc]["competences"].append("C" + c)
         
-        # Supprimer le fichier temporaire après lecture
+        
+        # Supprime le fichier temporaire après traitement
         os.remove(tmp_file_path)
         
-        # Remove duplicates in competences
+        # Retirer les bloc depubliqués
         for bloc in blocs_competences:
             blocs_competences[bloc]["competences"] = list(set(blocs_competences[bloc]["competences"]))
             blocs_competences[bloc]["bloc"] = blocs_competences[bloc]["bloc"].strip()
 
+        # Retrourner au frontend en format json le tableau de blocs et compétences
         return jsonify(blocs_competences)
-        
+    
+    # Gestion des erreurs avec un retour format json
     except Exception as e:
         return jsonify({'error': str(e), 'details': repr(e)}), 500
 
-
-# Enregistrer le blueprint dans l'application principale
 app.register_blueprint(livret_bp, url_prefix='/livret')
+
+load_dotenv()
+
+# clé API OpenAI
+openai.api_key = os.getenv('OPENAI_API_KEY')
+
+@livret_bp.route('/raccourcie-comp-ai', methods=['POST'])
+def raccourcir_competence():
+    try:
+        print("Requête reçue pour raccourcir les compétences")
+        data = request.json
+        if not data:
+            raise ValueError("Aucune donnée reçue")
+        print("Données reçues :", data)
+        competences = data.get('competences', [])
+        if not competences:
+            raise ValueError("Aucune compétence reçue")
+        print("Compétences à raccourcir :", competences)
+        shortened_competences = []
+
+        for competence in competences:
+            print(f"Appel à l'API OpenAI pour la compétence : {competence}")
+            response = openai.Completion.create(
+                engine="text-davinci-003",
+                prompt=f"Raccourcissez cette compétence : {competence}",
+                max_tokens=50
+            )
+            shortened_competence = response.choices[0].text.strip()
+            print(f"Compétence raccourcie : {shortened_competence}")
+            shortened_competences.append({
+                "original": competence,
+                "raccourcie": shortened_competence
+            })
+        
+        return jsonify({'shortened_competences': shortened_competences})
+    
+    except Exception as e:
+        print(f"Error: {str(e)}")
+        return jsonify({'error': str(e), 'details': repr(e)}), 500
+
 
 if __name__ == '__main__':
     app.run(debug=True)
+    
+    

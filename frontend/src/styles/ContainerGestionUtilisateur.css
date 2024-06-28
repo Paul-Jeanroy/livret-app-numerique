@@ -17,6 +17,26 @@
     font-family: monospace;
 }
 
+.div-import-user{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 40px;
+    width: 100%;
+}
+
+.btn-import-user {
+    border-radius: 40px 20px 40px 20px;
+    border: 1px solid #000000;
+    background-color: #C4A2FC;
+    padding: 10px;
+    color: #ffffff;
+    min-width: 140px;
+    font-weight: 600;
+    font-family: monospace;
+    cursor: pointer;
+}
+
 
 .main-container-suivi-utilisateur {
     display: flex;
