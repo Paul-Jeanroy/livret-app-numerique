@@ -1,9 +1,20 @@
+/* 
+    composant ValidationUser.jsx
+    Créer le 26/06 par PJ-HL
+
+    Fonctionnalité :
+    - sp_valider_user : fonction qui permet de valider un user en base avec un nouveau mot de passe (lors de la premiere co)
+    - ...
+    
+*/
+
+
+import "../styles/validationUser.css"
 import { useNavigate } from "react-router-dom";
 import { useUserRole } from "../hooks/useUserRole";
-import "../styles/validationUser.css"
 import { useState } from "react";
 
-export default function ValidationUser({ setValidationUser }) {
+export default function ValidationUser() {
     const { userId } = useUserRole();
     const [w_error_message, setErrorMessage] = useState("");
     const navigate = useNavigate(); 
@@ -32,10 +43,10 @@ export default function ValidationUser({ setValidationUser }) {
                 const errorText = await response.text();
                 throw new Error('Erreur HTTP, statut : ' + response.status + ', message : ' + errorText);
             }
+
             navigate("/accueil");
 
         } catch (error) {
-            console.error("Erreur lors de la validation de l'utilisateur :", error.message);
             setErrorMessage("Erreur lors de la validation de l'utilisateur");
         }
     }

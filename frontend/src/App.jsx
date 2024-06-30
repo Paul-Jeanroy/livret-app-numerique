@@ -10,6 +10,7 @@ import Livret from './pages/livret';
 import GestionLivret from './pages/gestionLivret';
 import GestionUtilisateur from './pages/gestionUtilisateur';
 import CreationTitre from './pages/creationTitre';
+import Loader from './components/Loader.jsx';
 
 const App = () => {
     const { roleUser } = useUserRole();

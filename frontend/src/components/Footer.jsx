@@ -1,9 +1,6 @@
 /* 
     composant Footer.jsx
     Créer le 08/06 par PJ
-
-    Fonctionnalités :
-    - ...
     
 */
 import useMenuSelect from "../hooks/useMenuSelect";

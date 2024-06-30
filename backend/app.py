@@ -33,6 +33,7 @@ app.register_blueprint(auth_bp, url_prefix='/auth')
 app.register_blueprint(user_bp, url_prefix='/user')
 app.register_blueprint(livret_bp, url_prefix='/livret')
 
+<<<<<<< HEAD
 
 # Configuration du logger pour capturer plus de détails
 if not app.debug:
@@ -42,6 +43,8 @@ if not app.debug:
         '%(asctime)s %(levelname)s: %(message)s [in %(pathname)s:%(lineno)d]'
     ))
     app.logger.addHandler(file_handler)
+=======
+>>>>>>> bfb70a4552c8af983cddec393e4198d6aa68adae
 
 if __name__ == '__main__':
     app.run(debug=True, port=5000)

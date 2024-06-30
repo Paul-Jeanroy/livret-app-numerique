@@ -1,3 +1,13 @@
+/* 
+    composant PopupModifierUser.jsx
+    Créer le 08/06 par PJ-HL
+
+    Fonctionnalités :
+    - sp_valider_formulaire : fonction qui permet de valider le formaulaire et aller chercher les données sur France Compétence
+    - sp_get_bloc_comp_formation : fonction qui permet de récupérer les blocs de compétences à partir du fichier PDF.
+    
+*/
+
 import Header from "../components/Header";
 import Footer from "../components/Footer";
 import "../styles/creationTitre.css";
@@ -92,7 +102,7 @@ export default function CreationTitre() {
                             <div className="info-formation">
                                 <label>Informations sur la formation :</label>
                                 <div>
-                                    <input disabled value={w_tt_info_formation.nom + ", " + w_tt_info_formation.niveau} />
+                                    {w_tt_info_formation.nom + ", " + w_tt_info_formation.niveau}
                                     <img src="/pencil-edit.svg"></img>
                                 </div>
                             </div>

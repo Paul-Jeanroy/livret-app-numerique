@@ -3,10 +3,8 @@
     Créer le 08/06 par PJ
 
     Fonctionnalités :
-    - ...
+    - sp_deconnexion : Permet de se déconnecter
 */
-
-"use client";
 
 import { useState } from "react";
 import "../styles/Header.css";
@@ -36,23 +34,19 @@ export default function Header() {
                         <nav className="nav_header">
 
                             <div className="div_nav_accueil">
-                                <img src="/home.svg"></img>
                                 <a href={"/accueil"} onClick={() => setMenuSelect("accueil")} className={menuSelect == "accueil" ? "selected" : ""}>Accueil</a>
                             </div>
                             <div className="div_nav_profil">
-                                <img src="/user.svg"></img>
                                 <a href={"/profil"} onClick={() => setMenuSelect("profil")} className={menuSelect == "profil" ? "selected" : ""}>Profil</a>
                             </div>
 
                             {roleUser == "coordinateur" && (
                                 <>
                                     <div className="div_nav_profil">
-                                        <img src="/icone-user-admin.svg"></img>
                                         <a href={"/gestionUtilisateur"} onClick={() => setMenuSelect("gestionUtilisateur")} className={menuSelect == "gestionUtilisateur" ? "selected" : ""}>Gestion Utilisateur</a>
                                     </div>
 
                                     <div className="div_nav_profil">
-                                        <img src="/icon-livret-admin.svg"></img>
                                         <a href={"/gestionLivret"} onClick={() => setMenuSelect("gestionLivret")} className={menuSelect == "gestionLivret" ? "selected" : ""}>Gestion Livret</a>
                                     </div>
 
@@ -62,14 +56,13 @@ export default function Header() {
                             {(roleUser == "apprenti" || roleUser == "maître d'apprentissage") && (
                                 <>
                                     <div className="div_nav_livret">
-                                        <img src="/livret.svg"></img>
                                         <a href={"/livret"} onClick={() => setMenuSelect("livret")} className={menuSelect == "livret" ? "selected" : ""}>Livret</a>
                                     </div>
                                 </>
                             )}
                         </nav>
-                        
-                         {roleUser == "coordinateur" && (
+
+                        {roleUser == "coordinateur" && (
                             <button className="btn_notif" onClick={() => navigate('/creationTitre')}>
                                 <img src="/icon-add-titre.svg"></img>
                             </button>
@@ -83,8 +76,7 @@ export default function Header() {
                     </div>
                 </div>
             </header>
-
-            {/* Popup notification */}
+            
             {f_openNotif && <PopupNotification setOpenNotif={setOpenNotif} />}
         </>
     );

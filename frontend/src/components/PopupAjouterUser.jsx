@@ -1,3 +1,13 @@
+/* 
+    composant PopupAjouterUser.jsx
+    Créer le 08/06 par PJ
+
+    Fonctionnalité :
+    - sp_valider_user : Permet d'ajouter un utilisateur avce la popup
+    - ...
+    
+*/
+
 import { useState } from "react";
 import { useUserRole } from "../hooks/useUserRole";
 import "../styles/PopupAjouterUser.css";
@@ -10,7 +20,7 @@ export default function PopupAjouterUser({ setAddNewUser, annee, onAddUser }) {
     const [password, setPassword] = useState("");
     const { userId } = useUserRole();
 
-    const handleSubmit = async (e) => {
+    const sp_valider_user = async (e) => {
         e.preventDefault();
         const newUser = {
             nom,
@@ -50,7 +60,7 @@ export default function PopupAjouterUser({ setAddNewUser, annee, onAddUser }) {
                     <img src="/icon-croix.png" onClick={() => setAddNewUser(false)} alt="Fermer" />
                 </div>
                 <div className="div-add-new-user-body">
-                    <form onSubmit={handleSubmit} className="form-add-new-user">
+                    <form onSubmit={sp_valider_user} className="form-add-new-user">
                         <div className="div-input-add-new-user">
                             <label htmlFor="nom">Nom</label>
                             <input

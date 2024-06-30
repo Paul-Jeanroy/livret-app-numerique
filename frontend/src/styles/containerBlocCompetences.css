@@ -1,0 +1,77 @@
+.bloc-competences-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 40px;
+    margin-top: 10px;
+}
+
+.bloc {
+    flex: 1 1 calc(50% - 20px);
+    margin-bottom: 20px;
+    padding: 10px;
+    box-sizing: border-box;
+}
+
+.bloc h2 {
+    display: flex;
+    font-size: 16px;
+    text-decoration: underline;
+    margin-bottom: 10px;
+    font-style: italic;
+}
+
+.div-bloc {
+    padding: 10px;
+    border-radius: 10px;
+    margin-bottom: 10px;
+    text-align: center;
+    background-color: #656565;
+    color: white;
+    box-shadow: 4px 4px 4px rgb(200, 200, 200);
+}
+
+.competences {
+    text-align: center;
+}
+
+.competence {
+    border-radius: 12px;
+    margin-bottom: 10px;
+    padding: 10px;
+    background-color: #E1E1E1;
+    box-shadow: 4px 4px 4px rgb(200, 200, 200);
+}
+
+.competence p {
+    margin: 0;
+}
+
+.titre-competence{
+    text-align: left;
+    margin-bottom: 5px;
+    font-size: 14px;
+    font-weight: bold;
+    font-style: italic;
+}
+
+
+.div-proposition-ia {
+    position: relative;
+    border-radius: 12px;
+    margin-bottom: 10px;
+    padding: 10px;
+    margin-bottom: 50px;
+    background-color: #E1E1E1;
+    box-shadow: 4px 4px 4px rgb(200, 200, 200);
+}
+
+.img-proposition-ia{
+    width: 100%;
+    margin-top: -45px;
+    display: flex;
+    justify-content: end;   
+}
+
+.img-proposition-ia img{
+    width: 25px;
+}

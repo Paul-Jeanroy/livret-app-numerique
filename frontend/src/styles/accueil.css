@@ -1,3 +1,14 @@
+
+.content-wrap {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+.main-home {
+    flex: 1;
+}
+
 #section-home-1 {
     position: relative;
     width: 100%;

@@ -2,17 +2,14 @@ import { useState } from "react";
 import "../styles/ContainerGestionUtilisateur.css";
 import PopupAjouterUser from "./PopupAjouterUser";
 import PopupModifierUser from "./PopupModifierUser";
-import PopupConfirmDeleteUser from "./PopupConfirmDeleteUser";
 
 export default function ContainerGestionUtilisateur({ annee, users, onDeleteUser, onUpdateUser, onAddUser, fetchUsers }) { 
     const [f_modifUser, setModifUser] = useState(false);
-    const [f_deleteUser, setDeleteUser] = useState(false);
-    const [userToDelete, setUserToDelete] = useState(null);
     const [f_addNewUser, setAddNewUser] = useState(false);
     const [f_containerVisible, setContainerVisible] = useState(true);
-    const [selectedUser, setSelectedUser] = useState(null);
+    const [o_selectedUser, setSelectedUser] = useState(null);
 
-    const handleUpdateUser = (updatedUser) => {
+    const sp_gerer_modif_user = (updatedUser) => {
         onUpdateUser(updatedUser);
         setModifUser(false);
     };
@@ -44,22 +41,18 @@ export default function ContainerGestionUtilisateur({ annee, users, onDeleteUser
                     <div className="container-suivi-utilisateur">
                         {users.length > 0 ? (
                             users.map((user, index) => (
-                                user.id_user !== null ? (
-                                    <div key={index} className="div-ligne-suivi-utilisateur">
-                                        <div className="div-nom-utilisateur">
-                                            <p>{user.nom}</p>
-                                            <p>{user.prenom}</p>
-                                        </div>
-                                        <img className="img-modif" src="/icon-chevron.png" alt="Détails utilisateur" onClick={() => {setModifUser(true); setSelectedUser(user);}} />
-                                        <img className="img-suppr" onClick={() => onDeleteUser(user)} src="/delete.svg" alt="supprimer utilisateur" />
+                                <div key={index} className="div-ligne-suivi-utilisateur">
+                                    <div className="div-nom-utilisateur">
+                                        <p>{user.nom}</p>
+                                        <p>{user.prenom}</p>
                                     </div>
-                                ) : (
-                                    <div key={index} className="div-ligne-suivi-utilisateur">
-                                        <div className="div-nom-utilisateur">
-                                            <p>Aucun utilisateur</p>
-                                        </div>
-                                    </div>
-                                )
+                                    {user.id_user && (
+                                        <>
+                                            <img className="img-modif" src="/icon-chevron.png" alt="Détails utilisateur" onClick={() => {setModifUser(true); setSelectedUser(user);}} />
+                                            <img className="img-suppr" onClick={() => onDeleteUser(user)} src="/delete.svg" alt="supprimer utilisateur" />
+                                        </>
+                                    )}
+                                </div>
                             ))
                         ) : (
                             <div className="div-ligne-suivi-utilisateur" style={{cursor: "normal !important"}}>
@@ -73,8 +66,7 @@ export default function ContainerGestionUtilisateur({ annee, users, onDeleteUser
             </main>
 
             {f_addNewUser && <PopupAjouterUser setAddNewUser={setAddNewUser} annee={annee} onAddUser={onAddUser} />}
-            {f_modifUser && <PopupModifierUser setModifUser={setModifUser} user={selectedUser} onUpdateUser={handleUpdateUser} fetchUsers={fetchUsers}/>}
-            {f_deleteUser && <PopupConfirmDeleteUser setDeleteUser={setDeleteUser} />}
+            {f_modifUser && <PopupModifierUser setModifUser={setModifUser} user={o_selectedUser} onUpdateUser={sp_gerer_modif_user} fetchUsers={fetchUsers}/>}
         </>
     );
 }

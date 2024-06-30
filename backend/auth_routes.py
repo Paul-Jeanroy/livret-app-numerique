@@ -1,6 +1,6 @@
 from flask import Blueprint, request, jsonify, url_for, current_app, redirect
 from flask_bcrypt import Bcrypt
-from flask_jwt_extended import create_access_token
+from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identity
 from db import mysql
 import smtplib
 from email.mime.text import MIMEText
@@ -66,6 +66,7 @@ def validation_user():
         current_app.logger.error(f'Error during user validation: {str(e)}')
         return jsonify({'error': str(e)}), 500
     
+<<<<<<< HEAD
 @auth_bp.route('/reset-password-request', methods=['POST'])
 def reset_password_request():
     try:
@@ -154,4 +155,29 @@ def reset_password(token):
 
 
 
+=======
+    
+
+@auth_bp.route('/verify-user', methods=['GET'])
+@jwt_required()
+def verify_user():
+    user_id = get_jwt_identity()
+    role_user = get_user_role_from_database(user_id)
+    return jsonify({'id': user_id, 'role': role_user})
+
+def get_user_role_from_database(user_id):
+    try:
+        cur = mysql.connection.cursor()
+        cur.execute("SELECT role FROM utilisateurs WHERE id_user = %s", (user_id,))
+        result = cur.fetchone()
+        cur.close()
+        
+        if result:
+            return result['role']
+        else:
+            return None
+    except Exception as e:
+        print(f"Erreur lors de la récupération du rôle de l'utilisateur: {str(e)}")
+        return None
+>>>>>>> bfb70a4552c8af983cddec393e4198d6aa68adae
 

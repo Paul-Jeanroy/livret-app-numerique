@@ -1,7 +1,7 @@
 {
   "name": "livret-app-numerique",
   "private": true,
-  "version": "0.0.0",
+  "version": "X",
   "type": "module",
   "scripts": {
     "dev": "vite",
