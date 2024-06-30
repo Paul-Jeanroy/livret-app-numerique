@@ -3,7 +3,14 @@ import "../styles/PopupConfirmDeleteUser.css";
 export default function PopupConfirmDeleteUser({ setDeleteUser, w_tt_data_delet_user, onDelete }) {
 
     const sp_supprimer_user = async () => {
+        if (!w_tt_data_delet_user || !w_tt_data_delet_user.id_user) {
+            console.error('ID utilisateur non défini ou invalide:', w_tt_data_delet_user);
+            return;
+        }
+
         try {
+            console.log('Suppression de l’utilisateur avec ID:', w_tt_data_delet_user.id_user);
+            
             const response = await fetch(`http://localhost:5000/user/deleteUser?user_id=${w_tt_data_delet_user.id_user}`, {
                 method: 'DELETE',
                 headers: {
@@ -29,7 +36,7 @@ export default function PopupConfirmDeleteUser({ setDeleteUser, w_tt_data_delet_
             <div className="div-delete-new-user">
                 <div className="div-delete-new-user-header">
                     <h1>Confirmation</h1>
-                    <img src="/icon-croix.png" onClick={() => setDeleteUser(false)} />
+                    <img src="/icon-croix.png" onClick={() => setDeleteUser(false)} alt="Close" />
                 </div>
                 <div className="div-container-confirm">Etes vous sûr de vouloir supprimer l’utilisateur</div>
                 <div className="div-container-confirm">{w_tt_data_delet_user.nom + " " + w_tt_data_delet_user.prenom}</div>
