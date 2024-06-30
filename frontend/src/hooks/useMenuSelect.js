@@ -27,6 +27,9 @@ const useMenuSelect = () => {
       case '/gestionLivret':
         setMenuSelect('gestionLivret');
         break;
+      case '/gestionFormation':
+        setMenuSelect('gestionFormation');
+        break;
       default:
         setMenuSelect('');
     }

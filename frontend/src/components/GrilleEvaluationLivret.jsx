@@ -1,29 +1,46 @@
-
-/* 
-    composant GrilleEvalutationLivret.jsx
-    Créer le 26/06 par PJ
-
-    Fonctionnalité :
-    - ...
-    
-*/
-
+import { useState } from "react";
 import "../styles/grilleEvaluationLivret.css";
 
-const GrilleEvaluationLivret = () => {
+const GrilleEvaluationLivret = ({ bloc, onChange }) => {
+    const [competences, setCompetences] = useState(bloc.competences);
+
+    const handleCheckboxChange = (compIndex, evalIndex) => {
+        const newCompetences = competences.map((comp, index) => {
+            if (index === compIndex) {
+                const newEvaluation = [false, false, false, false, false, false];
+                newEvaluation[evalIndex] = true;
+                return { ...comp, evaluation: newEvaluation };
+            }
+            return comp;
+        });
+        setCompetences(newCompetences);
+        onChange(newCompetences);  // Notify parent component of the change
+    };
+
+    const handleNoteChange = (compIndex, note) => {
+        const newCompetences = competences.map((comp, index) => {
+            if (index === compIndex) {
+                return { ...comp, note };
+            }
+            return comp;
+        });
+        setCompetences(newCompetences);
+        onChange(newCompetences);  // Notify parent component of the change
+    };
+
     return (
         <div className="grille-container">
             <table className="evaluation-table">
                 <thead>
                     <tr>
                         <th rowSpan="1" colSpan="2" className="header-cell" style={{ borderTopLeftRadius: "12px" }}>
-                            Evaluation des compétences - [Nom de la formation]
+                            Evaluation des compétences - {bloc.nom}
                         </th>
                         <th colSpan="6" className="header-cell">
                             Evaluations
                         </th>
-                        <th rowSpan="2" className="header-cell"  style={{borderTopRightRadius: "12px"}}>
-                            Notation si <br></br>réalisé (sur 20)
+                        <th rowSpan="2" className="header-cell" style={{ borderTopRightRadius: "12px" }}>
+                            Notation si <br />réalisé (sur 20)
                         </th>
                     </tr>
                     <tr>
@@ -49,90 +66,40 @@ const GrilleEvaluationLivret = () => {
                     </tr>
                 </thead>
                 <tbody>
-                    <tr>
-                        <td className="competence-cell" rowSpan="3"  style={{borderBottomLeftRadius: "12px"}}>
-                            [Nom du bloc]
-                        </td>
-                        <td className="competence-cell">
-                            [Compétences ......]
-                        </td>
-                        <td className="score-cell">
-                            <input type="checkbox" />
-                        </td>
-                        <td className="score-cell">
-                            <input type="checkbox" />
-                        </td>
-                        <td className="score-cell">
-                            <input type="checkbox" />
-                        </td>
-                        <td className="score-cell">
-                            <input type="checkbox" />
-                        </td>
-                        <td className="score-cell">
-                            <input type="checkbox" />
-                        </td>
-                        <td className="score-cell">
-                            <input type="checkbox" />
-                        </td>
-                        <td className="validation-cell">
-                            <input type="text" placeholder="N/A" />
-                        </td>
-                    </tr>
-                    <tr>
-                        <td className="competence-cell">
-                            [Compétences ......]
-                        </td>
-                        <td className="score-cell">
-                            <input type="checkbox" />
-                        </td>
-                        <td className="score-cell">
-                            <input type="checkbox" />
-                        </td>
-                        <td className="score-cell">
-                            <input type="checkbox" />
-                        </td>
-                        <td className="score-cell">
-                            <input type="checkbox" />
-                        </td>
-                        <td className="score-cell">
-                            <input type="checkbox" />
-                        </td>
-                        <td className="score-cell">
-                            <input type="checkbox" />
-                        </td>
-                        <td className="validation-cell">
-                            <input type="text" placeholder="N/A" />
-                        </td>
-                    </tr>
-                    <tr>
-                        <td className="competence-cell">
-                            [Compétences ......]
-                        </td>
-                        <td className="score-cell">
-                            <input type="checkbox" />
-                        </td>
-                        <td className="score-cell">
-                            <input type="checkbox" />
-                        </td>
-                        <td className="score-cell">
-                            <input type="checkbox" />
-                        </td>
-                        <td className="score-cell">
-                            <input type="checkbox" />
-                        </td>
-                        <td className="score-cell">
-                            <input type="checkbox" />
-                        </td>
-                        <td className="score-cell">
-                            <input type="checkbox" />
-                        </td>
-                        <td className="validation-cell">
-                            <input type="text" placeholder="N/A" />
-                        </td>
-                    </tr>
+                    {competences.map((competence, compIndex) => (
+                        <tr key={compIndex}>
+                            {compIndex === 0 && (
+                                <td className="competence-cell" rowSpan={competences.length} style={{ borderBottomLeftRadius: "12px" }}>
+                                    {bloc.description}
+                                </td>
+                            )}
+                            <td className="competence-cell">{competence.description}</td>
+                            {Array(6)
+                                .fill()
+                                .map((_, evalIndex) => (
+                                    <td className="score-cell" key={evalIndex} onClick={() => handleCheckboxChange(compIndex, evalIndex)}>
+                                        <input
+                                            type="checkbox"
+                                            checked={competence.evaluation && competence.evaluation[evalIndex]}
+                                            onChange={() => handleCheckboxChange(compIndex, evalIndex)}
+                                        />
+                                    </td>
+                                ))}
+                            <td className="validation-cell">
+                                <input
+                                    type="text"
+                                    placeholder="N/A"
+                                    value={competence.note}
+                                    onChange={(e) => handleNoteChange(compIndex, e.target.value)}
+                                />
+                            </td>
+                        </tr>
+                    ))}
                     <tr>
                         <td colSpan="8"></td>
-                        <td className="competence-cell" style={{borderBottomLeftRadius: "12px", borderBottomRightRadius: "12px"}}>N/A</td>
+                        <td className="competence-cell" style={{ borderBottomLeftRadius: "12px", borderBottomRightRadius: "12px" }}>
+                            N/A
+                        </td>
                     </tr>
                 </tbody>
             </table>

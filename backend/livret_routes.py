@@ -1,13 +1,16 @@
-import requests
 from flask import Flask, Blueprint, jsonify, request
 from flask_cors import CORS
 from flask_jwt_extended import JWTManager
+from flask_mysqldb import MySQL
 import pdfplumber
 import tempfile
 from bs4 import BeautifulSoup
 import openai
 from dotenv import load_dotenv
 import os
+import re
+from db import mysql
+
 
 # Load environment variables from .env file
 load_dotenv()
@@ -82,7 +85,7 @@ def get_info_formation():
 @livret_bp.route('/getBlocCompetencesFromPDF', methods=['GET'])
 def get_bloc_competence_from_pdf():
     try:
-        # Récupération du liens du pdf
+        # Récupération du lien du PDF
         pdf_url = request.args.get('pdf_path')
         
         # Télécharger le PDF
@@ -94,11 +97,13 @@ def get_bloc_competence_from_pdf():
             tmp_file.write(response.content)
             tmp_file_path = tmp_file.name
         
-        # Iniatilisation des variables
+        # Initialisation des variables
         blocs_competences = {}
         current_bloc = None
-        bloc_text = ""
-        capture_bloc_text = False
+        competence_buffer = ""
+
+        # Définir une expression régulière pour détecter les débuts de compétences
+        competence_pattern = re.compile(r'^C\d+[a-zA-Z]?')
 
         # Ouvrir le fichier PDF avec pdfplumber
         with pdfplumber.open(tmp_file_path) as pdf:
@@ -110,39 +115,48 @@ def get_bloc_competence_from_pdf():
                         bloc = row[0]  # Première colonne concerne les blocs
                         competence = row[1]  # Deuxième colonne concerne les compétences
 
-                        # Vérification si il y a des blocs
-                        if bloc and bloc.startswith("BLOC"):
+                        # Vérification s'il y a des blocs
+                        if bloc and (bloc.startswith("BLOC") or bloc.startswith("Bloc")):
+                            # Sauvegarder la compétence accumulée avant de changer de bloc
+                            if competence_buffer.strip() and current_bloc:
+                                blocs_competences[current_bloc]["competences"].append(competence_buffer.strip())
+                                competence_buffer = ""
+
                             current_bloc = " ".join(bloc.strip().split())
                             if current_bloc not in blocs_competences:
                                 blocs_competences[current_bloc] = {"bloc": "", "competences": []}
-                            capture_bloc_text = True
-                            bloc_text = bloc.strip()
-                            blocs_competences[current_bloc]["bloc"] += " " + bloc_text
-                        elif capture_bloc_text and bloc and bloc.startswith("A"):
-                            capture_bloc_text = False
+                            blocs_competences[current_bloc]["bloc"] += " " + bloc.strip()
 
                         # Récupération des compétences dans le texte extrait
                         if competence and current_bloc:
-                            competencies = [c.strip() for c in competence.split("C") if c.strip()]
-                            for c in competencies:
-                                if c and c[0].isdigit(): # si le bloc de compétence commence par "A suivi dun nombre..."
-                                    blocs_competences[current_bloc]["competences"].append("C" + c)
-        
-        
-        # Supprime le fichier temporaire après traitement
+                            parts = re.split(r'(?=C\d+[a-zA-Z]?)', competence)
+                            for part in parts:
+                                if competence_pattern.match(part.strip()):
+                                    if competence_buffer.strip():
+                                        blocs_competences[current_bloc]["competences"].append(competence_buffer.strip())
+                                    competence_buffer = part.strip()
+                                else:
+                                    competence_buffer += " " + part.strip()
+
+        # Ajouter la dernière compétence si elle existe
+        if competence_buffer.strip() and current_bloc:
+            blocs_competences[current_bloc]["competences"].append(competence_buffer.strip())
+
+        # Supprimer le fichier temporaire après traitement
         os.remove(tmp_file_path)
         
-        # Retirer les bloc depubliqués
+        # Nettoyer les données pour enlever les doublons
         for bloc in blocs_competences:
-            blocs_competences[bloc]["competences"] = list(set(blocs_competences[bloc]["competences"]))
+            blocs_competences[bloc]["competences"] = sorted(list(set(blocs_competences[bloc]["competences"])))
             blocs_competences[bloc]["bloc"] = blocs_competences[bloc]["bloc"].strip()
 
-        # Retrourner au frontend en format json le tableau de blocs et compétences
+        # Retourner au frontend en format JSON le tableau de blocs et compétences
         return jsonify(blocs_competences)
     
-    # Gestion des erreurs avec un retour format json
+    # Gestion des erreurs avec un retour format JSON
     except Exception as e:
         return jsonify({'error': str(e), 'details': repr(e)}), 500
+
 
 
 @livret_bp.route('/raccourcie-comp-ai', methods=['POST'])
@@ -183,7 +197,64 @@ def raccourcir_competence():
         print(f"Error: {str(e)}")
         return jsonify({'error': str(e), 'details': repr(e)}), 500
 
-# Register blueprint only after all routes are defined
+
+@livret_bp.route('/saveEvaluation', methods=['POST'])
+def save_evaluation():
+    try:
+        data = request.get_json()
+        user_id = data['userId']
+        formation_id = data['formationId']
+        evaluations = data['evaluations']
+        apprenti_id = data['apprentiId']
+
+        cur = mysql.connection.cursor()
+        for bloc in evaluations:
+            for comp in bloc['competences']:
+                if comp['evaluation'] and comp['evaluation'] != "N/A" and not comp['note']:
+                    return jsonify({'error': 'All competencies must be graded if evaluated.'}), 400
+                # Debug log
+                print(f"Saving evaluation for competence: {comp}")
+                # Save each competence evaluation to the database here
+                query = """
+                    INSERT INTO livret_maitre_apprentissage (id_user, id_formation, id_apprenti, evaluation)
+                    VALUES (%s, %s, %s, %s)
+                """
+                cur.execute(query, (user_id, formation_id, apprenti_id, str(comp)))
+        
+        mysql.connection.commit()
+        cur.close()
+        return jsonify({'message': 'Evaluations saved successfully'}), 200
+    except Exception as e:
+        # Debug log for the exception
+        print(f"Error saving evaluations: {str(e)}")
+        return jsonify({'error': str(e)}), 500
+
+
+
+@livret_bp.route('/getApprentis', methods=['GET'])
+def get_apprentis():
+    try:
+        maitre_id = request.args.get('maitreId')
+        cur = mysql.connection.cursor()
+        query = """
+            SELECT u.id_user, u.nom, u.prenom
+            FROM utilisateurs u
+            JOIN supervisions s ON u.id_user = s.id_apprenti
+            WHERE s.id_maitre_apprentissage = %s
+        """
+        cur.execute(query, (maitre_id,))
+        apprentis = cur.fetchall()
+        cur.close()
+        return jsonify({"apprentis": apprentis}), 200
+    except Exception as e:
+        print(f"Error fetching apprentis: {str(e)}")
+        return jsonify({'error': str(e)}), 500
+
+
+    
+
+
+
 app.register_blueprint(livret_bp, url_prefix='/livret')
 
 if __name__ == '__main__':

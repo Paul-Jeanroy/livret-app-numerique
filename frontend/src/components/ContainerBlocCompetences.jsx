@@ -1,83 +1,112 @@
-import React, { useEffect, useState } from 'react';
+import { useState, useEffect } from 'react';
 import '../styles/containerBlocCompetences.css';
+import axios from 'axios';
+import { useUserRole } from '../hooks/useUserRole';
 
 export default function ContainerBlocCompetences({ data }) {
-    const [shortenedCompetences, setShortenedCompetences] = useState({});
+    const [editedData, setEditedData] = useState({});
+    const { userId } = useUserRole();
 
     useEffect(() => {
-        const fetchShortenedCompetences = async () => {
-            for (const [blocTitle, blocData] of Object.entries(data)) {
-                if (blocData.competences && blocData.competences.length > 0) {
-                    try {
-                        const response = await fetch('http://localhost:5000/livret/raccourcie-comp-ai', {
-                            method: 'POST',
-                            headers: {
-                                'Content-Type': 'application/json',
-                            },
-                            body: JSON.stringify({ competences: blocData.competences }),
-                        });
-
-                        if (!response.ok) {
-                            throw new Error(`HTTP error! status: ${response.status}`);
-                        }
-
-                        const responseData = await response.json();
-                        setShortenedCompetences(prev => ({
-                            ...prev,
-                            [blocTitle]: responseData.shortened_competences,
-                        }));
-                    } catch (error) {
-                        console.error('Error fetching shortened competences:', error);
-                    }
-                }
-            }
-        };
-
-        fetchShortenedCompetences();
+        setEditedData(data);
     }, [data]);
 
-    const getTruncatedBlocText = (blocText) => {
-        const match = blocText.match(/BLOC \d+ [\-–] ([^-–]*?)(A\d+)/);
-        if (match) {
-            return match[1].trim();
+    const handleSubmit = async () => {
+        try {
+            console.log('Sending data:', { data: editedData, user_id: userId });
+            const response = await axios.post('http://localhost:5000/formation/setBlocCompFormation', { data: editedData, user_id: userId });
+            console.log(response.data);
+        } catch (error) {
+            console.error('Error saving data:', error);
         }
+    };
+
+    const getTruncatedBlocText = (blocText) => {
+        let match = blocText.match(/(BLOC|Bloc) \d+ [\-–] ([^-–]*?)(A\d+)/);
+        if (match) {
+            return match[2].trim();
+        }
+
+        match = blocText.match(/(BLOC|Bloc) \d+ ?: ([^A]*?)(A\d+|$)/);
+        if (match) {
+            return match[2].trim();
+        }
+
         return blocText;
     };
 
     const getTruncatedBlocTitle = (blocText) => {
-        const match = blocText.match(/BLOC \d+/);
+        const match = blocText.match(/(BLOC|Bloc) \d+/);
         if (match) {
             return match[0];
         }
         return blocText;
     };
 
+    const extractCompetenceNumber = (competence) => {
+        const match = competence.match(/C(\d+([a-d]|\.\d+)?)/);
+        if (match) {
+            return match[1];
+        }
+        return null;
+    };
+
+    const sortCompetences = (competences) => {
+        return competences.slice().sort((a, b) => {
+            const numA = extractCompetenceNumber(a);
+            const numB = extractCompetenceNumber(b);
+            if (numA && numB) {
+                return numA.localeCompare(numB, undefined, { numeric: true, sensitivity: 'base' });
+            }
+            return 0;
+        });
+    };
+
+    const renderCompetenceTitle = (competence) => {
+        const number = extractCompetenceNumber(competence);
+        if (number) {
+            return `compétence n°${number}`;
+        }
+        return "compétence";
+    };
+
+    const cleanCompetenceText = (competence) => {
+        return competence.replace(/^C\d+(\.\d+|[a-zA-Z]?)?\s*-?\s*/, '').trim();
+    };
+
+    const hasBlocsAndCompetences = () => {
+        return Object.keys(editedData).length > 0 && Object.values(editedData).some(bloc => bloc.competences && bloc.competences.length > 0);
+    };
+
     return (
-        <div className="bloc-competences-container">
-            {Object.entries(data).map(([blocTitle, blocData], index) => (
-                <div key={index} className="bloc">
-                    <h2 className="h2-bloc">{getTruncatedBlocTitle(blocTitle)}</h2>
-                    <div className="div-bloc">{getTruncatedBlocText(blocData.bloc)}</div>
-                    {blocData.competences && blocData.competences.length > 0 && (
-                        <div className="competences">
-                            {shortenedCompetences[blocTitle] ? (
-                                shortenedCompetences[blocTitle].slice().reverse().map((competencePair, index) => (
-                                    <div key={index} className="competence">
-                                        <p><strong>Original:</strong> {competencePair.original}</p>
-                                        <p><strong>Raccourcie:</strong> {competencePair.raccourcie}</p>
-                                        <div className='img-proposition-ia'>
-                                            <img src="annuler-2.png" alt="annuler"/>
-                                            <img src="/valider-1.png" alt="valider"/>
-                                        </div>
-                                    </div>
-                                ))
-                            ) : (
-                                <p>Loading...</p>
-                            )}
+        <>
+            <div className="bloc-competences-container">
+                {Object.entries(data).map(([blocTitle, blocData], blocIndex) => (
+                    <div key={blocIndex} className="bloc">
+                        <h2 className="h2-bloc">
+                            {getTruncatedBlocTitle(blocData.bloc)}
+                        </h2>
+                        <div className="div-bloc">
+                            {getTruncatedBlocText(blocData.bloc)}
                         </div>
-                    )}
-                </div>
-            ))}
-        </div>
+                        {blocData.competences && blocData.competences.length > 0 && (
+                            sortCompetences(blocData.competences).map((competence, compIndex) => (
+                                <div key={compIndex} className="competences">
+                                    <p className='titre-competence'>
+                                        {renderCompetenceTitle(competence)}
+                                    </p>
+                                    <div className="competence">
+                                        {cleanCompetenceText(competence)}
+                                    </div>
+                                </div>
+                            ))
+                        )}
+                    </div>
+                ))}
+            </div>
+            {hasBlocsAndCompetences() && (
+                <button onClick={handleSubmit}>Valider la création du titre</button>
+            )}
+        </>
     );
 }

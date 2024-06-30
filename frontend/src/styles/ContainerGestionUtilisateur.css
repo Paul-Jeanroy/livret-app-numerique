@@ -17,7 +17,7 @@
     font-family: monospace;
 }
 
-.div-import-user{
+.div-import-user {
     display: flex;
     justify-content: center;
     align-items: center;
@@ -35,6 +35,19 @@
     font-weight: 600;
     font-family: monospace;
     cursor: pointer;
+}
+
+.btn-ajout-classe {
+    border-radius: 40px 20px 40px 20px;
+    border: 1px solid #000000;
+    background-color: #C4A2FC;
+    padding: 10px;
+    color: #ffffff;
+    min-width: 140px;
+    font-weight: 600;
+    font-family: monospace;
+    cursor: pointer;
+    margin-right: 50px;
 }
 
 
@@ -145,4 +158,13 @@
 
 .main-container {
     flex: 1;
+}
+
+.msg-aucun-apprenant {
+    color: red;
+    font-weight: 600;
+    margin-right: 50px;
+    border: 1px solid;
+    border-radius: 12px;
+    padding: 10px;
 }

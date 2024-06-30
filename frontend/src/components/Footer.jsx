@@ -36,6 +36,10 @@ export default function Footer() {
                                 </div>
 
                                 <div className="div_nav_profil">
+                                    <a href={"/gestionFormation"} onClick={() => setMenuSelect("gestionFormation")} className={menuSelect == "gestionFormation" ? "selected" : ""}>Gestion Formation</a>
+                                </div>
+
+                                <div className="div_nav_profil">
                                     <a href={"/creationTitre"} onClick={() => setMenuSelect("creationTitre")} className={menuSelect == "gestionLivret" ? "selected" : ""}>Créér un Titre</a>
                                 </div>
 

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import "../styles/ContainerGestionUtilisateur.css";
 import PopupAjouterUser from "./PopupAjouterUser";
 import PopupModifierUser from "./PopupModifierUser";
@@ -8,6 +8,15 @@ export default function ContainerGestionUtilisateur({ annee, users, onDeleteUser
     const [f_addNewUser, setAddNewUser] = useState(false);
     const [f_containerVisible, setContainerVisible] = useState(true);
     const [o_selectedUser, setSelectedUser] = useState(null);
+    const [errorMessage, setErrorMessage] = useState(null);
+
+    useEffect(() => {
+        if (users.error) {
+            setErrorMessage(users.error);
+        } else {
+            setErrorMessage(null);
+        }
+    }, [users]);
 
     const sp_gerer_modif_user = (updatedUser) => {
         onUpdateUser(updatedUser);
@@ -39,7 +48,9 @@ export default function ContainerGestionUtilisateur({ annee, users, onDeleteUser
                 </div>
                 {f_containerVisible && (
                     <div className="container-suivi-utilisateur">
-                        {users.length > 0 ? (
+                        {errorMessage ? (
+                            <div className="error-message">{errorMessage}</div>
+                        ) : users.length > 0 ? (
                             users.map((user, index) => (
                                 <div key={index} className="div-ligne-suivi-utilisateur">
                                     <div className="div-nom-utilisateur">

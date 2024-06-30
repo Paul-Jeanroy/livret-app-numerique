@@ -49,6 +49,10 @@ export default function Header() {
                                     <div className="div_nav_profil">
                                         <a href={"/gestionLivret"} onClick={() => setMenuSelect("gestionLivret")} className={menuSelect == "gestionLivret" ? "selected" : ""}>Gestion Livret</a>
                                     </div>
+                                    
+                                    <div className="div_nav_profil">
+                                        <a href={"/gestionFormation"} onClick={() => setMenuSelect("gestionFormation")} className={menuSelect == "gestionFormation" ? "selected" : ""}>Gestion Formation</a>
+                                    </div>
 
                                 </>
                             )}

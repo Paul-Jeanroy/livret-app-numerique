@@ -9,6 +9,7 @@ import Livret from './pages/livret';
 import GestionLivret from './pages/gestionLivret';
 import GestionUtilisateur from './pages/gestionUtilisateur';
 import CreationTitre from './pages/creationTitre';
+import GestionFormation from './pages/gestionFormation'
 import Loader from './components/Loader.jsx';
 
 const App = () => {
@@ -27,6 +28,7 @@ const App = () => {
             <Route path="/gestionLivret" element={roleUser === "coordinateur" ? <GestionLivret /> : <Navigate to="/accueil" />} />
             <Route path="/gestionUtilisateur" element={roleUser === "coordinateur" ? <GestionUtilisateur /> : <Navigate to="/accueil" />} />
             <Route path="/creationTitre" element={roleUser === "coordinateur" ? <CreationTitre /> : <Navigate to="/accueil" />} />
+            <Route path="/gestionFormation" element={roleUser == "coordinateur"? <GestionFormation /> : <Navigate to="/accueil" />} />
             <Route path="*" element={roleUser !== "" ? <NotFound /> : <Navigate to="/connexion" />} />
         </Routes>
     );

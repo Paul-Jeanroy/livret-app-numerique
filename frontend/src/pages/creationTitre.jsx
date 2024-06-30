@@ -1,28 +1,20 @@
-/* 
-    composant PopupModifierUser.jsx
-    Créer le 08/06 par PJ-HL
-
-    Fonctionnalités :
-    - sp_valider_formulaire : fonction qui permet de valider le formaulaire et aller chercher les données sur France Compétence
-    - sp_get_bloc_comp_formation : fonction qui permet de récupérer les blocs de compétences à partir du fichier PDF.
-    
-*/
-
 import Header from "../components/Header";
 import Footer from "../components/Footer";
+import Loader from "../components/Loader"
+import axios from "axios"
 import "../styles/creationTitre.css";
 
-import { useState } from "react";
-import axios from 'axios';
+import { useEffect, useState } from "react";
 import ContainerBlocCompetences from "../components/ContainerBlocCompetences";
+import { useUserRole } from '../hooks/useUserRole';
 
 export default function CreationTitre() {
+    const {userId} = useUserRole()
     const [w_codeRncp, setCodeRncp] = useState('');
     const [w_tt_info_formation, setInfoFormation] = useState(null);
     const [errorMessage, setErrorMessage] = useState('');
     const [o_tt_dataBlocComp, setDataBlocComp] = useState({});
     const [isLoading, setIsLoading] = useState(false);
-    const [loadingProgress, setLoadingProgress] = useState(0);
 
     const sp_valider_formulaire = async (e) => {
         e.preventDefault();
@@ -59,16 +51,9 @@ export default function CreationTitre() {
             }
 
             setIsLoading(true);
-            setLoadingProgress(0);
 
             const response = await axios.get(`http://localhost:5000/livret/getBlocCompetencesFromPDF?pdf_path=${pdfPath}`, {
                 responseType: 'json',
-                onDownloadProgress: (progressEvent) => {
-                    const total = progressEvent.total;
-                    const current = progressEvent.loaded;
-                    const percentCompleted = Math.round((current / total) * 100);
-                    setLoadingProgress(percentCompleted);
-                }
             });
 
             const data = response.data;
@@ -85,6 +70,31 @@ export default function CreationTitre() {
             setIsLoading(false);
         }
     };
+
+    const sp_set_formation = async () => {
+        try {
+            const response = await fetch(`http://localhost:5000/formation/setFormation?user_id=${userId}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(w_tt_info_formation)
+            });
+            if (!response.ok) {
+                throw new Error('Erreur HTTP, statut : ' + response.status);
+            }
+            const data = await response.json();
+            console.log(data);
+        } catch (error) {
+            console.error("Erreur lors de l'insertion de la formation :", error);
+        }
+    };
+
+    useEffect(() => {
+        if (w_tt_info_formation) {
+            sp_set_formation();
+        }
+    }, [w_tt_info_formation]);
 
     return (
         <>
@@ -103,24 +113,15 @@ export default function CreationTitre() {
                                 <label>Informations sur la formation :</label>
                                 <div>
                                     {w_tt_info_formation.nom + ", " + w_tt_info_formation.niveau}
-                                    <img src="/pencil-edit.svg"></img>
+                                    <img src="/pencil-edit.svg" alt="Edit" />
                                 </div>
                             </div>
                         )}
-                        {/* Afficher les informations supplémentaires du PDF si disponibles */}
-                        <ContainerBlocCompetences data={o_tt_dataBlocComp} />
+                        <ContainerBlocCompetences data={o_tt_dataBlocComp}/>
                     </div>
                 </section>
             </main>
-            {isLoading && (
-                <div className="loading-popup">
-                    <div className="loading-content">
-                        <p>Récupération des infos de la formation en cours</p>
-                        <progress value={loadingProgress} max="100">{loadingProgress}%</progress>
-                        <p>{loadingProgress}%</p>
-                    </div>
-                </div>
-            )}
+            {isLoading && (<Loader />)}
             <Footer />
         </>
     );

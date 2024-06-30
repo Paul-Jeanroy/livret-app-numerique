@@ -105,16 +105,17 @@ def getIdFormationByUser():
             LEFT JOIN utilisateurs u ON a.id_annee = u.id_annee AND u.role = 'apprenti' AND u.id_gerant = %s
             WHERE f.id_gerant_formation = %s;
             """
-            cur.execute(query, (id_gerant,id_gerant))
+            cur.execute(query, (id_gerant, id_gerant))
             result = cur.fetchall()
 
             if result:
                 return jsonify(result), 200
             else:
-                return jsonify({'error': 'Aucune donnée trouvée pour ce gérant'}), 404
+                return jsonify([]), 200
 
     except Exception as e:
         return jsonify({'error': str(e)}), 500
+
     
     
     
@@ -216,25 +217,68 @@ def update_profile():
 
 
 
-@user_bp.route('/getInfoFormationByUserId', methods=['GET'])
-def get_info_formation_by_userId():
+@user_bp.route('/getInfoFormationByUserIdMa', methods=['GET'])
+def get_info_formation_by_user_idMa():
     user_id = request.args.get('user_id')
 
     try:
         with mysql.connection.cursor() as cur:
-            query = """
+            # Récupérer les identifiants des apprentis supervisés par le maître d'apprentissage
+            query_apprentis = """
+                SELECT id_apprenti
+                FROM supervisions
+                WHERE id_maitre_apprentissage = %s;
+            """
+            cur.execute(query_apprentis, (user_id,))
+            apprentis_results = cur.fetchall()
+
+            if not apprentis_results:
+                return jsonify({'error': 'Aucun apprenti supervisé trouvé pour ce maître d\'apprentissage'}), 404
+
+            formations = []
+            for apprenti in apprentis_results:
+                apprenti_id = apprenti['id_apprenti']
+                # Récupérer les informations de formation de chaque apprenti
+                query_formation = """
+                    SELECT f.*
+                    FROM formation f
+                    JOIN utilisateurs u ON f.id_formation = u.id_formation
+                    WHERE u.id_user = %s;
+                """
+                cur.execute(query_formation, (apprenti_id,))
+                formation_result = cur.fetchone()
+                if formation_result:
+                    formations.append(formation_result)
+
+            response = {
+                'formation': formations
+            }
+
+            return jsonify(response), 200
+
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+
+
+@user_bp.route('/getInfoFormationByUserIdApprenti', methods=['GET'])
+def get_info_formation_by_user_idApprenti():
+    user_id = request.args.get('user_id')
+
+    try:
+        with mysql.connection.cursor() as cur:
+            query_formation = """
                 SELECT f.*
                 FROM formation f
                 JOIN utilisateurs u ON f.id_formation = u.id_formation
                 WHERE u.id_user = %s;
             """
-            cur.execute(query, (user_id, ))
-            result = cur.fetchone()
-
-            if result:
-                return jsonify(result), 200
-            else:
-                return jsonify({'error': 'Aucune donnée trouvée pour cet utilisateur'}), 404
+            cur.execute(query_formation, (user_id,))
+            formation_result = cur.fetchone()
+            if formation_result:
+                return jsonify(formation_result), 200
 
     except Exception as e:
         return jsonify({'error': str(e)}), 500
+
+

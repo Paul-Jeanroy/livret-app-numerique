@@ -1,0 +1,55 @@
+.container-gestion-formation {
+    position: relative;
+    width: 100%;
+    max-width: 1400px;
+    margin: auto;
+    border-radius: 20px;
+    overflow: hidden;
+    font-family: monospace;
+}
+
+.container-gestion-info-formation {
+    padding: 10px;
+
+}
+
+.detail-formation {
+    padding-bottom: 20px;
+    border-bottom: 1px solid;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+}
+
+
+.detail-formation h2 {
+    position: relative;
+    z-index: 1;
+}
+
+.detail-formation h2::after {
+    content: '';
+    width: 98%;
+    position: absolute;
+    background-color: #C4A2FC;
+    left: 10px;
+    top: 12px;
+    height: 10px;
+    z-index: -1;
+}
+
+.div-container-formation{
+    height: 100%;
+    border: 1px solid;
+    border-radius: 12px;
+    position: relative;
+}
+
+.img-manage-formation{
+    position: absolute;
+    right: 30px;
+    top: 30px;
+    cursor: pointer;
+}

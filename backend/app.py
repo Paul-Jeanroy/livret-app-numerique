@@ -6,6 +6,7 @@ from db import init_db, mysql
 from auth_routes import auth_bp
 from user_routes import user_bp
 from livret_routes import livret_bp
+from formation_routes import formation_bp
 import secrets
 
 app = Flask(__name__)
@@ -25,6 +26,7 @@ jwt = JWTManager(app)
 app.register_blueprint(auth_bp, url_prefix='/auth')
 app.register_blueprint(user_bp, url_prefix='/user')
 app.register_blueprint(livret_bp, url_prefix='/livret')
+app.register_blueprint(formation_bp, url_prefix='/formation')
 
 
 if __name__ == '__main__':

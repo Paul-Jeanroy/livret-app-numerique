@@ -12,6 +12,14 @@
     border-collapse: collapse;
     font-family: Arial, sans-serif;
   }
+
+  .evaluation-table:last-child{
+    margin-bottom: 40px;
+  }
+
+  .evaluation-table:first-child{
+    margin-top: 40px;
+  }
   
   .header-cell {
     background-color: #cce5ff;
@@ -31,7 +39,6 @@
     background-color: #b3d7ff;
     padding: 10px;
     border: 1px solid black;
-    max-width: 10px;
     text-align: center;
 }
 
@@ -48,7 +55,6 @@
     text-align: center;
     padding: 10px;
     border: 1px solid black;
-    width: 100px;
     max-height: 10px;
   }
   

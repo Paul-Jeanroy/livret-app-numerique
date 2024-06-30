@@ -6,6 +6,7 @@ import { useUserRole } from "../hooks/useUserRole";
 import useUsersByFormation from "../hooks/useUsersByFormation";
 import PopupConfirmDeleteUser from "../components/PopupConfirmDeleteUser";
 import PopupAjouterUser from "../components/PopupAjouterUser";
+import PopupAjouterAnnee from "../components/PopupAjouterAnnee"
 import Loader from "../components/Loader";
 
 export default function GestionUtilisateur() {
@@ -13,6 +14,7 @@ export default function GestionUtilisateur() {
     const { users, loading, error, setUsers, fetchUsers } = useUsersByFormation(userId);
     const [f_openDeletePopup, setDeletPopup] = useState(false);
     const [f_openAddPopup, setAddPopup] = useState(false);
+    const [f_openAddAnnee, setAddAnneePopup] = useState(false)
     const [o_userToDelete, setUserToDelete] = useState(null);
     const [allYears, setAllYears] = useState([]);
 
@@ -44,10 +46,8 @@ export default function GestionUtilisateur() {
         setUsers((prevUsers) => prevUsers.map(user => user.id_user === updatedUser.id_user ? updatedUser : user));
     };
 
-    // Regroupement des utilisateurs par année
     const sp_grouper_user_by_annee = allYears.reduce((acc, year) => {
         acc[year] = users.filter(user => user.annee === year);
-        // Ajouter une entrée vide si l'année n'a pas d'utilisateurs valides
         if (acc[year].length === 0 || (acc[year].length === 1 && acc[year][0].id_user === null)) {
             acc[year] = [{ id_user: null, nom: "Aucun utilisateur", prenom: "", annee: year }];
         }
@@ -63,6 +63,8 @@ export default function GestionUtilisateur() {
             <section className="section-gestion-utilisateur">
                 <h1 className="titre_page"><span>Gestion des utilisateurs</span></h1>
                 <div className="div-import-user">
+                    <button type="file" className="btn-ajout-classe" onClick={() => setAddAnneePopup(true)}>Ajouter une classe (année)</button>
+                    {users.length === 0 && <p className="msg-aucun-apprenant">Aucun apprenant pour cette formation</p>}
                     <button type="file" className="btn-import-user">Importer d'utilisateurs</button>
                 </div>
                 <main className="main-gestion-utilisateur" style={{ display: "flex" }}>
@@ -94,6 +96,13 @@ export default function GestionUtilisateur() {
                     setDeleteUser={setDeletPopup}
                     w_tt_data_delet_user={o_userToDelete}
                     onDelete={sp_supprimer_utilisateur}
+                />
+            )}
+
+            {f_openAddAnnee && (
+                <PopupAjouterAnnee
+                    setAddAnneePopup={setAddAnneePopup}
+                    fetchUsers={fetchUsers}
                 />
             )}
         </>
