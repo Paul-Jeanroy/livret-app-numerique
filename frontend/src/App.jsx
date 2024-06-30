@@ -10,11 +10,11 @@ import Livret from './pages/livret';
 import GestionLivret from './pages/gestionLivret';
 import GestionUtilisateur from './pages/gestionUtilisateur';
 import CreationTitre from './pages/creationTitre';
-import GestionFormation from './pages/gestionFormation'
+import GestionFormation from './pages/gestionFormation';
 import Loader from './components/Loader.jsx';
 
 const App = () => {
-    const { roleUser } = useUserRole();
+    const { roleUser, isLoading } = useUserRole();
     const location = useLocation();
     const token = new URLSearchParams(location.search).get('token');
 
@@ -23,6 +23,10 @@ const App = () => {
             window.history.replaceState({}, '', '/reset-password?token=' + token);
         }
     }, [token]);
+
+    if (isLoading) {
+        return <Loader />;
+    }
 
     return (
         <Routes>
@@ -39,8 +43,6 @@ const App = () => {
             <Route path="/creationTitre" element={roleUser === "coordinateur" ? <CreationTitre /> : <Navigate to="/accueil" />} />
             <Route path="/gestionFormation" element={roleUser == "coordinateur"? <GestionFormation /> : <Navigate to="/accueil" />} />
             <Route path="*" element={roleUser !== "" ? <NotFound /> : <Navigate to="/connexion" />} />
-
-            
         </Routes>
     );
 };

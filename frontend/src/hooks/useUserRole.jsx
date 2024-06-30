@@ -23,10 +23,15 @@ export const UserRoleProvider = ({ children }) => {
                     }
 
                     const data = await response.json();
-                    setRoleUser(data.role);
-                    setUserId(data.id);
+                    if (data.role) {
+                        setRoleUser(data.role);
+                        setUserId(data.id);
+                    } else {
+                        throw new Error("Utilisateur non trouvé");
+                    }
                 } catch (error) {
                     console.error("Erreur lors de la vérification de l'utilisateur:", error);
+                    localStorage.removeItem('token'); // Retirer le token invalide
                 } finally {
                     setIsLoading(false);
                 }
