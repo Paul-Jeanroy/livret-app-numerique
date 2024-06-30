@@ -14,7 +14,7 @@ const GrilleEvaluationLivret = ({ bloc, onChange }) => {
             return comp;
         });
         setCompetences(newCompetences);
-        onChange(newCompetences);  // Notify parent component of the change
+        onChange(newCompetences); 
     };
 
     const handleNoteChange = (compIndex, note) => {
@@ -25,7 +25,7 @@ const GrilleEvaluationLivret = ({ bloc, onChange }) => {
             return comp;
         });
         setCompetences(newCompetences);
-        onChange(newCompetences);  // Notify parent component of the change
+        onChange(newCompetences); 
     };
 
     return (
@@ -95,12 +95,6 @@ const GrilleEvaluationLivret = ({ bloc, onChange }) => {
                             </td>
                         </tr>
                     ))}
-                    <tr>
-                        <td colSpan="8"></td>
-                        <td className="competence-cell" style={{ borderBottomLeftRadius: "12px", borderBottomRightRadius: "12px" }}>
-                            N/A
-                        </td>
-                    </tr>
                 </tbody>
             </table>
         </div>
