@@ -250,6 +250,7 @@ def get_blocs_comp_by_formation_id():
             bloc_id = row['id_bloc']
             if bloc_id not in blocs:
                 blocs[bloc_id] = {
+                    'id': bloc_id,
                     'nom': row['bloc_nom'],
                     'description': row['bloc_description'],
                     'competences': []
@@ -264,6 +265,7 @@ def get_blocs_comp_by_formation_id():
         return jsonify(blocs), 200
     except Exception as e:
         return jsonify({'error': str(e)}), 500
+
 
 
     
@@ -371,6 +373,53 @@ def get_annees_by_formation_id():
         return jsonify({'error': str(e)}), 500
 
 
+
+@formation_bp.route('/updateBloc', methods=['POST'])
+def update_bloc():
+    try:
+        data = request.get_json()
+        bloc_id = data.get('bloc').get('id')
+        nom = data.get('bloc').get('nom')
+        description = data.get('bloc').get('description')
+
+        if not bloc_id:
+            return jsonify({'error': "Bloc ID is required"}), 400
+
+        cur = mysql.connection.cursor()
+        cur.execute("UPDATE bloc_de_competences SET nom = %s, description = %s WHERE id_bloc = %s", (nom, description, bloc_id))
+        mysql.connection.commit()
+        cur.close()
+
+        return jsonify({'message': 'Bloc updated successfully'}), 200
+
+    except Exception as e:
+        print(f"Error updating bloc: {str(e)}")  # Debug line
+        return jsonify({'error': str(e)}), 500
+
+
+
+
+
+
+@formation_bp.route('/updateCompetence', methods=['POST'])
+def update_competence():
+    try:
+        data = request.get_json()
+        print("Data received for updating competence:", data)
+        competence_id = data.get('competence')['id']
+        nom = data.get('competence')['nom']
+        description = data.get('competence')['description']
+
+        cur = mysql.connection.cursor()
+        cur.execute("UPDATE competence SET nom = %s, description = %s WHERE id_competence = %s", (nom, description, competence_id))
+        mysql.connection.commit()
+        cur.close()
+
+        return jsonify({'message': 'Competence updated successfully'}), 200
+
+    except Exception as e:
+        print("Error updating competence:", str(e))
+        return jsonify({'error': str(e)}), 500
     
     
 

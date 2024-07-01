@@ -27,11 +27,12 @@ const useFormationData = (userId, selectedApprenti) => {
                 }
 
                 const responseBlocs = await axios.get(`http://localhost:5000/formation/getBlocsCompByFormationId?formation_id=${responseFormation.data.id_formation}`);
+                console.log("reponse bloc", responseBlocs);
                 const responseInfo = await axios.get(`http://localhost:5000/livret/getFormationInfo?apprentiId=${selectedApprenti || userId}`);
 
                 setFormationData({
                     formation: responseFormation.data,
-                    blocs: responseBlocs.data,
+                    blocs: Object.values(responseBlocs.data), // Convertir en tableau
                     info: responseInfo.data,
                 });
                 setLoading(false);
@@ -46,7 +47,7 @@ const useFormationData = (userId, selectedApprenti) => {
         }
     }, [userId, roleUser, selectedApprenti]);
 
-    return { formationData, loading, error };
+    return { formationData, loading, error, setFormationData };
 };
 
 export default useFormationData;
