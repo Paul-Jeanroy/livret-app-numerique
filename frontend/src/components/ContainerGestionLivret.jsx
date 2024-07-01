@@ -1,14 +1,12 @@
 /* 
     composant ContainerGestionLivret.jsx
     Créer le 08/06 par PJ
-    
 */
 
 import { useState } from "react";
-
 import "../styles/ContainerGestionLivret.css";
 
-export default function ContainerGestionLivret(props) {
+export default function ContainerGestionLivret({ annee, users }) {
     const [f_containerVisible, setContainerVisible] = useState(true);
 
     return (
@@ -20,7 +18,7 @@ export default function ContainerGestionLivret(props) {
             }}
         >
             <div className="div-header-suivi-livret">
-                <h1>{props.annee}</h1>
+                <h1>{annee}</h1>
                 <img
                     src="/icon-chevron.png"
                     onClick={() => setContainerVisible(!f_containerVisible)}
@@ -33,11 +31,11 @@ export default function ContainerGestionLivret(props) {
             </div>
             {f_containerVisible && (
                 <div className="container-suivi-livret">
-                    {props.data.map((item, index) => (
+                    {users.map((user, index) => (
                         <div key={index} className="div-ligne-suivi-livret">
                             <div className="div-nom-livret">
-                                <p>{item.nom}</p>
-                                <p>{item.prenom}</p>
+                                <p>{user.nom}</p>
+                                <p>{user.prenom}</p>
                             </div>
                             <img src="/icon-chevron.png" />
                         </div>

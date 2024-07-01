@@ -3,6 +3,7 @@ import Footer from "../components/Footer";
 import Header from "../components/Header";
 
 import "../styles/profil.css";
+import Loader from "../components/Loader";
 
 export default function Profil() {
     const [o_user, setUser] = useState(null);
@@ -152,17 +153,7 @@ export default function Profil() {
                                     </div>
                                     <div className="info-item">
                                         <label>Rôle :</label>
-                                        {f_modifUser.role ? (
-                                            <div className="div-modif-info">
-                                                <input type="text" name="role" value={o_newValeurUser.role} onChange={sp_modifier_user} />
-                                                <button type="submit">Enregistrer les modifications</button>
-                                            </div>
-                                        ) : (
-                                            <>
-                                                <span>{o_user.role}</span>
-                                                <img src="/pencil-edit.svg" alt="Edit" className="edit-icon" onClick={() => sp_modifier_valeur('role')} />
-                                            </>
-                                        )}
+                                        <span>{o_user.role}</span>
                                     </div>
                                     <div className="info-item">
                                         <label>Email :</label>
@@ -194,7 +185,7 @@ export default function Profil() {
                                     </div>
                                 </form>
                             ) : (
-                                <p>Chargement en cours...</p>
+                                <Loader />
                             )}
                         </div>
                     </div>
