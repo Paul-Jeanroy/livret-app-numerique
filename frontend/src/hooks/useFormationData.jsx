@@ -15,9 +15,7 @@ const useFormationData = (userId, selectedApprenti) => {
                 let responseFormation;
 
                 if (roleUser === "maître d'apprentissage") {
-                    console.log("-----------------------------");
                     const apprentiId = selectedApprenti;
-                    console.log("apprentiId", apprentiId);
                     if (!apprentiId) {
                         setError('Aucun apprenti sélectionné');
                         setLoading(false);

@@ -1,20 +1,35 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import "../styles/grilleEvaluationLivret.css";
 
-const GrilleEvaluationLivret = ({ bloc, onChange }) => {
-    const [competences, setCompetences] = useState(bloc.competences);
+const GrilleEvaluationLivret = ({ bloc, onChange, completed }) => {
+    const [competences, setCompetences] = useState([]);
+
+    console.log(competences);
+
+    useEffect(() => {
+        if (completed) {
+            setCompetences(bloc.competences);
+        } else {
+            setCompetences(bloc.competences.map(comp => ({ ...comp, evaluation: [false, false, false, false, false, false], note: "" })));
+        }
+    }, [completed, bloc]);
 
     const handleCheckboxChange = (compIndex, evalIndex) => {
         const newCompetences = competences.map((comp, index) => {
             if (index === compIndex) {
-                const newEvaluation = [false, false, false, false, false, false];
-                newEvaluation[evalIndex] = true;
-                return { ...comp, evaluation: newEvaluation };
+                const newEvaluation = [...comp.evaluation];
+                newEvaluation[evalIndex] = !newEvaluation[evalIndex];
+                if (newEvaluation[evalIndex]) {
+                    for (let i = 0; i < newEvaluation.length; i++) {
+                        if (i !== evalIndex) newEvaluation[i] = false;
+                    }
+                }
+                return { ...comp, evaluation: newEvaluation, note: evalIndex === 5 ? '' : comp.note };
             }
             return comp;
         });
         setCompetences(newCompetences);
-        onChange(newCompetences); 
+        onChange(newCompetences);
     };
 
     const handleNoteChange = (compIndex, note) => {
@@ -25,8 +40,9 @@ const GrilleEvaluationLivret = ({ bloc, onChange }) => {
             return comp;
         });
         setCompetences(newCompetences);
-        onChange(newCompetences); 
+        onChange(newCompetences);
     };
+
 
     return (
         <div className="grille-container">
@@ -91,6 +107,7 @@ const GrilleEvaluationLivret = ({ bloc, onChange }) => {
                                     placeholder="N/A"
                                     value={competence.note}
                                     onChange={(e) => handleNoteChange(compIndex, e.target.value)}
+                                    disabled={competence.evaluation && competence.evaluation[5]}
                                 />
                             </td>
                         </tr>

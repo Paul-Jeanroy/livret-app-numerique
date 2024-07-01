@@ -262,6 +262,34 @@ def get_formation_info():
 
 
 
+@livret_bp.route('/updateEvaluation/<int:id>', methods=['PUT'])
+def update_evaluation(id):
+    try:
+        data = request.json
+        if not data:
+            return jsonify({'error': "Les données sont nécessaires pour la mise à jour."}), 400
+
+        cur = mysql.connection.cursor()
+        query = """
+            UPDATE livret_maitre_apprentissage
+            SET evaluation = %s, mission = %s, remarque = %s
+            WHERE id_livret = %s
+        """
+        cur.execute(query, (
+            json.dumps(data['evaluations']), 
+            data['mission'], 
+            data['remarque'], 
+            id
+        ))
+        mysql.connection.commit()
+        cur.close()
+
+        return jsonify({'message': 'Livret mis à jour avec succès.'}), 200
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+
+
 
 
 
@@ -286,6 +314,36 @@ def get_apprentis():
 
 
 
+
+
+@livret_bp.route('/checkPeriodeCompletion', methods=['GET'])
+def check_periode_completion():
+    try:
+        formation_id = request.args.get('formation_id')
+        apprenti_id = request.args.get('apprenti_id')
+        periode = request.args.get('periode')
+
+        if not formation_id or not apprenti_id or not periode:
+            return jsonify({'error': "Les paramètres 'formation_id', 'apprenti_id' et 'periode' sont nécessaires."}), 400
+
+        cur = mysql.connection.cursor()
+        query = """
+            SELECT *
+            FROM livret_maitre_apprentissage
+            WHERE id_formation = %s AND id_apprenti = %s AND periode = %s
+        """
+        cur.execute(query, (formation_id, apprenti_id, periode))
+        result = cur.fetchone()
+        cur.close()
+
+        if not result:
+            return jsonify({'completed': False}), 200
+
+        return jsonify({'completed': result}), 200
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+    
+    
 
 
 app.register_blueprint(livret_bp, url_prefix='/livret')

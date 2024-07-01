@@ -371,6 +371,8 @@ def get_annees_by_formation_id():
         return jsonify({'error': str(e)}), 500
 
 
+    
+    
 
 if __name__ == '__main__':
     app.run(debug=True)

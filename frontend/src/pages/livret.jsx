@@ -6,6 +6,8 @@ import Header from "../components/Header";
 import Footer from "../components/Footer";
 import GrilleEvaluationLivret from "../components/GrilleEvaluationLivret";
 import Loader from "../components/Loader";
+import { ToastContainer, toast } from "react-toastify";
+import 'react-toastify/dist/ReactToastify.css';
 import "../styles/livret.css";
 
 export default function Livret() {
@@ -15,11 +17,13 @@ export default function Livret() {
     const [remarque, setRemarque] = useState("");
     const [selectedApprenti, setSelectedApprenti] = useState(null);
     const [apprentis, setApprentis] = useState([]);
-    const [selectedPeriodeIndex, setSelectedPeriodeIndex] = useState(0); // Change to index
+    const [selectedPeriodeIndex, setSelectedPeriodeIndex] = useState(0);
     const { roleUser, userId } = useUserRole();
     const { formationData, loading, error } = useFormationData(userId, selectedApprenti);
     const [fetchError, setFetchError] = useState(null);
     const [annees, setAnnees] = useState([]);
+    const [periodeCompleted, setPeriodeCompleted] = useState(false);
+    const [currentLivretId, setCurrentLivretId] = useState(null);
 
     useEffect(() => {
         const fetchApprentis = async () => {
@@ -29,7 +33,6 @@ export default function Livret() {
                 if (response.data.apprentis.length === 1) {
                     setSelectedApprenti(response.data.apprentis[0].id_user);
                 }
-                console.log("Apprentis fetched:", response.data.apprentis);
                 if (!selectedApprenti && response.data.apprentis.length > 0) {
                     setSelectedApprenti(response.data.apprentis[0].id_user);
                 }
@@ -44,7 +47,6 @@ export default function Livret() {
     }, [userId, roleUser]);
 
     useEffect(() => {
-        console.log("Selected Apprenti Updated:", selectedApprenti);
         if (formationData?.blocs) {
             setEvaluations(Object.values(formationData.blocs));
         }
@@ -67,6 +69,42 @@ export default function Livret() {
             sp_get_duree_formation();
         }
     }, [formationData]);
+
+    useEffect(() => {
+        const checkPeriodeCompletion = async () => {
+            if (!formationData || !selectedApprenti || annees.length === 0) return;
+
+            try {
+                const anneeIndex = Math.floor(selectedPeriodeIndex / (formationData.formation.periode === 'semestre' ? 2 : 3));
+                const periodeIndex = (selectedPeriodeIndex % (formationData.formation.periode === 'semestre' ? 2 : 3)) + 1;
+                const periodeLabel = `${annees[anneeIndex].annee}-${periodeIndex}`;
+                
+                const url = `http://localhost:5000/livret/checkPeriodeCompletion?formation_id=${formationData.formation.id_formation}&apprenti_id=${selectedApprenti}&periode=${periodeLabel}`;
+
+                const response = await axios.get(url);
+                setPeriodeCompleted(response.data.completed);
+                if (response.data.completed) {
+                    const completedData = JSON.parse(response.data.completed.evaluation);
+                    setEvaluations(completedData.map(item => ({ competences: item.competences, description: item.description, nom: item.nom })));
+                    setMission(response.data.completed.mission);
+                    setRemarque(response.data.completed.remarque);
+                    setCurrentLivretId(response.data.completed.id_livret); 
+                } else {
+                    setEvaluations(Object.values(formationData.blocs).map(bloc => ({
+                        ...bloc,
+                        competences: bloc.competences.map(comp => ({ ...comp, evaluation: [false, false, false, false, false, false], note: "" }))
+                    })));
+                    setMission("");
+                    setRemarque("");
+                    setCurrentLivretId(null); 
+                }
+            } catch (error) {
+                console.error("Error checking periode completion:", error);
+            }
+        };
+
+        checkPeriodeCompletion();
+    }, [formationData, selectedPeriodeIndex, selectedApprenti, annees]);
 
     const handleEvaluationChange = (blocIndex, updatedCompetences) => {
         const newEvaluations = [...evaluations];
@@ -102,7 +140,7 @@ export default function Livret() {
                     <button
                         key={`${anneesData[i].annee}-${pIndex}`}
                         className="btn-nav-livret"
-                        onClick={() => setSelectedPeriodeIndex(i * periodeNames[periodeKey].length + pIndex)} // Update index
+                        onClick={() => setSelectedPeriodeIndex(i * periodeNames[periodeKey].length + pIndex)}
                     >
                         {periodLabel}
                     </button>
@@ -114,14 +152,23 @@ export default function Livret() {
     };
 
     const handleSave = async () => {
+
+        if(mission == "" || mission == undefined || mission == null){
+            setFetchError("Veuillez entrer une mission.");
+            toast.error("Veuillez entrer une mission.");
+            return;
+        }
+        
         for (let bloc of evaluations) {
             for (let comp of bloc.competences) {
                 if (!comp.evaluation || comp.evaluation.every((val) => val === false)) {
                     setFetchError("Toutes les compétences doivent être évaluées.");
+                    toast.error("Toutes les compétences doivent être évaluées.");
                     return;
                 }
-                if (comp.evaluation.some((val) => val === true) && comp.evaluation.indexOf("N/A") === -1 && !comp.note) {
+                if (comp.evaluation.some((val) => val === true && !comp.evaluation[5]) && !comp.note) {
                     setFetchError("Toutes les compétences évaluées doivent avoir une note, sauf celles marquées N/A.");
+                    toast.error("Toutes les compétences évaluées doivent avoir une note, sauf celles marquées N/A.");
                     return;
                 }
             }
@@ -137,12 +184,20 @@ export default function Livret() {
                 remarque: remarque,
                 periode: `${annees[Math.floor(selectedPeriodeIndex / (formationData?.formation?.periode === 'semestre' ? 2 : 3))].annee}-${(selectedPeriodeIndex % (formationData?.formation?.periode === 'semestre' ? 2 : 3)) + 1}`,
             };
-            const response = await axios.post("http://localhost:5000/livret/saveEvaluation", payload);
+            const url = currentLivretId 
+                ? `http://localhost:5000/livret/updateEvaluation/${currentLivretId}` 
+                : "http://localhost:5000/livret/saveEvaluation";
+            const response = currentLivretId 
+                ? await axios.put(url, payload)
+                : await axios.post(url, payload);
+
             console.log(response.data);
             setFetchError(null);
+            toast.success("Livret sauvegardé avec succès.");
         } catch (saveError) {
             console.error(saveError);
             setFetchError("Erreur lors de la sauvegarde des évaluations.");
+            toast.error("Erreur lors de la sauvegarde des évaluations.");
         }
     };
 
@@ -150,18 +205,15 @@ export default function Livret() {
         return <Loader />;
     }
 
-    if (error) {
-        return <p>{error}</p>;
-    }
-
-    const currentPeriodLabel = generateNavigation(formationData?.formation?.periode, formationData?.duree, annees)[selectedPeriodeIndex]?.props.children || '';
+    const navigationButtons = generateNavigation(formationData?.formation?.periode, formationData?.duree, annees);
+    const currentPeriodLabel = navigationButtons.length > 0 ? navigationButtons[selectedPeriodeIndex].props.children : '';
 
     return (
         <>
             <Header />
+            <ToastContainer position="top-right" autoClose={10000} />
             <main className="main-container-livret">
                 <h1 className="titre_page">Livret de suivi en entreprise</h1>
-                {fetchError && <p className="error-message">{fetchError}</p>}
                 {!f_ficheSignaletique ? (
                     <div className="div-container-livret">
                         <button className="btn-fiche-sign" onClick={() => setFicheSignaletique(true)}>
@@ -176,14 +228,27 @@ export default function Livret() {
                         <img className="fleche-droite-livret" src="icon-arrow.svg" onClick={() => handleNavigation(1)} />
                         <div className="div-contenu-aborde">
                             <label>Objectifs / Missions de la période</label>
-                            <textarea placeholder="Entrez ici les missions confiées à l'apprenti sur la période" value={mission} onChange={(e) => setMission(e.target.value)}></textarea>
+                            <textarea 
+                                placeholder="Entrez ici les missions confiées à l'apprenti sur la période" 
+                                value={mission} 
+                                onChange={(e) => setMission(e.target.value)}
+                            ></textarea>
                             <label>Remarques particulières</label>
-                            <textarea placeholder="Entrez ici les remarques particulières si besoin" value={remarque} onChange={(e) => setRemarque(e.target.value)}></textarea>
+                            <textarea 
+                                placeholder="Entrez ici les remarques particulières si besoin" 
+                                value={remarque} 
+                                onChange={(e) => setRemarque(e.target.value)}
+                            ></textarea>
                         </div>
 
                         {formationData?.blocs &&
-                            Object.values(formationData.blocs).map((bloc, index) => (
-                                <GrilleEvaluationLivret key={index} bloc={bloc} onChange={(updatedCompetences) => handleEvaluationChange(index, updatedCompetences)} />
+                            evaluations.map((bloc, index) => (
+                                <GrilleEvaluationLivret 
+                                    key={index} 
+                                    bloc={bloc} 
+                                    onChange={(updatedCompetences) => handleEvaluationChange(index, updatedCompetences)}
+                                    completed={periodeCompleted}
+                                />
                             ))}
 
                         <div className="btn-validation-livret">
@@ -191,14 +256,14 @@ export default function Livret() {
                         </div>
 
                         <div className="div-navigation-livret">
-                            {formationData?.formation && generateNavigation(formationData.formation.periode, formationData.duree, annees)}
+                            {formationData?.formation && navigationButtons}
                         </div>
                     </div>
                 ) : (
                     <div className="div-container-fiche-sign">
                         <button className="btn-fiche-sign" onClick={() => setFicheSignaletique(false)}>Retour</button>
                         <div className="div-navigation-livret">
-                            {formationData?.formation && generateNavigation(formationData.formation.periode, formationData.duree, annees)}
+                            {formationData?.formation && navigationButtons}
                         </div>
                     </div>
                 )}
