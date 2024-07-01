@@ -27,7 +27,6 @@ const useFormationData = (userId, selectedApprenti) => {
                 }
 
                 const responseBlocs = await axios.get(`http://localhost:5000/formation/getBlocsCompByFormationId?formation_id=${responseFormation.data.id_formation}`);
-                console.log("reponse bloc", responseBlocs);
                 const responseInfo = await axios.get(`http://localhost:5000/livret/getFormationInfo?apprentiId=${selectedApprenti || userId}`);
 
                 setFormationData({

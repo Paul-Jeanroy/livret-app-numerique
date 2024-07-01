@@ -4,12 +4,15 @@ import { useState } from "react";
 import Footer from "../components/Footer";
 import Header from "../components/Header";
 import PopupHome from "../components/PopupHome";
+import {useUserRole} from "../hooks/useUserRole"
 
 import "../styles/accueil.css";
 
 export default function Accueil() {
     const navigate = useNavigate()
     const [f_openPopupHome, setOpenPopupHome] = useState(false)
+    const { roleUser } = useUserRole()
+    console.log(roleUser);
 
     return (
         <>
@@ -22,7 +25,15 @@ export default function Accueil() {
                         <div className="content">
                             <h1>Le livret qui vous accompagne.</h1>
                             <p>Votre parcours éducatif mérite un outil moderne et efficace...</p>
-                            <button onClick={() => navigate('/livret')}>Consulter le livret</button>
+                            {roleUser === "coordinateur" ? (
+                                    <button onClick={() => navigate('/gestionLivret')}>Gérer les livrets</button>
+                                ) : roleUser === "apprenti" ? (
+                                    <button onClick={() => navigate('/livret')}>Compléter votre livret</button>
+                                ) : roleUser === "maître d'apprentissage" && (
+                                    <button onClick={() => navigate('/livret')}>Compléter le livret</button>
+                                )
+                            }
+
                         </div>
                     </section>
                     <section id="section-home-2">

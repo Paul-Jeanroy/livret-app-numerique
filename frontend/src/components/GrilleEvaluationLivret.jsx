@@ -4,8 +4,6 @@ import "../styles/grilleEvaluationLivret.css";
 const GrilleEvaluationLivret = ({ bloc, onChange, completed }) => {
     const [competences, setCompetences] = useState([]);
 
-    console.log(competences);
-
     useEffect(() => {
         if (completed) {
             setCompetences(bloc.competences);

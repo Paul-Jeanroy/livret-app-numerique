@@ -9,6 +9,7 @@ import Loader from "../components/Loader";
 import { ToastContainer, toast } from "react-toastify";
 import 'react-toastify/dist/ReactToastify.css';
 import "../styles/livret.css";
+import TableauEvaluationLivret from "../components/TableauEvaluationLivret";
 
 export default function Livret() {
     const [f_ficheSignaletique, setFicheSignaletique] = useState(false);
@@ -16,11 +17,9 @@ export default function Livret() {
     const [mission, setMission] = useState("");
     const [remarque, setRemarque] = useState("");
     const [selectedApprenti, setSelectedApprenti] = useState(null);
-    const [apprentis, setApprentis] = useState([]);
     const [selectedPeriodeIndex, setSelectedPeriodeIndex] = useState(0);
     const { roleUser, userId } = useUserRole();
     const { formationData, loading, error } = useFormationData(userId, selectedApprenti);
-    const [fetchError, setFetchError] = useState(null);
     const [annees, setAnnees] = useState([]);
     const [periodeCompleted, setPeriodeCompleted] = useState(false);
     const [currentLivretId, setCurrentLivretId] = useState(null);
@@ -29,7 +28,6 @@ export default function Livret() {
         const fetchApprentis = async () => {
             try {
                 const response = await axios.get(`http://localhost:5000/livret/getApprentis?maitreId=${userId}`);
-                setApprentis(response.data.apprentis);
                 if (response.data.apprentis.length === 1) {
                     setSelectedApprenti(response.data.apprentis[0].id_user);
                 }
@@ -53,13 +51,10 @@ export default function Livret() {
 
         const sp_get_duree_formation = async () => {
             try {
-                const response = await axios.get(`http://localhost:5000/formation/getDureeFormation?id_formation=${formationData?.formation?.id_formation}`);
-                const duree = response.data.duree;
-
                 const anneesResponse = await axios.get(`http://localhost:5000/formation/getAnneesByFormationId?id_formation=${formationData?.formation?.id_formation}`);
                 setAnnees(anneesResponse.data);
 
-                setSelectedPeriodeIndex(0); // Reset index on new data
+                setSelectedPeriodeIndex(0);
             } catch (error) {
                 console.error("Error fetching duree and periode:", error);
             }
@@ -78,7 +73,7 @@ export default function Livret() {
                 const anneeIndex = Math.floor(selectedPeriodeIndex / (formationData.formation.periode === 'semestre' ? 2 : 3));
                 const periodeIndex = (selectedPeriodeIndex % (formationData.formation.periode === 'semestre' ? 2 : 3)) + 1;
                 const periodeLabel = `${annees[anneeIndex].annee}-${periodeIndex}`;
-                
+
                 const url = `http://localhost:5000/livret/checkPeriodeCompletion?formation_id=${formationData.formation.id_formation}&apprenti_id=${selectedApprenti}&periode=${periodeLabel}`;
 
                 const response = await axios.get(url);
@@ -88,7 +83,7 @@ export default function Livret() {
                     setEvaluations(completedData.map(item => ({ competences: item.competences, description: item.description, nom: item.nom })));
                     setMission(response.data.completed.mission);
                     setRemarque(response.data.completed.remarque);
-                    setCurrentLivretId(response.data.completed.id_livret); 
+                    setCurrentLivretId(response.data.completed.id_livret);
                 } else {
                     setEvaluations(Object.values(formationData.blocs).map(bloc => ({
                         ...bloc,
@@ -96,7 +91,7 @@ export default function Livret() {
                     })));
                     setMission("");
                     setRemarque("");
-                    setCurrentLivretId(null); 
+                    setCurrentLivretId(null);
                 }
             } catch (error) {
                 console.error("Error checking periode completion:", error);
@@ -153,21 +148,18 @@ export default function Livret() {
 
     const handleSave = async () => {
 
-        if(mission == "" || mission == undefined || mission == null){
-            setFetchError("Veuillez entrer une mission.");
+        if (mission == "" || mission == undefined || mission == null) {
             toast.error("Veuillez entrer une mission.");
             return;
         }
-        
+
         for (let bloc of evaluations) {
             for (let comp of bloc.competences) {
                 if (!comp.evaluation || comp.evaluation.every((val) => val === false)) {
-                    setFetchError("Toutes les compétences doivent être évaluées.");
                     toast.error("Toutes les compétences doivent être évaluées.");
                     return;
                 }
                 if (comp.evaluation.some((val) => val === true && !comp.evaluation[5]) && !comp.note) {
-                    setFetchError("Toutes les compétences évaluées doivent avoir une note, sauf celles marquées N/A.");
                     toast.error("Toutes les compétences évaluées doivent avoir une note, sauf celles marquées N/A.");
                     return;
                 }
@@ -184,19 +176,17 @@ export default function Livret() {
                 remarque: remarque,
                 periode: `${annees[Math.floor(selectedPeriodeIndex / (formationData?.formation?.periode === 'semestre' ? 2 : 3))].annee}-${(selectedPeriodeIndex % (formationData?.formation?.periode === 'semestre' ? 2 : 3)) + 1}`,
             };
-            const url = currentLivretId 
-                ? `http://localhost:5000/livret/updateEvaluation/${currentLivretId}` 
+            const url = currentLivretId
+                ? `http://localhost:5000/livret/updateEvaluation/${currentLivretId}`
                 : "http://localhost:5000/livret/saveEvaluation";
-            const response = currentLivretId 
+            const response = currentLivretId
                 ? await axios.put(url, payload)
                 : await axios.post(url, payload);
 
             console.log(response.data);
-            setFetchError(null);
             toast.success("Livret sauvegardé avec succès.");
         } catch (saveError) {
             console.error(saveError);
-            setFetchError("Erreur lors de la sauvegarde des évaluations.");
             toast.error("Erreur lors de la sauvegarde des évaluations.");
         }
     };
@@ -226,34 +216,48 @@ export default function Livret() {
 
                         <img className="fleche-gauche-livret" src="icon-arrow.svg" style={{ transform: "rotate(180deg)" }} onClick={() => handleNavigation(-1)} />
                         <img className="fleche-droite-livret" src="icon-arrow.svg" onClick={() => handleNavigation(1)} />
-                        <div className="div-contenu-aborde">
-                            <label>Objectifs / Missions de la période</label>
-                            <textarea 
-                                placeholder="Entrez ici les missions confiées à l'apprenti sur la période" 
-                                value={mission} 
-                                onChange={(e) => setMission(e.target.value)}
-                            ></textarea>
-                            <label>Remarques particulières</label>
-                            <textarea 
-                                placeholder="Entrez ici les remarques particulières si besoin" 
-                                value={remarque} 
-                                onChange={(e) => setRemarque(e.target.value)}
-                            ></textarea>
-                        </div>
 
-                        {formationData?.blocs &&
-                            evaluations.map((bloc, index) => (
-                                <GrilleEvaluationLivret 
-                                    key={index} 
-                                    bloc={bloc} 
-                                    onChange={(updatedCompetences) => handleEvaluationChange(index, updatedCompetences)}
-                                    completed={periodeCompleted}
-                                />
-                            ))}
+                        {roleUser == "maître d'apprentissage" && (
+                            <>
+                                <div className="div-contenu-aborde">
+                                    <label>Objectifs / Missions de la période</label>
+                                    <textarea
+                                        placeholder="Entrez ici les missions confiées à l'apprenti sur la période"
+                                        value={mission}
+                                        onChange={(e) => setMission(e.target.value)}
+                                    ></textarea>
+                                    <label>Remarques particulières</label>
+                                    <textarea
+                                        placeholder="Entrez ici les remarques particulières si besoin"
+                                        value={remarque}
+                                        onChange={(e) => setRemarque(e.target.value)}
+                                    ></textarea>
+                                </div>
 
-                        <div className="btn-validation-livret">
-                            <button onClick={handleSave}>Valider le livret</button>
-                        </div>
+
+                                {formationData?.blocs &&
+                                    evaluations.map((bloc, index) => (
+                                        <GrilleEvaluationLivret
+                                            key={index}
+                                            bloc={bloc}
+                                            onChange={(updatedCompetences) => handleEvaluationChange(index, updatedCompetences)}
+                                            completed={periodeCompleted}
+                                        />
+                                    ))}
+                                <div className="btn-validation-livret">
+                                    <button onClick={handleSave}>Valider le livret</button>
+                                </div>
+                            </>
+                        )}
+
+                        {roleUser == "apprenti" && (
+                            <TableauEvaluationLivret
+                                selectedPeriodeIndex={selectedPeriodeIndex}
+                                annees={annees}
+                                formationData={formationData?.formation}
+                            />
+                        )}
+
 
                         <div className="div-navigation-livret">
                             {formationData?.formation && navigationButtons}

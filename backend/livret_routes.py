@@ -346,6 +346,95 @@ def check_periode_completion():
     
 
 
+@livret_bp.route('/setLivretApprenti', methods=['POST'])
+def set_periode_livret():
+    try:
+        data = request.json
+        apprenti_id = data.get('apprentiId')
+        periode = data.get('periode')
+        formation_id = data.get('formationId')
+        modules = data.get('modules')
+
+        if not modules or not apprenti_id or not periode or not formation_id:
+            return jsonify({'error': "Veuillez remplir au moins un modules"}), 400
+
+        cur = mysql.connection.cursor()
+
+        # Récupérer le maitre_id à partir de l'apprenti_id
+        cur.execute("SELECT id_maitre_apprentissage FROM supervisions WHERE id_apprenti = %s", (apprenti_id,))
+        result = cur.fetchone()
+
+        if not result:
+            return jsonify({'error': "Maitre d'apprentissage introuvable pour l'apprenti donné"}), 400
+
+        maitre_id = result['id_maitre_apprentissage']
+
+        # Vérifier si une entrée existe déjà pour cette période et cet apprenti
+        check_query = """
+            SELECT id_livret FROM livret_apprenti 
+            WHERE id_apprenti = %s AND id_formation = %s AND periode = %s
+        """
+        cur.execute(check_query, (apprenti_id, formation_id, periode))
+        existing_entry = cur.fetchone()
+
+        if existing_entry:
+            # Mettre à jour l'entrée existante
+            update_query = """
+                UPDATE livret_apprenti 
+                SET modules = %s
+                WHERE id_livret = %s
+            """
+            cur.execute(update_query, (json.dumps(modules), existing_entry['id_livret']))
+        else:
+            # Insérer une nouvelle entrée
+            insert_query = """
+                INSERT INTO livret_apprenti (id_apprenti, id_maitre_apprentissage, id_formation, periode, modules) 
+                VALUES (%s, %s, %s, %s, %s)
+            """
+            cur.execute(insert_query, (apprenti_id, maitre_id, formation_id, periode, json.dumps(modules)))
+
+        mysql.connection.commit()
+        cur.close()
+
+        return jsonify({'success': True}), 200
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+
+
+ 
+ 
+ 
+
+@livret_bp.route('/getLivretApprenti', methods=['GET'])
+def get_periode_livret():
+    try:
+        apprenti_id = request.args.get('apprentiId')
+        periode = request.args.get('periode')
+        formation_id = request.args.get('formationId')
+
+        if not apprenti_id or not periode or not formation_id:
+            return jsonify({'error': "Les paramètres 'apprentiId', 'periode' et 'formationId' sont nécessaires."}), 400
+
+        cur = mysql.connection.cursor()
+        query = """
+            SELECT modules
+            FROM livret_apprenti
+            WHERE id_apprenti = %s AND id_formation = %s AND periode = %s
+        """
+        cur.execute(query, (apprenti_id, formation_id, periode))
+        result = cur.fetchone()
+        cur.close()
+
+        if result:
+            return jsonify({'modules': json.loads(result['modules'])}), 200
+        else:
+            return jsonify({'modules': []}), 200
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+    
+    
+
 app.register_blueprint(livret_bp, url_prefix='/livret')
 
 if __name__ == '__main__':
