@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from 'react';
 
 const useUsersByFormation = (userId) => {
@@ -6,12 +7,16 @@ const useUsersByFormation = (userId) => {
     const [error, setError] = useState(null);
 
     const fetchUsers = async () => {
+        setLoading(true);
+        setError(null);  
+
         try {
             const response = await fetch(`http://localhost:5000/user/getIdFormationByUser?userId=${userId}`, {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',
                 },
+                credentials: 'include',
             });
 
             if (!response.ok) {
@@ -21,10 +26,10 @@ const useUsersByFormation = (userId) => {
 
             const data = await response.json();
             setUsers(data);
-            setLoading(false);
 
         } catch (error) {
             setError(error.message);
+        } finally {
             setLoading(false);
         }
     };

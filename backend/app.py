@@ -12,7 +12,7 @@ import secrets
 
 from logging.handlers import RotatingFileHandler
 app = Flask(__name__)
-CORS(app, resources={r"/*": {"origins": "http://localhost:5173"}})
+CORS(app, supports_credentials=True, resources={r"/*": {"origins": "http://localhost:5173"}})
 
 
 
@@ -21,7 +21,7 @@ CORS(app, resources={r"/*": {"origins": "http://localhost:5173"}})
 # Générer une clé secrète de 32 octets (256 bits)
 secret_key = secrets.token_hex(32)
 app.config['JWT_SECRET_KEY'] = secret_key
-# app.config['SECRET_KEY'] = secret_key #pour URLSafeTimedSerializer
+app.config['SECRET_KEY'] = secret_key #pour URLSafeTimedSerializer
 
 # Initialiser la base de données
 init_db(app)
