@@ -141,8 +141,6 @@ def set_bloc_comp_formation():
         return jsonify({'error': str(e)}), 500
     
     
-    
-
 
 
 @formation_bp.route('/getFormationByUserId', methods=['GET'])
@@ -165,9 +163,9 @@ def get_formation_by_user_id():
                 FROM formation f
                 JOIN utilisateurs u ON f.id_formation = u.id_formation
                 JOIN supervisions s ON u.id_user = s.id_apprenti
-                WHERE s.id_maitre_apprentissage = %s
+                WHERE s.id_maitre_apprentissage = %s AND u.id_user = %s
             """
-            cur.execute(query, (user_id,))
+            cur.execute(query, (user_id, user_id))
         elif role == 'apprenti':
             query = """
                 SELECT f.*
@@ -188,6 +186,41 @@ def get_formation_by_user_id():
         return jsonify(formation), 200
     except Exception as e:
         return jsonify({'error': str(e)}), 500
+
+
+
+
+
+@formation_bp.route('/getFormationByApprentiId', methods=['GET'])
+def get_formation_by_apprenti_id():
+    try:
+        apprenti_id = request.args.get('apprenti_id')
+        maitre_id = request.args.get('maitre_id')
+
+        if not apprenti_id or not maitre_id:
+            return jsonify({'error': 'Apprenti ID and Maitre ID are required'}), 400
+
+        cur = mysql.connection.cursor()
+        query = """
+            SELECT f.*
+            FROM formation f
+            JOIN utilisateurs u ON f.id_formation = u.id_formation
+            JOIN supervisions s ON u.id_user = s.id_apprenti
+            WHERE s.id_apprenti = %s AND s.id_maitre_apprentissage = %s
+        """
+        cur.execute(query, (apprenti_id, maitre_id))
+        formation = cur.fetchone()
+        cur.close()
+
+        if not formation:
+            return jsonify({'error': 'No formation found for this apprenti and maitre'}), 404
+
+        return jsonify(formation), 200
+    except Exception as e:
+        print(f"Error: {str(e)}")
+        return jsonify({'error': str(e)}), 500
+
+
 
 
 
@@ -233,6 +266,9 @@ def get_blocs_comp_by_formation_id():
         return jsonify({'error': str(e)}), 500
 
 
+    
+    
+    
 
 @formation_bp.route('/setPeriodeLivret', methods=['POST'])
 def set_periode_livret():
@@ -279,7 +315,64 @@ def set_periode_livret():
 
 
 
+@formation_bp.route('/getDureeFormation', methods=['GET'])
+def get_duree_formation():
+    try:
+        formation_id = request.args.get('id_formation')
 
+        if not formation_id:
+            return jsonify({'error': "L'id de la formation est nécessaire !"}), 400
+
+        cur = mysql.connection.cursor()
+        query = """
+            SELECT COUNT(*) AS duree, (SELECT periode FROM formation WHERE id_formation = %s) AS periode
+            FROM annees
+            WHERE id_formation = %s
+        """
+        cur.execute(query, (formation_id, formation_id))
+        result = cur.fetchone()
+        cur.close()
+
+        if not result:
+            return jsonify({'error': 'No data found for this formation'}), 404
+
+        return jsonify(result), 200
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+
+
+
+
+
+@formation_bp.route('/getAnneesByFormationId', methods=['GET'])
+def get_annees_by_formation_id():
+    try:
+        formation_id = request.args.get('id_formation')
+
+        if not formation_id:
+            return jsonify({'error': "L'id de la formation est nécessaire !"}), 400
+
+        cur = mysql.connection.cursor()
+        query = """
+            SELECT annee
+            FROM annees
+            WHERE id_formation = %s
+        """
+        cur.execute(query, (formation_id,))
+        result = cur.fetchall()
+        cur.close()
+
+        if not result:
+            return jsonify({'error': 'No data found for this formation'}), 404
+
+        return jsonify(result), 200
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+
+    
+    
 
 if __name__ == '__main__':
     app.run(debug=True)

@@ -68,21 +68,16 @@
 .div-navigation-livret {
     position: absolute;
     left: 15px;
-    bottom: -60px;
     background-color: #f5f5f5;
     padding: 10px;
     border-radius: 10px;
+    max-width: 70%;
 }
 
 .btn-nav-livret {
     padding: 5px 10px;
     border: none;
     cursor: pointer;
-}
-
-.btn-nav-livret:not(:first-child) {
-    opacity: 0.4;
-    cursor: default;
 }
 
 .btn-nav-livret:first-child {

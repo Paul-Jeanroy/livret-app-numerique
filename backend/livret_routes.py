@@ -9,6 +9,7 @@ import openai
 from dotenv import load_dotenv
 import os
 import re
+import json
 from db import mysql
 
 
@@ -198,29 +199,31 @@ def raccourcir_competence():
         return jsonify({'error': str(e), 'details': repr(e)}), 500
 
 
+
 @livret_bp.route('/saveEvaluation', methods=['POST'])
 def save_evaluation():
     try:
         data = request.get_json()
-        user_id = data['userId']
+        maitre_id = data['userId']
         formation_id = data['formationId']
         evaluations = data['evaluations']
         apprenti_id = data['apprentiId']
+        mission = data['mission']
+        remarque = data.get('remarque', None)
+        periode = data['periode']
 
         cur = mysql.connection.cursor()
-        for bloc in evaluations:
-            for comp in bloc['competences']:
-                if comp['evaluation'] and comp['evaluation'] != "N/A" and not comp['note']:
-                    return jsonify({'error': 'All competencies must be graded if evaluated.'}), 400
-                # Debug log
-                print(f"Saving evaluation for competence: {comp}")
-                # Save each competence evaluation to the database here
-                query = """
-                    INSERT INTO livret_maitre_apprentissage (id_user, id_formation, id_apprenti, evaluation)
-                    VALUES (%s, %s, %s, %s)
-                """
-                cur.execute(query, (user_id, formation_id, apprenti_id, str(comp)))
-        
+
+        # Insérer les informations générales et les évaluations dans livret_maitre_apprentissage
+        query_livret = """
+            INSERT INTO livret_maitre_apprentissage (id_maitre_apprentissage, id_formation, id_apprenti, mission, remarque, periode, evaluation)
+            VALUES (%s, %s, %s, %s, %s, %s, %s)
+        """
+        cur.execute(query_livret, (
+            maitre_id, formation_id, apprenti_id, mission, remarque, periode, 
+            json.dumps(evaluations)  # Convertir les évaluations en JSON
+        ))
+
         mysql.connection.commit()
         cur.close()
         return jsonify({'message': 'Evaluations saved successfully'}), 200
@@ -228,6 +231,65 @@ def save_evaluation():
         # Debug log for the exception
         print(f"Error saving evaluations: {str(e)}")
         return jsonify({'error': str(e)}), 500
+
+
+
+@livret_bp.route('/getFormationInfo', methods=['GET'])
+def get_formation_info():
+    try:
+        apprenti_id = request.args.get('apprentiId')
+        cur = mysql.connection.cursor()
+
+        # Get the formation details
+        query_formation = """
+            SELECT f.*, COUNT(a.id_annee) AS duree
+            FROM formation f
+            JOIN utilisateurs u ON f.id_formation = u.id_formation
+            JOIN annees a ON f.id_formation = a.id_formation
+            WHERE u.id_user = %s
+        """
+        cur.execute(query_formation, (apprenti_id,))
+        formation_info = cur.fetchone()
+        cur.close()
+
+        if not formation_info:
+            return jsonify({'error': 'Formation not found'}), 404
+
+        return jsonify(formation_info), 200
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+
+
+
+@livret_bp.route('/updateEvaluation/<int:id>', methods=['PUT'])
+def update_evaluation(id):
+    try:
+        data = request.json
+        if not data:
+            return jsonify({'error': "Les données sont nécessaires pour la mise à jour."}), 400
+
+        cur = mysql.connection.cursor()
+        query = """
+            UPDATE livret_maitre_apprentissage
+            SET evaluation = %s, mission = %s, remarque = %s
+            WHERE id_livret = %s
+        """
+        cur.execute(query, (
+            json.dumps(data['evaluations']), 
+            data['mission'], 
+            data['remarque'], 
+            id
+        ))
+        mysql.connection.commit()
+        cur.close()
+
+        return jsonify({'message': 'Livret mis à jour avec succès.'}), 200
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+
+
 
 
 
@@ -251,8 +313,37 @@ def get_apprentis():
         return jsonify({'error': str(e)}), 500
 
 
-    
 
+
+
+@livret_bp.route('/checkPeriodeCompletion', methods=['GET'])
+def check_periode_completion():
+    try:
+        formation_id = request.args.get('formation_id')
+        apprenti_id = request.args.get('apprenti_id')
+        periode = request.args.get('periode')
+
+        if not formation_id or not apprenti_id or not periode:
+            return jsonify({'error': "Les paramètres 'formation_id', 'apprenti_id' et 'periode' sont nécessaires."}), 400
+
+        cur = mysql.connection.cursor()
+        query = """
+            SELECT *
+            FROM livret_maitre_apprentissage
+            WHERE id_formation = %s AND id_apprenti = %s AND periode = %s
+        """
+        cur.execute(query, (formation_id, apprenti_id, periode))
+        result = cur.fetchone()
+        cur.close()
+
+        if not result:
+            return jsonify({'completed': False}), 200
+
+        return jsonify({'completed': result}), 200
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+    
+    
 
 
 app.register_blueprint(livret_bp, url_prefix='/livret')
