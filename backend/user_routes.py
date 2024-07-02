@@ -3,6 +3,8 @@ from flask import Blueprint, jsonify, request
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from db import mysql
 import bcrypt
+import pandas as pd
+import io
 
 user_bp = Blueprint('user', __name__)
 
@@ -280,5 +282,70 @@ def get_info_formation_by_user_idApprenti():
 
     except Exception as e:
         return jsonify({'error': str(e)}), 500
+    
 
+#importUser
 
+@user_bp.route('/importUsers', methods=['POST'])
+@jwt_required()
+def import_users():
+    if 'file' not in request.files:
+        return jsonify({'error': 'Aucun fichier fourni'}), 400
+
+    file = request.files['file']
+
+    if file.filename == '':
+        return jsonify({'error': 'Aucun fichier sélectionné'}), 400
+
+    if file and file.filename.endswith('.csv'):
+        try:
+            data = pd.read_csv(io.StringIO(file.stream.read().decode('utf-8')))
+            print("Données CSV analysées:", data)
+
+            user_id = get_jwt_identity()
+
+            for index, row in data.iterrows():
+                nom = row['nom']
+                prenom = row['prenom']
+                role = row['role']
+                email = row['email']
+                password = row['password']
+                annee = row['annee']
+                est_valide = 0
+
+                if not nom or not prenom or not role or not email or not password or not annee:
+                    print("Entrée invalide, utilisateur ignoré.")
+                    continue
+
+                cur = mysql.connection.cursor()
+
+                cur.execute("SELECT id_formation FROM formation WHERE id_gerant_formation = %s", (user_id,))
+                id_formation = cur.fetchone()
+                if not id_formation:
+                    print(f"Aucune formation trouvée pour l'utilisateur ID {user_id}")
+                    continue
+                id_formation = id_formation['id_formation']
+
+                cur.execute("SELECT id_annee FROM annees WHERE id_formation = %s AND annee = %s", (id_formation, annee))
+                id_annee = cur.fetchone()
+                if not id_annee:
+                    print(f"Aucune année trouvée pour la formation ID {id_formation} et l'année {annee}")
+                    continue
+                id_annee = id_annee['id_annee']
+
+                hashed_password = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt()).decode('utf-8')
+
+                sql_query = "INSERT INTO utilisateurs (nom, prenom, password, role, email, id_gerant, id_annee, id_formation, est_valide) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)"
+                cur.execute(sql_query, (nom, prenom, hashed_password, role, email, user_id, int(id_annee), int(id_formation), est_valide))
+
+                mysql.connection.commit()
+                cur.close()
+
+            print("Importation réussie")
+            return jsonify({'message': 'Utilisateurs importés avec succès'}), 201
+
+        except Exception as e:
+            print("Erreur lors de l'importation des utilisateurs:", str(e))
+            return jsonify({'error': str(e)}), 500
+    else:
+        return jsonify({'error': 'Format de fichier non supporté, veuillez télécharger un fichier CSV'}), 400
