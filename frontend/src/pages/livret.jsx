@@ -1,38 +1,62 @@
+
+/* Page livret: permet l'affichage selon le rôle du livret à completer.
+
+    Par Paul Jeanroy
+
+    Fonctionnalités :
+    - sp_get_apprentis : Permet la récupération du ou des apprenants gérer par le MA.
+    - sp_get_duree_formation : Permet la récupération de la durée d'une formation.
+    - checkPeriodeCompletion : Vérifie si la période de formation est déjà complète.
+    - handleEvaluationChange : Gère le changement d'évaluation dans le tableau d'évaluation.
+    - generateNavigation : Génère la navigation entre les périodes de formation.
+    - handleSave : Enregistre les évaluations dans la base de données. 
+
+*/
+
+
+// Import REACT
 import { useEffect, useState } from "react";
+
+// Import externes
 import axios from "axios";
+import { ToastContainer, toast } from "react-toastify";
+import 'react-toastify/dist/ReactToastify.css';
+
+// Import Hooks personnalisés
 import { useUserRole } from "../hooks/useUserRole";
 import useFormationData from "../hooks/useFormationData";
+
+// Import des composants
 import Header from "../components/Header";
 import Footer from "../components/Footer";
 import GrilleEvaluationLivret from "../components/GrilleEvaluationLivret";
-import Loader from "../components/Loader";
-import { ToastContainer, toast } from "react-toastify";
-import 'react-toastify/dist/ReactToastify.css';
-import "../styles/livret.css";
 import TableauEvaluationLivret from "../components/TableauEvaluationLivret";
 
+// Import CSS
+import "../styles/livret.css";
+
 export default function Livret() {
-    const [f_ficheSignaletique, setFicheSignaletique] = useState(false);
-    const [evaluations, setEvaluations] = useState([]);
-    const [mission, setMission] = useState("");
-    const [remarque, setRemarque] = useState("");
-    const [selectedApprenti, setSelectedApprenti] = useState(null);
-    const [selectedPeriodeIndex, setSelectedPeriodeIndex] = useState(0);
+    const [f_fiche_signaletique, setFicheSignaletique] = useState(false);
+    const [w_tt_evaluations, setEvaluations] = useState([]);
+    const [w_mission, setMission] = useState("");
+    const [w_remarque, setRemarque] = useState("");
+    const [o_apprenti_selectionne, setApprenti] = useState(null);
+    const [i_index_perdiode_select, setSelectedPeriodeIndex] = useState(0);
     const { roleUser, userId } = useUserRole();
-    const { formationData, loading, error } = useFormationData(userId, selectedApprenti);
-    const [annees, setAnnees] = useState([]);
+    const { formationData } = useFormationData(userId, o_apprenti_selectionne);
+    const [w_tt_annees, setAnnees] = useState([]);
     const [periodeCompleted, setPeriodeCompleted] = useState(false);
     const [currentLivretId, setCurrentLivretId] = useState(null);
 
     useEffect(() => {
-        const fetchApprentis = async () => {
+        const sp_get_apprentis = async () => {
             try {
                 const response = await axios.get(`http://localhost:5000/livret/getApprentis?maitreId=${userId}`);
                 if (response.data.apprentis.length === 1) {
-                    setSelectedApprenti(response.data.apprentis[0].id_user);
+                    setApprenti(response.data.apprentis[0].id_user);
                 }
-                if (!selectedApprenti && response.data.apprentis.length > 0) {
-                    setSelectedApprenti(response.data.apprentis[0].id_user);
+                if (!o_apprenti_selectionne && response.data.apprentis.length > 0) {
+                    setApprenti(response.data.apprentis[0].id_user);
                 }
             } catch (error) {
                 console.error("Error fetching apprentis:", error);
@@ -40,7 +64,7 @@ export default function Livret() {
         };
 
         if (roleUser === "maître d'apprentissage") {
-            fetchApprentis();
+            sp_get_apprentis();
         }
     }, [userId, roleUser]);
 
@@ -50,13 +74,13 @@ export default function Livret() {
         }
 
         const sp_get_duree_formation = async () => {
+
             try {
                 const anneesResponse = await axios.get(`http://localhost:5000/formation/getAnneesByFormationId?id_formation=${formationData?.formation?.id_formation}`);
                 setAnnees(anneesResponse.data);
-
                 setSelectedPeriodeIndex(0);
             } catch (error) {
-                console.error("Error fetching duree and periode:", error);
+                console.error("Erreur lors de la récupération de la période de la formation:", error);
             }
         };
 
@@ -67,14 +91,14 @@ export default function Livret() {
 
     useEffect(() => {
         const checkPeriodeCompletion = async () => {
-            if (!formationData || !selectedApprenti || annees.length === 0) return;
+            if (!formationData || !o_apprenti_selectionne || w_tt_annees.length === 0) return;
 
             try {
-                const anneeIndex = Math.floor(selectedPeriodeIndex / (formationData.formation.periode === 'semestre' ? 2 : 3));
-                const periodeIndex = (selectedPeriodeIndex % (formationData.formation.periode === 'semestre' ? 2 : 3)) + 1;
-                const periodeLabel = `${annees[anneeIndex].annee}-${periodeIndex}`;
+                const anneeIndex = Math.floor(i_index_perdiode_select / (formationData.formation.periode === 'semestre' ? 2 : 3));
+                const periodeIndex = (i_index_perdiode_select % (formationData.formation.periode === 'semestre' ? 2 : 3)) + 1;
+                const periodeLabel = `${w_tt_annees[anneeIndex].annee}-${periodeIndex}`;
 
-                const url = `http://localhost:5000/livret/checkPeriodeCompletion?formation_id=${formationData.formation.id_formation}&apprenti_id=${selectedApprenti}&periode=${periodeLabel}`;
+                const url = `http://localhost:5000/livret/checkPeriodeCompletion?formation_id=${formationData.formation.id_formation}&apprenti_id=${o_apprenti_selectionne}&periode=${periodeLabel}`;
 
                 const response = await axios.get(url);
                 setPeriodeCompleted(response.data.completed);
@@ -94,37 +118,37 @@ export default function Livret() {
                     setCurrentLivretId(null);
                 }
             } catch (error) {
-                console.error("Error checking periode completion:", error);
+                console.error("Erreur lors de la récupération des livrets complétés pour la période:", error);
             }
         };
 
         checkPeriodeCompletion();
-    }, [formationData, selectedPeriodeIndex, selectedApprenti, annees]);
+    }, [formationData, i_index_perdiode_select, o_apprenti_selectionne, w_tt_annees]);
 
     const handleEvaluationChange = (blocIndex, updatedCompetences) => {
-        const newEvaluations = [...evaluations];
+        const newEvaluations = [...w_tt_evaluations];
         newEvaluations[blocIndex].competences = updatedCompetences;
         setEvaluations(newEvaluations);
     };
 
     const handleNavigation = (direction) => {
-        const totalPeriods = annees.length * (formationData?.formation?.periode === 'semestre' ? 2 : 3);
-        let newIndex = selectedPeriodeIndex + direction;
+        const totalPeriods = w_tt_annees.length * (formationData?.formation?.periode === 'semestre' ? 2 : 3);
+        let newIndex = i_index_perdiode_select + direction;
         if (newIndex < 0) newIndex = totalPeriods - 1;
         if (newIndex >= totalPeriods) newIndex = 0;
         setSelectedPeriodeIndex(newIndex);
     };
 
-    const generateNavigation = (periode, duree, anneesData) => {
+    const generateNavigation = (periode, anneesData) => {
         const navButtons = [];
         const periodeNames = {
             semestre: ["Septembre à Février", "Mars à Août"],
             trimestre: ["Septembre à Décembre", "Janvier à Avril", "Mai à Août"],
         };
 
-        const periodeKey = periode.toLowerCase();
+        const periodeKey = (periode || "").toLowerCase();
         if (!periodeNames[periodeKey]) {
-            console.error("Invalid periode:", periode);
+            console.error("Période invalide:", periode);
             return navButtons;
         }
 
@@ -147,13 +171,12 @@ export default function Livret() {
     };
 
     const handleSave = async () => {
-
-        if (mission == "" || mission == undefined || mission == null) {
+        if (w_mission == "" || w_mission == undefined || w_mission == null) {
             toast.error("Veuillez entrer une mission.");
             return;
         }
 
-        for (let bloc of evaluations) {
+        for (let bloc of w_tt_evaluations) {
             for (let comp of bloc.competences) {
                 if (!comp.evaluation || comp.evaluation.every((val) => val === false)) {
                     toast.error("Toutes les compétences doivent être évaluées.");
@@ -170,11 +193,11 @@ export default function Livret() {
             const payload = {
                 userId: userId,
                 formationId: formationData.formation.id_formation,
-                apprentiId: selectedApprenti,
-                evaluations: evaluations,
-                mission: mission,
-                remarque: remarque,
-                periode: `${annees[Math.floor(selectedPeriodeIndex / (formationData?.formation?.periode === 'semestre' ? 2 : 3))].annee}-${(selectedPeriodeIndex % (formationData?.formation?.periode === 'semestre' ? 2 : 3)) + 1}`,
+                apprentiId: o_apprenti_selectionne,
+                evaluations: w_tt_evaluations,
+                mission: w_mission,
+                remarque: w_remarque,
+                periode: `${w_tt_annees[Math.floor(i_index_perdiode_select / (formationData?.formation?.periode === 'semestre' ? 2 : 3))].annee}-${(i_index_perdiode_select % (formationData?.formation?.periode === 'semestre' ? 2 : 3)) + 1}`,
             };
             const url = currentLivretId
                 ? `http://localhost:5000/livret/updateEvaluation/${currentLivretId}`
@@ -183,7 +206,6 @@ export default function Livret() {
                 ? await axios.put(url, payload)
                 : await axios.post(url, payload);
 
-            console.log(response.data);
             toast.success("Livret sauvegardé avec succès.");
         } catch (saveError) {
             console.error(saveError);
@@ -191,12 +213,8 @@ export default function Livret() {
         }
     };
 
-    if (loading) {
-        return <Loader />;
-    }
-
-    const navigationButtons = generateNavigation(formationData?.formation?.periode, formationData?.duree, annees);
-    const currentPeriodLabel = navigationButtons.length > 0 ? navigationButtons[selectedPeriodeIndex].props.children : '';
+    const navigationButtons = generateNavigation(formationData?.formation?.periode, formationData?.duree, w_tt_annees);
+    const currentPeriodLabel = navigationButtons.length > 0 ? navigationButtons[i_index_perdiode_select].props.children : '';
 
     return (
         <>
@@ -204,7 +222,7 @@ export default function Livret() {
             <ToastContainer position="top-right" autoClose={10000} />
             <main className="main-container-livret">
                 <h1 className="titre_page">Livret de suivi en entreprise</h1>
-                {!f_ficheSignaletique ? (
+                {!f_fiche_signaletique ? (
                     <div className="div-container-livret">
                         <button className="btn-fiche-sign" onClick={() => setFicheSignaletique(true)}>
                             Fiche Signalétique
@@ -223,20 +241,20 @@ export default function Livret() {
                                     <label>Objectifs / Missions de la période</label>
                                     <textarea
                                         placeholder="Entrez ici les missions confiées à l'apprenti sur la période"
-                                        value={mission}
+                                        value={w_mission}
                                         onChange={(e) => setMission(e.target.value)}
                                     ></textarea>
                                     <label>Remarques particulières</label>
                                     <textarea
                                         placeholder="Entrez ici les remarques particulières si besoin"
-                                        value={remarque}
+                                        value={w_remarque}
                                         onChange={(e) => setRemarque(e.target.value)}
                                     ></textarea>
                                 </div>
 
 
                                 {formationData?.blocs &&
-                                    evaluations.map((bloc, index) => (
+                                    w_tt_evaluations.map((bloc, index) => (
                                         <GrilleEvaluationLivret
                                             key={index}
                                             bloc={bloc}
@@ -252,8 +270,8 @@ export default function Livret() {
 
                         {roleUser == "apprenti" && (
                             <TableauEvaluationLivret
-                                selectedPeriodeIndex={selectedPeriodeIndex}
-                                annees={annees}
+                                i_index_perdiode_select={i_index_perdiode_select}
+                                w_tt_annees={w_tt_annees}
                                 formationData={formationData?.formation}
                             />
                         )}

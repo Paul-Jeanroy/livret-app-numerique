@@ -5,26 +5,12 @@ from flask_mysqldb import MySQL
 import pdfplumber
 import tempfile
 from bs4 import BeautifulSoup
-import openai
-from dotenv import load_dotenv
+import requests
 import os
 import re
 import json
 from db import mysql
 
-
-# Load environment variables from .env file
-load_dotenv()
-
-# Retrieve the API key from environment variables
-api_key = os.getenv("OPENAI_API_KEY")
-
-# Raise an error if the API key is not set
-if api_key is None:
-    raise ValueError("The OPENAI_API_KEY environment variable is not set.")
-
-# Initialize the OpenAI API key
-openai.api_key = api_key
 
 app = Flask(__name__)
 CORS(app)
@@ -35,34 +21,36 @@ livret_bp = Blueprint('livret', __name__)
 def get_info_formation():
     try:
         code_rncp = request.args.get('w_codeRncp')
+        print("code_rncp", code_rncp)
         if not code_rncp:
-            return jsonify({'error': 'w_codeRncp parameter is required'}), 400
+            return jsonify({'error': 'Le code RNCP est requis.'}), 400
 
         url = f"https://www.francecompetences.fr/recherche/rncp/{code_rncp}"
-
         response = requests.get(url)
         response.raise_for_status()
 
         soup = BeautifulSoup(response.text, 'html.parser')
-
         content_to_get = soup.find('main', class_='main')
+
         if not content_to_get:
             return jsonify({'error': 'Aucun contenu à récupérer'}), 404
 
         etat_element = content_to_get.find('p', class_='tag--fcpt-certification green')
+        print("etat_element", etat_element)
         etat = etat_element.find('span', class_='tag--fcpt-certification__status font-bold').get_text(strip=True) if etat_element else 'N/A'
-        
+        print("etat", etat)
+
         if etat and 'Active' in etat:
-            code_element = content_to_get.find('span', class_='tag--fcpt-certification__status font-bold')
+            code_element = content_to_get.find('span', class_='tag--fcpt-certification__status')
             titre_element = content_to_get.find('h1', class_='title--page--generic')
             niveau_element = content_to_get.find('span', class_='list--fcpt-certification--essential--desktop__line__text--highlighted')
-            
+
             fichier_pdf_element = None
             for a in content_to_get.find_all('a'):
-                if 'Référentiel d’activité, de compétences et d’évaluation' in a.text:
+                if "Référentiel d’activité, de compétences et d’évaluation" in a.text:
                     fichier_pdf_element = a
                     break
-            
+
             nom_formation = titre_element.get_text(strip=True) if titre_element else 'N/A'
             niveau = niveau_element.get_text(strip=True) if niveau_element else 'N/A'
             fichier_pdf = fichier_pdf_element['href'] if fichier_pdf_element else 'N/A'
@@ -70,12 +58,11 @@ def get_info_formation():
 
             return jsonify({
                 'nom': nom_formation,
-                "niveau": niveau,
-                "code": code,
-                "fichier_pdf": fichier_pdf,
-                "etat": etat
+                'niveau': niveau,
+                'code': code_rncp,
+                'fichier_pdf': fichier_pdf,
+                'etat': etat
             })
-
         else:
             return jsonify({'error': 'Formation non active'}), 404
 
@@ -86,7 +73,6 @@ def get_info_formation():
 @livret_bp.route('/getBlocCompetencesFromPDF', methods=['GET'])
 def get_bloc_competence_from_pdf():
     try:
-        # Récupération du lien du PDF
         pdf_url = request.args.get('pdf_path')
         
         # Télécharger le PDF
@@ -103,7 +89,7 @@ def get_bloc_competence_from_pdf():
         current_bloc = None
         competence_buffer = ""
 
-        # Définir une expression régulière pour détecter les débuts de compétences
+        # Détecter le début d'une compétence
         competence_pattern = re.compile(r'^C\d+[a-zA-Z]?')
 
         # Ouvrir le fichier PDF avec pdfplumber
@@ -112,11 +98,10 @@ def get_bloc_competence_from_pdf():
                 table = page.extract_table()
 
                 if table:
-                    for row in table:
-                        bloc = row[0]  # Première colonne concerne les blocs
-                        competence = row[1]  # Deuxième colonne concerne les compétences
+                    for ligne in table:
+                        bloc = ligne[0]
+                        competence = ligne[1]
 
-                        # Vérification s'il y a des blocs
                         if bloc and (bloc.startswith("BLOC") or bloc.startswith("Bloc")):
                             # Sauvegarder la compétence accumulée avant de changer de bloc
                             if competence_buffer.strip() and current_bloc:
@@ -160,46 +145,6 @@ def get_bloc_competence_from_pdf():
 
 
 
-@livret_bp.route('/raccourcie-comp-ai', methods=['POST'])
-def raccourcir_competence():
-    try:
-        print("Requête reçue pour raccourcir les compétences")
-        data = request.json
-        if not data:
-            raise ValueError("Aucune donnée reçue")
-        print("Données reçues :", data)
-        competences = data.get('competences', [])
-        if not competences:
-            raise ValueError("Aucune compétence reçue")
-        print("Compétences à raccourcir :", competences)
-        shortened_competences = []
-
-        # Only test with the first competence
-        competence = competences[0]
-        print(f"Appel à l'API OpenAI pour la compétence : {competence}")
-        response = openai.ChatCompletion.create(
-            model="gpt-3.5-turbo",
-            messages=[
-                {"role": "system", "content": "You are a helpful assistant."},
-                {"role": "user", "content": f"Raccourcissez cette compétence : {competence}"}
-            ],
-            max_tokens=50
-        )
-        shortened_competence = response.choices[0].message['content'].strip()
-        print(f"Compétence raccourcie : {shortened_competence}")
-        shortened_competences.append({
-            "original": competence,
-            "raccourcie": shortened_competence
-        })
-        
-        return jsonify({'shortened_competences': shortened_competences})
-    
-    except Exception as e:
-        print(f"Error: {str(e)}")
-        return jsonify({'error': str(e), 'details': repr(e)}), 500
-
-
-
 @livret_bp.route('/saveEvaluation', methods=['POST'])
 def save_evaluation():
     try:
@@ -214,22 +159,19 @@ def save_evaluation():
 
         cur = mysql.connection.cursor()
 
-        # Insérer les informations générales et les évaluations dans livret_maitre_apprentissage
         query_livret = """
             INSERT INTO livret_maitre_apprentissage (id_maitre_apprentissage, id_formation, id_apprenti, mission, remarque, periode, evaluation)
             VALUES (%s, %s, %s, %s, %s, %s, %s)
         """
         cur.execute(query_livret, (
             maitre_id, formation_id, apprenti_id, mission, remarque, periode, 
-            json.dumps(evaluations)  # Convertir les évaluations en JSON
+            json.dumps(evaluations)
         ))
 
         mysql.connection.commit()
         cur.close()
         return jsonify({'message': 'Evaluations saved successfully'}), 200
     except Exception as e:
-        # Debug log for the exception
-        print(f"Error saving evaluations: {str(e)}")
         return jsonify({'error': str(e)}), 500
 
 
@@ -240,7 +182,6 @@ def get_formation_info():
         apprenti_id = request.args.get('apprentiId')
         cur = mysql.connection.cursor()
 
-        # Get the formation details
         query_formation = """
             SELECT f.*, COUNT(a.id_annee) AS duree
             FROM formation f
@@ -258,7 +199,6 @@ def get_formation_info():
         return jsonify(formation_info), 200
     except Exception as e:
         return jsonify({'error': str(e)}), 500
-
 
 
 
@@ -287,8 +227,6 @@ def update_evaluation(id):
         return jsonify({'message': 'Livret mis à jour avec succès.'}), 200
     except Exception as e:
         return jsonify({'error': str(e)}), 500
-
-
 
 
 
@@ -345,7 +283,6 @@ def check_periode_completion():
     
     
 
-
 @livret_bp.route('/setLivretApprenti', methods=['POST'])
 def set_periode_livret():
     try:
@@ -356,20 +293,18 @@ def set_periode_livret():
         modules = data.get('modules')
 
         if not modules or not apprenti_id or not periode or not formation_id:
-            return jsonify({'error': "Veuillez remplir au moins un modules"}), 400
+            return jsonify({'error': "Veuillez remplir au moins un module"}), 400
 
         cur = mysql.connection.cursor()
 
-        # Récupérer le maitre_id à partir de l'apprenti_id
         cur.execute("SELECT id_maitre_apprentissage FROM supervisions WHERE id_apprenti = %s", (apprenti_id,))
         result = cur.fetchone()
 
         if not result:
-            return jsonify({'error': "Maitre d'apprentissage introuvable pour l'apprenti donné"}), 400
+            return jsonify({'error': "Maître d'apprentissage introuvable pour l'apprenti donné"}), 400
 
         maitre_id = result['id_maitre_apprentissage']
 
-        # Vérifier si une entrée existe déjà pour cette période et cet apprenti
         check_query = """
             SELECT id_livret FROM livret_apprenti 
             WHERE id_apprenti = %s AND id_formation = %s AND periode = %s
@@ -378,7 +313,6 @@ def set_periode_livret():
         existing_entry = cur.fetchone()
 
         if existing_entry:
-            # Mettre à jour l'entrée existante
             update_query = """
                 UPDATE livret_apprenti 
                 SET modules = %s
@@ -386,7 +320,6 @@ def set_periode_livret():
             """
             cur.execute(update_query, (json.dumps(modules), existing_entry['id_livret']))
         else:
-            # Insérer une nouvelle entrée
             insert_query = """
                 INSERT INTO livret_apprenti (id_apprenti, id_maitre_apprentissage, id_formation, periode, modules) 
                 VALUES (%s, %s, %s, %s, %s)
@@ -402,9 +335,7 @@ def set_periode_livret():
 
 
 
- 
- 
- 
+
 
 @livret_bp.route('/getLivretApprenti', methods=['GET'])
 def get_periode_livret():

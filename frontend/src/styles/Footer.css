@@ -1,5 +1,4 @@
-/* ... autres styles ... */
-
+/* Footer.css */
 body, html {
     height: 100%;
     margin: 0;
@@ -11,7 +10,7 @@ body, html {
     min-height: 100vh;
 }
 
-.main-home {
+.main-container {
     flex: 1;
 }
 

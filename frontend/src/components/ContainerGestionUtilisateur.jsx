@@ -1,5 +1,19 @@
+/*  composant ContainerGestionUtilisateur.jsx : permet l'affichage des utilisateurs d'une formation page de gestion des utilisateurs
+    
+    Par Paul Jeanroy
+
+    Fonctionnalité :
+    - sp_gerer_modif_user : Gère la modification d'un utilisateur
+    
+*/
+
+// Import REACR
 import { useState, useEffect } from "react";
+
+// Import CSS
 import "../styles/ContainerGestionUtilisateur.css";
+
+// Import des composants
 import PopupAjouterUser from "./PopupAjouterUser";
 import PopupModifierUser from "./PopupModifierUser";
 

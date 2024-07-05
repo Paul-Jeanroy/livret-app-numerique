@@ -13,6 +13,9 @@ auth_bp = Blueprint('auth', __name__)
 def get_serializer():
     return URLSafeTimedSerializer(current_app.config['JWT_SECRET_KEY'])
 
+
+
+
 @auth_bp.route('/login', methods=['POST'])
 def login():
     try:
@@ -45,9 +48,6 @@ def login():
 
 
 
-
-
-
 @auth_bp.route('/verify-user', methods=['GET'])
 @jwt_required()
 def verify_user():
@@ -69,9 +69,6 @@ def get_user_role_from_database(user_id):
     except Exception as e:
         print(f"Erreur lors de la récupération du rôle de l'utilisateur: {str(e)}")
         return None
-
-
-
 
 
 @auth_bp.route('/validationUser', methods=['POST'])
@@ -98,18 +95,7 @@ def validation_user():
         return jsonify({'error': str(e)}), 500
     
     
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
+      
 @auth_bp.route('/reset-password-request', methods=['POST'])
 def reset_password_request():
     try:
@@ -160,7 +146,6 @@ def reset_password_request():
 
 
 
-
 @auth_bp.route('/reset-password/<token>', methods=['GET', 'POST'])
 def reset_password(token):
     if request.method == 'GET':
@@ -195,10 +180,3 @@ def reset_password(token):
         except Exception as e:
             current_app.logger.error(f'Erreur lors de la réinitialisation du mot de passe: {str(e)}')
             return jsonify({'error': str(e)}), 500
-
-
-
-
-
-
-

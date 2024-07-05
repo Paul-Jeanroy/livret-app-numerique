@@ -1,4 +1,5 @@
 from flask import Flask, Blueprint, jsonify, request
+from flask_mysqldb import MySQL
 import mysql
 from db import mysql
 import json
@@ -7,10 +8,6 @@ import re
 formation_bp = Blueprint('formation', __name__)
 
 
-from flask import Flask, request, jsonify
-from flask_mysqldb import MySQL
-
-formation_bp = Blueprint('formation', __name__)
 
 @formation_bp.route('/setFormation', methods=['POST'])
 def set_formation_bdd():
@@ -24,13 +21,14 @@ def set_formation_bdd():
         nom = data.get('nom')   
         code = data.get('code')
         niveau = data.get('niveau')
+        periode_defaut = "Trimestre"
 
         if not nom or not code or not niveau:
             return jsonify({'error': "Données manquantes pour l'ajout de cette formation en base"}), 400
 
         cur = mysql.connection.cursor()
-        cur.execute("INSERT INTO formation (nom, code_rncp, niveau, id_gerant_formation) VALUES (%s, %s, %s, %s)", 
-                    (nom, code, niveau, id_gerant_formation))
+        cur.execute("INSERT INTO formation (nom, code_rncp, niveau, id_gerant_formation, periode) VALUES (%s, %s, %s, %s, %s)", 
+                    (nom, code, niveau, id_gerant_formation, periode_defaut))
         mysql.connection.commit()
         cur.close()
 
@@ -40,30 +38,28 @@ def set_formation_bdd():
     
     
     
+    
 @formation_bp.route('/setAnneOnFormation', methods=['POST'])
 def set_anne_on_formation():
     id_gerant_formation = request.args.get('user_id')
     try:
         data = request.get_json()
-        nom = data.get('nom')
+        nom = data.get('w_nom')
 
         if not id_gerant_formation or not nom:
             return jsonify({'error': "Données manquantes pour l'ajout de l'année de cette formation en base"}), 400
 
         cur = mysql.connection.cursor()
 
-        # Récupérer l'id_formation à partir de id_gerant_formation
         query = "SELECT id_formation FROM formation WHERE id_gerant_formation = %s"
         cur.execute(query, (id_gerant_formation,))
         result = cur.fetchone()
-
 
         if not result:
             return jsonify({'error': 'Aucune formation trouvée pour ce coordinateur de filière'}), 404
 
         id_formation = result['id_formation']
 
-        # Insérer la nouvelle année dans la table annees
         query = "INSERT INTO annees (id_formation, annee) VALUES (%s, %s)"
         cur.execute(query, (id_formation, nom))
         mysql.connection.commit()
@@ -73,7 +69,8 @@ def set_anne_on_formation():
     except Exception as e:
         return jsonify({'error': str(e)}), 500
     
-    
+
+
 @formation_bp.route('/setBlocCompFormation', methods=['POST'])
 def set_bloc_comp_formation():
     try:
@@ -107,13 +104,13 @@ def set_bloc_comp_formation():
             if title_match:
                 title = title_match.group(0)
             else:
-                title = blocText.split()[0]  # Fallback if pattern not found
+                title = blocText.split()[0]
 
             desc_match = re.search(r'(A\d+)', blocText)
             if desc_match:
                 description = blocText.split(desc_match.group(0))[0].strip()
             else:
-                description = blocText  # Fallback if pattern not found
+                description = blocText 
             
             return title, description
 
@@ -141,7 +138,6 @@ def set_bloc_comp_formation():
         return jsonify({'error': str(e)}), 500
     
     
-
 
 @formation_bp.route('/getFormationByUserId', methods=['GET'])
 def get_formation_by_user_id():
@@ -189,8 +185,6 @@ def get_formation_by_user_id():
 
 
 
-
-
 @formation_bp.route('/getFormationByApprentiId', methods=['GET'])
 def get_formation_by_apprenti_id():
     try:
@@ -198,7 +192,7 @@ def get_formation_by_apprenti_id():
         maitre_id = request.args.get('maitre_id')
 
         if not apprenti_id or not maitre_id:
-            return jsonify({'error': 'Apprenti ID and Maitre ID are required'}), 400
+            return jsonify({'error': "Maître d'apprentissage ou apprenti introuvable, ID manquant"}), 400
 
         cur = mysql.connection.cursor()
         query = """
@@ -213,17 +207,12 @@ def get_formation_by_apprenti_id():
         cur.close()
 
         if not formation:
-            return jsonify({'error': 'No formation found for this apprenti and maitre'}), 404
+            return jsonify({'error': "Aucune formation pour ce Maître d'apprentissage"}), 404
 
         return jsonify(formation), 200
     except Exception as e:
         print(f"Error: {str(e)}")
         return jsonify({'error': str(e)}), 500
-
-
-
-
-
 
 
 
@@ -268,9 +257,6 @@ def get_blocs_comp_by_formation_id():
 
 
 
-    
-    
-    
 
 @formation_bp.route('/setPeriodeLivret', methods=['POST'])
 def set_periode_livret():
@@ -284,7 +270,6 @@ def set_periode_livret():
 
         cur = mysql.connection.cursor()
 
-        # Récupérer l'id_formation à partir de user_id
         query = """
         SELECT id_formation 
         FROM formation 
@@ -298,7 +283,6 @@ def set_periode_livret():
 
         id_formation = result['id_formation']
 
-        # Mettre à jour la période dans la table formation
         update_query = """
         UPDATE formation
         SET periode = %s
@@ -312,38 +296,6 @@ def set_periode_livret():
     
     except Exception as e:
         return jsonify({'error': str(e)}), 500
-
-
-
-
-
-@formation_bp.route('/getDureeFormation', methods=['GET'])
-def get_duree_formation():
-    try:
-        formation_id = request.args.get('id_formation')
-
-        if not formation_id:
-            return jsonify({'error': "L'id de la formation est nécessaire !"}), 400
-
-        cur = mysql.connection.cursor()
-        query = """
-            SELECT COUNT(*) AS duree, (SELECT periode FROM formation WHERE id_formation = %s) AS periode
-            FROM annees
-            WHERE id_formation = %s
-        """
-        cur.execute(query, (formation_id, formation_id))
-        result = cur.fetchone()
-        cur.close()
-
-        if not result:
-            return jsonify({'error': 'No data found for this formation'}), 404
-
-        return jsonify(result), 200
-    except Exception as e:
-        return jsonify({'error': str(e)}), 500
-
-
-
 
 
 
@@ -393,7 +345,6 @@ def update_bloc():
         return jsonify({'message': 'Bloc updated successfully'}), 200
 
     except Exception as e:
-        print(f"Error updating bloc: {str(e)}")  # Debug line
         return jsonify({'error': str(e)}), 500
 
 
@@ -403,7 +354,6 @@ def update_bloc():
 def update_competence():
     try:
         data = request.get_json()
-        print("Data received for updating competence:", data)
         competence_id = data.get('competence')['id']
         nom = data.get('competence')['nom']
         description = data.get('competence')['description']
@@ -418,7 +368,3 @@ def update_competence():
     except Exception as e:
         print("Error updating competence:", str(e))
         return jsonify({'error': str(e)}), 500
-    
-
-
-

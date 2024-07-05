@@ -1,18 +1,20 @@
-.bloc-competences-container {
+/* FICHIER DE STYLE : containerBlocCompetence.css : affichage bloc/comp page de création de titre */
+
+.div_container_bloc_comp {
     display: flex;
     flex-wrap: wrap;
     gap: 40px;
     margin-top: 10px;
 }
 
-.bloc {
+.div_bloc {
     flex: 1 1 calc(50% - 20px);
     margin-bottom: 20px;
     padding: 10px;
     box-sizing: border-box;
 }
 
-.bloc h2 {
+.div_bloc h2 {
     display: flex;
     font-size: 16px;
     text-decoration: underline;
@@ -20,7 +22,7 @@
     font-style: italic;
 }
 
-.div-bloc {
+.div_texte_bloc {
     padding: 10px;
     border-radius: 10px;
     margin-bottom: 10px;
@@ -30,11 +32,9 @@
     box-shadow: 4px 4px 4px rgb(200, 200, 200);
 }
 
-.competences {
-    text-align: center;
-}
 
-.competence {
+
+.div_texte_competence {
     border-radius: 12px;
     margin-bottom: 10px;
     padding: 10px;
@@ -42,36 +42,6 @@
     box-shadow: 4px 4px 4px rgb(200, 200, 200);
 }
 
-.competence p {
+.div_texte_competence p {
     margin: 0;
-}
-
-.titre-competence{
-    text-align: left;
-    margin-bottom: 5px;
-    font-size: 14px;
-    font-weight: bold;
-    font-style: italic;
-}
-
-
-.div-proposition-ia {
-    position: relative;
-    border-radius: 12px;
-    margin-bottom: 10px;
-    padding: 10px;
-    margin-bottom: 50px;
-    background-color: #E1E1E1;
-    box-shadow: 4px 4px 4px rgb(200, 200, 200);
-}
-
-.img-proposition-ia{
-    width: 100%;
-    margin-top: -45px;
-    display: flex;
-    justify-content: end;   
-}
-
-.img-proposition-ia img{
-    width: 25px;
 }

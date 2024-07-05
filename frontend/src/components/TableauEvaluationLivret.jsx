@@ -5,7 +5,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import "../styles/tableauEvaluationLivret.css";
 import { useUserRole } from "../hooks/useUserRole";
 
-export default function TableauEvaluationLivret({ selectedPeriodeIndex, annees, formationData }) {
+export default function TableauEvaluationLivret({ i_index_perdiode_select, w_tt_annees, formationData }) {
     const { userId } = useUserRole();
     const [modules, setModules] = useState([]);
     const [moduleInput, setModuleInput] = useState("");
@@ -13,9 +13,9 @@ export default function TableauEvaluationLivret({ selectedPeriodeIndex, annees, 
     useEffect(() => {
         const fetchModules = async () => {
             try {
-                const anneeIndex = Math.floor(selectedPeriodeIndex / (formationData.periode === 'semestre' ? 2 : 3));
-                const periodeIndex = (selectedPeriodeIndex % (formationData.periode === 'semestre' ? 2 : 3)) + 1;
-                const periodeLabel = `${annees[anneeIndex].annee}-${periodeIndex}`;
+                const anneeIndex = Math.floor(i_index_perdiode_select / (formationData.periode === 'semestre' ? 2 : 3));
+                const periodeIndex = (i_index_perdiode_select % (formationData.periode === 'semestre' ? 2 : 3)) + 1;
+                const periodeLabel = `${w_tt_annees[anneeIndex].annee}-${periodeIndex}`;
 
                 const response = await axios.get("http://localhost:5000/livret/getLivretApprenti", {
                     params: {
@@ -36,10 +36,10 @@ export default function TableauEvaluationLivret({ selectedPeriodeIndex, annees, 
             }
         };
 
-        if (userId && annees.length > 0 && formationData) {
+        if (userId && w_tt_annees.length > 0 && formationData) {
             fetchModules();
         }
-    }, [userId, selectedPeriodeIndex, annees, formationData]);
+    }, [userId, i_index_perdiode_select, w_tt_annees, formationData]);
 
     const sp_ajouter_module = () => {
         if (moduleInput.trim() !== "") {
@@ -50,11 +50,16 @@ export default function TableauEvaluationLivret({ selectedPeriodeIndex, annees, 
         }
     };
 
+    const removeModule = (index) => {
+        const newModules = modules.filter((_, i) => i !== index);
+        setModules(newModules);
+    };
+
     const handleSave = async () => {
         try {
-            const anneeIndex = Math.floor(selectedPeriodeIndex / (formationData.periode === 'semestre' ? 2 : 3));
-            const periodeIndex = (selectedPeriodeIndex % (formationData.periode === 'semestre' ? 2 : 3)) + 1;
-            const periodeLabel = `${annees[anneeIndex].annee}-${periodeIndex}`;
+            const anneeIndex = Math.floor(i_index_perdiode_select / (formationData.periode === 'semestre' ? 2 : 3));
+            const periodeIndex = (i_index_perdiode_select % (formationData.periode === 'semestre' ? 2 : 3)) + 1;
+            const periodeLabel = `${w_tt_annees[anneeIndex].annee}-${periodeIndex}`;
 
             const payload = {
                 modules,
@@ -64,9 +69,9 @@ export default function TableauEvaluationLivret({ selectedPeriodeIndex, annees, 
             };
 
             const response = await axios.post("http://localhost:5000/livret/setLivretApprenti", payload);
-            toast.success("Modules sauvegardés avec succès.");
+            toast.success("Livret sauvegardés avec succès.");
         } catch (error) {
-            console.error("Error saving modules:", error);
+            console.error("Erreuyr lors de la sauvegarde du livret:", error);
             toast.error(`${error.response?.data?.error || error.message}`);
         }
     };
@@ -88,6 +93,7 @@ export default function TableauEvaluationLivret({ selectedPeriodeIndex, annees, 
                     <thead className="thead_evaluation_tab">
                         <tr>
                             <th>Modules étudiés en entreprise</th>
+                            <th>Action</th>
                         </tr>
                     </thead>
                     <tbody className="tbody_evaluation_tab">
@@ -95,11 +101,15 @@ export default function TableauEvaluationLivret({ selectedPeriodeIndex, annees, 
                             modules.map((module, index) => (
                                 <tr key={index} className="tr_evaluation_tab">
                                     <td className="td_evaluation_tab">{module}</td>
+                                    <td className="td_action_tab">
+                                        <button onClick={() => removeModule(index)}>Supprimer</button>
+                                    </td>
                                 </tr>
                             ))
                         ) : (
                             <tr className="tr_evaluation_tab">
                                 <td className="td_evaluation_tab">Aucun module étudié</td>
+                                <td className="td_evaluation_tab"></td>
                             </tr>
                         )}
                     </tbody>

@@ -82,6 +82,26 @@
     text-align: center;
 }
 
+.td_action_tab{
+    background-color: #818284;
+    padding: 10px;
+    border: 1px solid black;
+    text-align: center;
+    max-width: 10px;
+}
+
+.td_action_tab button {
+    border-radius: 40px 20px 40px 20px;
+    border: 1px solid #000000;
+    background-color: #ff0404c9;
+    padding: 5px;
+    color: #ffffff;
+    min-width: 100px;
+    font-weight: 600;
+    font-family: monospace;
+    cursor: pointer;
+}
+
 
 .btn-validation-livret-apprenti {
     margin: 50px 0px;

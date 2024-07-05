@@ -1,10 +1,14 @@
-/* 
-    composant Footer.jsx
-    Créer le 08/06 par PJ
+/*  composant Footer.jsx : Composant Footer
+    
+    Par Hossame Laib
     
 */
+
+// Import hooks peronnalisés
 import useMenuSelect from "../hooks/useMenuSelect";
 import { useUserRole } from "../hooks/useUserRole";
+
+// Import CSS
 import "../styles/Footer.css";
 
 export default function Footer() {

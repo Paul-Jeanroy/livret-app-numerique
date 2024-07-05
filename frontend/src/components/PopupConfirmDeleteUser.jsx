@@ -1,7 +1,7 @@
 
-/* 
-    composant PopupConfirmDeletUser.jsx
-    Créer le 08/06 par PJ
+/*  Composant PopupConfirmDeletUser.jsx
+    
+    Par Paul Jeanroy
 
     Fonctionnalité :
     - sp_supprimer_user : fonction qui permet de supprimer un utilisateur
@@ -9,7 +9,7 @@
     
 */
 
-
+// Import CSS
 import "../styles/PopupConfirmDeleteUser.css";
 
 export default function PopupConfirmDeleteUser({ setDeleteUser, w_tt_data_delet_user, onDelete }) {
@@ -20,9 +20,7 @@ export default function PopupConfirmDeleteUser({ setDeleteUser, w_tt_data_delet_
             return;
         }
 
-        try {
-            console.log('Suppression de l’utilisateur avec ID:', w_tt_data_delet_user.id_user);
-            
+        try {            
             const response = await fetch(`http://localhost:5000/user/deleteUser?user_id=${w_tt_data_delet_user.id_user}`, {
                 method: 'DELETE',
                 headers: {

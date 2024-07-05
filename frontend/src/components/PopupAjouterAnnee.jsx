@@ -1,19 +1,27 @@
-/* 
-composant PopupAjouterAnnee.jsx
-Créer le 29/06 par PJ
+/* composant PopupAjouterAnnee.jsx : Permet l'ajout d'une classe via la page de gestion des utilisateurs
 
-Fonctionnalité :
-- sp_valider_annee : Permet d'ajouter une année pour une formation dans la popup
-- ...
+    Par Paul Jeanroy
+
+    Fonctionnalité :
+    - sp_valider_annee : Permet d'ajouter une année pour une formation dans la popup
 
 */
 
+// Import CSS
 import "../styles/PopupAjouterUser.css";
+
+// Import hooks personalisé
 import { useUserRole } from '../hooks/useUserRole';
+
+// Import REACT
 import { useState } from 'react'
 
+// Import snackbar
+import { ToastContainer, toast } from "react-toastify";
+import 'react-toastify/dist/ReactToastify.css';
+
 export default function PopupAjouterUser({ setAddAnneePopup, fetchUsers }) {
-    const [nom, setNom] = useState("");
+    const [w_nom, setNom] = useState("");
     const {userId} = useUserRole();
 
     const sp_valider_annee = async (e) => {
@@ -24,7 +32,7 @@ export default function PopupAjouterUser({ setAddAnneePopup, fetchUsers }) {
                 headers: {
                     "Content-Type": "application/json"
                 },
-                body: JSON.stringify({ nom })
+                body: JSON.stringify({ w_nom })
             })
 
             if(reponse.ok){
@@ -52,7 +60,7 @@ export default function PopupAjouterUser({ setAddAnneePopup, fetchUsers }) {
                                 type="text"
                                 id="nom"
                                 placeholder="Exemple : L3"
-                                value={nom}
+                                value={w_nom}
                                 onChange={(e) => setNom(e.target.value)}
                                 required
                             />

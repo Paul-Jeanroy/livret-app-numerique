@@ -1,4 +1,4 @@
-.container-gestion-formation {
+.main_gestion_formation {
     position: relative;
     width: 100%;
     max-width: 1400px;
@@ -8,12 +8,25 @@
     font-family: monospace;
 }
 
-.container-gestion-info-formation {
-    padding: 10px;
-
+.div_container_formation{
+    height: 100%;
+    border: 1px solid;
+    border-radius: 12px;
+    position: relative;
 }
 
-.detail-formation {
+.div_header_info_formation {
+    padding: 10px;
+}
+
+.img_manage_bloc_info_formation{
+    position: absolute;
+    right: 30px;
+    top: 30px;
+    cursor: pointer;
+}
+
+.div_info_formation {
     padding-bottom: 20px;
     border-bottom: 1px solid;
     display: flex;
@@ -23,13 +36,12 @@
     text-align: center;
 }
 
-
-.detail-formation h2 {
+.div_info_formation h2 {
     position: relative;
     z-index: 1;
 }
 
-.detail-formation h2::after {
+.div_info_formation h2::after {
     content: '';
     width: 98%;
     position: absolute;
@@ -40,16 +52,51 @@
     z-index: -1;
 }
 
-.div-container-formation{
-    height: 100%;
-    border: 1px solid;
-    border-radius: 12px;
-    position: relative;
+.div_container_bloc_comp {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 40px;
+    margin-top: 10px;
 }
 
-.img-manage-formation{
-    position: absolute;
-    right: 30px;
-    top: 30px;
-    cursor: pointer;
+.div_bloc {
+    flex: 1 1 calc(50% - 20px);
+    margin-bottom: 20px;
+    padding: 10px;
+    box-sizing: border-box;
+}
+
+.div_bloc h2 {
+    display: flex;
+    font-size: 16px;
+    text-decoration: underline;
+    margin-bottom: 10px;
+    font-style: italic;
+}
+
+.div_texte_bloc {
+    padding: 10px;
+    border-radius: 10px;
+    margin-bottom: 10px;
+    text-align: center;
+    background-color: #656565;
+    color: white;
+    box-shadow: 4px 4px 4px rgb(200, 200, 200);
+}
+
+.div_titre_competence{
+    font-weight: 700;
+    font-size: 16px;
+}
+
+.div_texte_competence {
+    border-radius: 12px;
+    margin-bottom: 10px;
+    padding: 10px;
+    background-color: #E1E1E1;
+    box-shadow: 4px 4px 4px rgb(200, 200, 200);
+}
+
+.div_texte_competence p {
+    margin: 0;
 }

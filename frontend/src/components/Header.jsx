@@ -1,23 +1,32 @@
-/* 
-    composant Header.jsx
-    Créer le 08/06 par PJ
+/* Composant Header.jsx : Composant Header
+    
+    Par Paul Jeanroy
 
     Fonctionnalités :
     - sp_deconnexion : Permet de se déconnecter
+
 */
 
+// Import REACT
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+
+// Import CSS
 import "../styles/Header.css";
+
+// Import des composants
 import PopupNotification from "./PopupNotification";
+
+// Import hooks personnalisés
 import useMenuSelect from "../hooks/useMenuSelect";
 import { useUserRole } from "../hooks/useUserRole";
-import { useNavigate } from "react-router-dom";
+
 
 export default function Header() {
     const [f_openNotif, setOpenNotif] = useState(false);
     const { menuSelect, setMenuSelect } = useMenuSelect();
     const { roleUser } = useUserRole();
-    const navigate = useNavigate();
+    const navigate = useNavigate() ;
 
     const sp_deconnexion = () => {
         localStorage.removeItem('roleUser');

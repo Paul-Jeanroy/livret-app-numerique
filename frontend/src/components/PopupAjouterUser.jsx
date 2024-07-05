@@ -1,33 +1,37 @@
-/* 
-    composant PopupAjouterUser.jsx
-    Créer le 08/06 par PJ
+/* composant PopupAjouterUser.jsx : Permet l'ajout d'utilisteur dans la popup page de gestion des utilisateurs
+    
+    Par Paul Jeanroy
 
     Fonctionnalité :
-    - sp_valider_user : Permet d'ajouter un utilisateur avce la popup
-    - ...
+    - sp_valider_utilisateur : Permet d'ajouter un utilisateur dans une formation avec popup
     
 */
 
+// Import React
 import { useState } from "react";
+
+// Import hooks personnalisé
 import { useUserRole } from "../hooks/useUserRole";
+
+// Import CSS
 import "../styles/PopupAjouterUser.css";
 
 export default function PopupAjouterUser({ setAddNewUser, annee, onAddUser }) {
-    const [nom, setNom] = useState("");
-    const [prenom, setPrenom] = useState("");
-    const [role, setRole] = useState("apprenti");
-    const [email, setEmail] = useState("");
-    const [password, setPassword] = useState("");
+    const [w_nom, setNom] = useState("");
+    const [w_prenom, setPrenom] = useState("");
+    const [w_role, setRole] = useState("apprenti");
+    const [w_email, setEmail] = useState("");
+    const [w_password, setPassword] = useState("");
     const { userId } = useUserRole();
 
-    const sp_valider_user = async (e) => {
+    const sp_valider_utilisateur = async (e) => {
         e.preventDefault();
-        const newUser = {
-            nom,
-            prenom,
-            email,
-            password,
-            role,
+        const o_nouvel_apprenant = {
+            w_nom,
+            w_prenom,
+            w_role,
+            w_email,
+            w_password,
             userId,
             annee,
         };
@@ -38,7 +42,7 @@ export default function PopupAjouterUser({ setAddNewUser, annee, onAddUser }) {
                 headers: {
                     "Content-Type": "application/json",
                 },
-                body: JSON.stringify(newUser),
+                body: JSON.stringify(o_nouvel_apprenant),
             });
 
             if (!response.ok) {
@@ -46,7 +50,8 @@ export default function PopupAjouterUser({ setAddNewUser, annee, onAddUser }) {
             }
 
             setAddNewUser(false);
-            onAddUser(newUser);
+            onAddUser(o_nouvel_apprenant);
+            fetchUsers();
         } catch (error) {
             console.error("Erreur lors de l'ajout de l'utilisateur :", error.message);
         }
@@ -60,13 +65,13 @@ export default function PopupAjouterUser({ setAddNewUser, annee, onAddUser }) {
                     <img src="/icon-croix.png" onClick={() => setAddNewUser(false)} alt="Fermer" />
                 </div>
                 <div className="div-add-new-user-body">
-                    <form onSubmit={sp_valider_user} className="form-add-new-user">
+                    <form onSubmit={sp_valider_utilisateur} className="form-add-new-user">
                         <div className="div-input-add-new-user">
                             <label htmlFor="nom">Nom</label>
                             <input
                                 type="text"
                                 id="nom"
-                                value={nom}
+                                value={w_nom}
                                 onChange={(e) => setNom(e.target.value)}
                                 required
                             />
@@ -76,7 +81,7 @@ export default function PopupAjouterUser({ setAddNewUser, annee, onAddUser }) {
                             <input
                                 type="text"
                                 id="prenom"
-                                value={prenom}
+                                value={w_prenom}
                                 onChange={(e) => setPrenom(e.target.value)}
                                 required
                             />
@@ -86,7 +91,7 @@ export default function PopupAjouterUser({ setAddNewUser, annee, onAddUser }) {
                             <input
                                 type="text"
                                 id="role"
-                                value={role}
+                                value={w_role}
                                 onChange={(e) => setRole(e.target.value)}
                                 required
                                 disabled
@@ -97,7 +102,7 @@ export default function PopupAjouterUser({ setAddNewUser, annee, onAddUser }) {
                             <input
                                 type="email"
                                 id="email"
-                                value={email}
+                                value={w_email}
                                 onChange={(e) => setEmail(e.target.value)}
                                 required
                             />
@@ -107,7 +112,7 @@ export default function PopupAjouterUser({ setAddNewUser, annee, onAddUser }) {
                             <input
                                 type="password"
                                 id="password"
-                                value={password}
+                                value={w_password}
                                 onChange={(e) => setPassword(e.target.value)}
                                 required
                             />

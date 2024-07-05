@@ -1,8 +1,28 @@
+/* Page de connexion + récupération de mot de passe
+
+    Fait par Paul Jeanroy et Hossame Laib
+
+    Fonctionnalités :
+    - ...
+
+*/
+
+// Import REACT
 import { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
+
+// Import CSS
 import "../styles/connexion.css";
+
+// Import hook personalisé
 import { useUserRole } from "../hooks/useUserRole.jsx";
+
+// Import de composant
 import ValidationUser from "../components/ValidationUser.jsx";
+
+// Import externe
+import { ToastContainer, toast } from "react-toastify";
+import 'react-toastify/dist/ReactToastify.css';
 
 export default function Connexion() {
     const navigate = useNavigate();
@@ -14,12 +34,11 @@ export default function Connexion() {
     const [newPassword, setNewPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
     const [estValide, setValideUser] = useState(null);
-    const [errorMessage, setErrorMessage] = useState('');
     const { setRoleUser, setUserId } = useUserRole();
     const [f_isValidUser, setValidationUser] = useState(false);
     const [w_resetMessage, setResetMessage] = useState('');
     const token = new URLSearchParams(location.search).get('token');
-    
+
     const valider_formulaire = async (e) => {
         e.preventDefault();
 
@@ -44,8 +63,7 @@ export default function Connexion() {
             setValideUser(data.est_valide);
 
         } catch (error) {
-            console.error('Erreur lors de la connexion :', error.message);
-            setErrorMessage('Email ou mot de passe incorrect');
+            toast.error('Email ou mot de passe incorrect');
         }
     };
 
@@ -53,7 +71,7 @@ export default function Connexion() {
         e.preventDefault();
 
         if (!w_resetEmail) {
-            setResetMessage('Veuillez entrer une adresse e-mail valide.');
+            toast.error('Veuillez entrer une adresse e-mail valide.');
             return;
         }
 
@@ -64,25 +82,24 @@ export default function Connexion() {
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify({ email: w_resetEmail }),
-        });
-        
-        if (!response.ok){
-            const errorData = await response.json();
-            throw new Error('Erreur HTTP, statut : ' + response.status + ' - ' + errorData.error)
-        }
+            });
 
-        setResetMessage('Un email de rénitialisation a été envoyé.');
-    } catch (error){
-        console.error('Erreur lors de la demande de rénistialisation :', error.message);
-        setResetMessage('Erreur lors de la demande de rénistialisation.' + error.message);
-    }
+            if (!response.ok) {
+                const errorData = await response.json();
+                throw new Error('Erreur HTTP, statut : ' + response.status + ' - ' + errorData.error)
+            }
+
+            setResetMessage('Un email de rénitialisation a été envoyé.');
+        } catch (error) {
+            toast.error("Erreur lors de la demande de rénistialisation de mot de passe.");
+        }
     };
 
     const handleResetPassword = async (e) => {
         e.preventDefault();
 
         if (newPassword !== confirmPassword) {
-            setErrorMessage('Les mots de passe ne correspondent pas.');
+            toast.error('Les mots de passe ne correspondent pas.');
             return;
         }
 
@@ -100,12 +117,11 @@ export default function Connexion() {
                 throw new Error('Erreur HTTP, statut : ' + response.status + ' - ' + errorData.error);
             }
 
-            setResetMessage('Votre mot de passe a été réinitialisé avec succès.');
+            toast.success('Votre mot de passe a été réinitialisé avec succès.');
             setTimeout(() => navigate('/connexion'), 3000);
 
         } catch (error) {
-            console.error('Erreur lors de la réinitialisation du mot de passe :', error.message);
-            setErrorMessage('Erreur lors de la réinitialisation du mot de passe : ' + error.message);
+            toast.error("Erreur lors de la réinitialisation du mot de passe : ");
         }
     };
 
@@ -119,6 +135,7 @@ export default function Connexion() {
 
     return (
         <>
+            <ToastContainer position="top-right" autoClose={10000} />
             {f_isValidUser ? (
                 <ValidationUser setValidationUser={setValidationUser} />
             ) : token ? (
@@ -139,7 +156,6 @@ export default function Connexion() {
                                 value={confirmPassword}
                                 onChange={(e) => setConfirmPassword(e.target.value)}
                             />
-                            {errorMessage && <p className="error-message">{errorMessage}</p>}
                             {w_resetMessage && <p className="reset-message">{w_resetMessage}</p>}
                             <button type="submit">Réinitialiser le mot de passe</button>
                         </form>
@@ -167,14 +183,10 @@ export default function Connexion() {
                                         value={password}
                                         onChange={(e) => setPassword(e.target.value)}
                                     />
-                                    {errorMessage && <p className="error-message">{errorMessage}</p>}
+    
                                     <span onClick={() => setGetPassword(true)}>Mot de passe oublié ?</span>
                                     <button type="submit">Se connecter</button>
                                 </form>
-                                <div className="container-google">
-                                    <span className="span-gg">ou continuer avec </span>
-                                    <button>Google</button>
-                                </div>
                             </>
                         )}
                         {f_getPassword && (

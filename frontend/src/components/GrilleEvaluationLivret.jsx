@@ -1,5 +1,19 @@
+/* Composant GrilleEvaluationLivret.jsx : Permet l'affichages du livret pour un maitre d'apprentissage
+
+    Fait par Paul Jeanroy
+
+    Fonctionnalités :
+    - sp_cocher_note : Permet de modifier l'évaluation d'une compétence (case a coché)
+    - sp_evaluer_competence : Permet la notation d'une compétence
+    
+*/
+
+// Import REACT
 import { useState, useEffect } from "react";
+
+// Import CSS
 import "../styles/grilleEvaluationLivret.css";
+
 
 const GrilleEvaluationLivret = ({ bloc, onChange, completed }) => {
     const [competences, setCompetences] = useState([]);
@@ -12,7 +26,7 @@ const GrilleEvaluationLivret = ({ bloc, onChange, completed }) => {
         }
     }, [completed, bloc]);
 
-    const handleCheckboxChange = (compIndex, evalIndex) => {
+    const sp_cocher_note = (compIndex, evalIndex) => {
         const newCompetences = competences.map((comp, index) => {
             if (index === compIndex) {
                 const newEvaluation = [...comp.evaluation];
@@ -30,7 +44,7 @@ const GrilleEvaluationLivret = ({ bloc, onChange, completed }) => {
         onChange(newCompetences);
     };
 
-    const handleNoteChange = (compIndex, note) => {
+    const sp_evaluer_competence = (compIndex, note) => {
         const newCompetences = competences.map((comp, index) => {
             if (index === compIndex) {
                 return { ...comp, note };
@@ -91,11 +105,11 @@ const GrilleEvaluationLivret = ({ bloc, onChange, completed }) => {
                             {Array(6)
                                 .fill()
                                 .map((_, evalIndex) => (
-                                    <td className="score-cell" key={evalIndex} onClick={() => handleCheckboxChange(compIndex, evalIndex)}>
+                                    <td className="score-cell" key={evalIndex} onClick={() => sp_cocher_note(compIndex, evalIndex)}>
                                         <input
                                             type="checkbox"
                                             checked={competence.evaluation && competence.evaluation[evalIndex]}
-                                            onChange={() => handleCheckboxChange(compIndex, evalIndex)}
+                                            onChange={() => sp_cocher_note(compIndex, evalIndex)}
                                         />
                                     </td>
                                 ))}
@@ -104,7 +118,7 @@ const GrilleEvaluationLivret = ({ bloc, onChange, completed }) => {
                                     type="text"
                                     placeholder="N/A"
                                     value={competence.note}
-                                    onChange={(e) => handleNoteChange(compIndex, e.target.value)}
+                                    onChange={(e) => sp_evaluer_competence(compIndex, e.target.value)}
                                     disabled={competence.evaluation && competence.evaluation[5]}
                                 />
                             </td>

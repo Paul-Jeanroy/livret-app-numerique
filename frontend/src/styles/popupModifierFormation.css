@@ -1,6 +1,6 @@
 
 
-.popup-overlay {
+.div_overlay_popup {
     position: fixed;
     top: 0;
     left: 0;
@@ -13,7 +13,7 @@
     z-index: 1000;
 }
 
-.popup-content {
+.div_container_popup {
     background-color: white;
     padding: 20px;
     border-radius: 8px;
@@ -22,17 +22,17 @@
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
 }
 
-.popup-content h2 {
+.div_container_popup h2 {
     margin-top: 0;
 }
 
-.popup-content label {
+.div_container_popup label {
     display: block;
     margin-bottom: 10px;
 }
 
-.popup-content input,
-.popup-content textarea {
+.div_container_popup input,
+.div_container_popup textarea {
     width: 100%;
     padding: 8px;
     margin-bottom: 10px;
@@ -40,24 +40,28 @@
     border-radius: 4px;
 }
 
-.popup-actions {
+.div_container_popup textarea {
+    min-height: 50px;
+}
+
+.div_action_popup {
     display: flex;
     justify-content: space-between;
 }
 
-.popup-actions button {
+.div_action_popup button {
     padding: 10px 20px;
     border: none;
     border-radius: 4px;
     cursor: pointer;
 }
 
-.popup-actions button:first-child {
+.div_action_popup button:first-child {
     background-color: #28a745;
     color: white;
 }
 
-.popup-actions button:last-child {
+.div_action_popup button:last-child {
     background-color: #dc3545;
     color: white;
 }

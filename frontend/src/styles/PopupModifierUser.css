@@ -1,5 +1,5 @@
 
-.overlay {
+.div_overlay {
     position: fixed;
     top: 0;
     left: 0;
@@ -12,7 +12,7 @@
     z-index: 1000;
 }
 
-.div-add-modif-user {
+.div_container_ajout_user {
     background: #fff;
     padding: 20px;
     border-radius: 10px;
@@ -22,7 +22,7 @@
     z-index: 1001;
 }
 
-.div-add-modif-user-header {
+.div_header_ajout_user {
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -31,38 +31,38 @@
     margin-bottom: 20px;
 }
 
-.div-add-modif-user-header h1 {
+.div_header_ajout_user h1 {
     margin: 0;
     font-size: 24px;
 }
 
-.div-add-modif-user-header img {
+.div_header_ajout_user img {
     cursor: pointer;
 }
 
-.div-add-modif-user-body {
+.div_body_ajout_user {
     display: flex;
     flex-direction: column;
     gap: 15px;
 }
 
-.div-input-add-modif-user {
+.div_input_ajout_user {
     display: flex;
     flex-direction: column;
 }
 
-.div-input-add-modif-user label {
+.div_input_ajout_user label {
     margin-bottom: 5px;
     font-weight: bold;
 }
 
-.div-input-add-modif-user input {
+.div_input_ajout_user input {
     padding: 10px;
     border: 1px solid #ddd;
     border-radius: 5px;
 }
 
-.div-add-modif-user button {
+.div_footer_ajout_user button {
     width: 270px;
     display: flex;
     justify-content: center;
@@ -77,12 +77,12 @@
     cursor: pointer;
 }
 
-.div-add-modif-user button img{
+.div_footer_ajout_user button img{
     width: 20px;
     margin-left: 10px;
 }
 
-.div-btn-add-modif-user{
+.div_footer_ajout_user{
     display: flex;
     justify-content: end;
     margin-top: 10px;

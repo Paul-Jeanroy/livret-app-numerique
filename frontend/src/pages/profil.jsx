@@ -1,5 +1,5 @@
-import { useEffect, useState } from "react";
-import Footer from "../components/Footer";
+
+import { useEffect, useState } from "react";import Footer from "../components/Footer";
 import Header from "../components/Header";
 
 import "../styles/profil.css";
@@ -65,7 +65,6 @@ export default function Profil() {
 
     const sp_modifier_user = (e) => {
         const { name, value } = e.target;
-        console.log(name, value);
         setNewValeurUser({
             ...o_newValeurUser,
             [name]: value

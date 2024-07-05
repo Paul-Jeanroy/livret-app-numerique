@@ -1,23 +1,4 @@
-.section-gestion-livret{
-    position: relative;
-    width: 100%;
-    max-width: 1800px;
-    margin: 30px auto;
-    border-radius: 20px;
-    overflow: hidden;
-    font-family: monospace; 
-}
-
-.titre_page{
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    position: relative;
-    font-size: 40px;
-    font-family: monospace;
-}
-
-.main-container-suivi-livret {
+.main_container_suivi_livret {
     display: flex;
     flex-direction: row;
     justify-content: center;
@@ -30,11 +11,21 @@
     position: relative;
 }
 
-.main-container-suivi-livret:not(:last-child) {
+.main_container_suivi_livret:not(:last-child) {
     margin-right: -50px;
 }
 
-.div-header-suivi-livret {
+.section-gestion-livret{
+    position: relative;
+    width: 100%;
+    max-width: 1800px;
+    margin: 30px auto;
+    border-radius: 20px;
+    overflow: hidden;
+    font-family: monospace; 
+}
+
+.div_header_suivi_livret {
     display: flex;
     width: 100%;
     height: 50px;
@@ -45,14 +36,14 @@
     align-items: center;
 }
 
-.div-header-suivi-livret h1 {
+.div_header_suivi_livret h1 {
     width: 90%;
     font-size: 16px;
     z-index: 1;
     position: relative;
 }
 
-.div-header-suivi-livret img {
+.div_header_suivi_livret img {
     justify-content: end;
     width: 20px;
     height: 20px;
@@ -64,7 +55,7 @@
     width: 100%;
 }
 
-.div-ligne-suivi-livret{
+.div_ligne_suivi_livret{
     display: flex;
     flex-direction: row;
     align-items: center;
@@ -72,11 +63,11 @@
     position: relative;
 }
 
-.div-ligne-suivi-livret:not(:last-child){
+.div_ligne_suivi_livret:not(:last-child){
     border-bottom: 1px solid gray;
 }
 
-.div-ligne-suivi-livret img{
+.div_ligne_suivi_livret img{
     height: 15px;
     width: 15px;
     display: flex;
@@ -86,7 +77,7 @@
     right: 20px;
 }
 
-.div-header-suivi-livret h1::after{
+.div_body_suivi_livret h1::after{
     position: absolute;
     width: 15px;
     height: 5px;
@@ -97,11 +88,11 @@
     z-index: -1;
 }
 
-.div-nom-livret{
+.div_nom_livret{
     display: flex;
     margin-left: 15px;
 }
 
-.div-nom-livret p:not(:last-child){
+.div_nom_livret p:not(:last-child){
     margin-right: 20px;
 }

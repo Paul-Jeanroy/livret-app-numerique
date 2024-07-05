@@ -37,32 +37,30 @@ def setUser():
     if request.method == 'OPTIONS':
         return '', 204
 
-    print('Je passse dans le requete')
     try:
         data = request.get_json()
-        nom = data.get('nom')
-        prenom = data.get('prenom')
-        role = data.get('role')
-        email = data.get('email')
-        password = data.get('password')
+        print("data", data)
+        nom = data.get('w_nom')
+        print("nom", nom)
+        prenom = data.get('w_prenom')
+        role = data.get('w_role')
+        email = data.get('w_email')
+        password = data.get('w_password')
         id_gerant = data.get('userId')
         annee = data.get('annee')
         est_valide = 0
 
-        # Vérification des champs requis
         if not nom or not prenom or not role or not email or not password or not annee:
             return jsonify({'error': 'Tous les champs sont requis'}), 400
 
         cur = mysql.connection.cursor()
 
-        # Récupération de l'id_formation en utilisant id_gerant
         cur.execute("SELECT id_formation FROM formation WHERE id_gerant_formation = %s", (id_gerant,))
         id_formation = cur.fetchone()
         if not id_formation:
             return jsonify({'error': "L'utilisateur n'est gérant d'aucune formation"}), 400
         id_formation = id_formation['id_formation']
         
-        # Récupération de l'id_annee
         cur.execute("SELECT id_annee FROM annees WHERE id_formation = %s AND annee = %s", (id_formation, annee,))
         id_annee = cur.fetchone()
         if not id_annee:
@@ -71,7 +69,6 @@ def setUser():
 
         hashed_password = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt()).decode('utf-8')
 
-        # Insertion de l'utilisateur avec l'id de l'année et l'id de la formation
         sql_query = "INSERT INTO utilisateurs (nom, prenom, password, role, email, id_gerant, id_annee, id_formation, est_valide) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)"
         cur.execute(sql_query, (nom, prenom, hashed_password, role, email, id_gerant, int(id_annee), int(id_formation), est_valide))
         mysql.connection.commit()
@@ -85,7 +82,6 @@ def setUser():
 
 
 
-    
     
     
 # route pour récupérer un utilisateur avvec l'id de la formation 
@@ -145,7 +141,7 @@ def delete_user():
 
 
 # route pour modifier un utilisateur
-@user_bp.route('/updateUser', methods=['PUT'])
+@user_bp.route('/setUpdateUser', methods=['PUT'])
 def update_user():
     user_id = request.args.get('user_id')
 
@@ -178,6 +174,10 @@ def update_user():
     
     except Exception as e:
         return jsonify({'error': str(e)}), 500
+    
+    
+    
+    
     
 
 @user_bp.route('/updateProfile', methods=['PUT'])
@@ -223,7 +223,6 @@ def get_info_formation_by_user_idMa():
 
     try:
         with mysql.connection.cursor() as cur:
-            # Récupérer les identifiants des apprentis supervisés par le maître d'apprentissage
             query_apprentis = """
                 SELECT id_apprenti
                 FROM supervisions
@@ -238,7 +237,6 @@ def get_info_formation_by_user_idMa():
             formations = []
             for apprenti in apprentis_results:
                 apprenti_id = apprenti['id_apprenti']
-                # Récupérer les informations de formation de chaque apprenti
                 query_formation = """
                     SELECT f.*
                     FROM formation f
@@ -280,5 +278,3 @@ def get_info_formation_by_user_idApprenti():
 
     except Exception as e:
         return jsonify({'error': str(e)}), 500
-
-
