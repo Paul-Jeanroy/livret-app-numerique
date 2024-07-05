@@ -28,6 +28,7 @@ import { useUserRole } from "../hooks/useUserRole";
 import useUsersByFormation from "../hooks/useUsersByFormation";
 
 
+
 export default function GestionUtilisateur() {
     const { userId } = useUserRole();
     const { users, setUsers, fetchUsers } = useUsersByFormation(userId);
@@ -35,7 +36,8 @@ export default function GestionUtilisateur() {
     const [f_openAddPopup, setAddPopup] = useState(false);
     const [f_openAddAnnee, setAddAnneePopup] = useState(false)
     const [o_userToDelete, setUserToDelete] = useState(null);
-    const [w_tt_utilisateurs, setUtilisateurs] = useState([]);
+    const [allYears, setAllYears] = useState([]);
+    const [file, setFile] = useState(null);
 
     useEffect(() => {
         if (users.length > 0) {
@@ -73,6 +75,38 @@ export default function GestionUtilisateur() {
         return o_tt_utilisateur;
     }, {});
 
+    const handleFileChange = async (e) => {
+        const file = e.target.files[0];
+        if (!file) return;
+
+        const formData = new FormData();
+        formData.append('file', file);
+
+        const token = localStorage.getItem('token');
+
+        try {
+            const response = await fetch('http://localhost:5000/user/importUsers', {
+                method: 'POST',
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                },
+                body: formData,
+            });
+            if (response.ok) {
+                alert('Importation réussie');
+                fetchUsers(); // Met à jour les utilisateurs après l'importation
+            } else {
+                alert('Erreur lors de l\'importation');
+            }
+        } catch (error) {
+            console.error('Erreur lors de l\'importation', error);
+            alert('Erreur lors de l\'importation');
+        }
+    };
+   
+    if (loading) return <Loader />;
+    if (error) return <div>Error: {error}</div>;
+
     return (
         <>
             <Header />
@@ -81,7 +115,8 @@ export default function GestionUtilisateur() {
                 <div className="div-import-user">
                     <button type="file" className="btn-ajout-classe" onClick={() => setAddAnneePopup(true)}>Ajouter une classe (année)</button>
                     {users.length === 0 && <p className="msg-aucun-apprenant">Aucun apprenant pour cette formation</p>}
-                    <button type="file" className="btn-import-user">Importer d'utilisateurs</button>
+                    <input type="file" onChange={handleFileChange} style={{ display: 'none' }} id="fileInput"/>
+                    <button className="btn-import-user" onClick={() => document.getElementById('fileInput').click()}>Importer des utilisateurs</button>
                 </div>
                 <main className="main-gestion-utilisateur" style={{ display: "flex" }}>
                     {Object.keys(sp_grouper_user_by_annee).map((annee) => (
@@ -124,3 +159,4 @@ export default function GestionUtilisateur() {
         </>
     );
 }
+
