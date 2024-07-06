@@ -1,32 +1,8 @@
-header {
-    height: 100px;
-    background-color: #ffffff;
-    border-bottom: 1px solid;
-    width: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
+/* Header.css */
 
-header a {
-    text-decoration: none;
-    color: black;
-    font-size: 15px;
-    font-family: monospace;
-    font-weight: 700;
-    position: relative;
-    z-index: 1;
-}
-
-.selected::after{
-    position: absolute;
-    content: "";
-    height: 5px;
-    background-color: #C4A2FC;
-    width: 100%;
-    top: 10px;
-    left: 5px;
-    z-index: -1;
+body, html {
+    height: 100%;
+    margin: 0;
 }
 
 .div_container_header {
@@ -34,6 +10,7 @@ header a {
     height: 100%;
     align-items: center;
     width: 100%;
+    justify-content: space-between;
 }
 
 .h1_titre_site {
@@ -84,19 +61,7 @@ header a {
     margin-right: 10px;
 }
 
-.div_nav_accueil {
-    display: flex;
-    align-items: center;
-    font-weight: 500;
-}
-
-.div_nav_livret {
-    display: flex;
-    align-items: center;
-    font-weight: 500;
-}
-
-.div_nav_profil {
+.div_nav {
     display: flex;
     align-items: center;
     font-weight: 500;
@@ -124,6 +89,54 @@ header a {
     min-width: 140px;
     font-weight: 600;
     font-family: monospace;
+}
+
+.btn_hamburger_menu {
+    display: none;
+    background: none;
+    border: none;
+    font-size: 24px;
+    cursor: pointer;
+}
+
+.nav_header.ouvert {
+    position: fixed;
+    top: 0;
+    right: 0;
+    height: 100%;
+    width: 250px;
+    background-color: rgba(255, 255, 255, 0.9);
+    z-index: 999;
+    flex-direction: column;
+    justify-content: flex-start;
+    padding-top: 100px;
+    box-shadow: 2px 0 5px rgba(0,0,0,0.1);
+}
+
+.nav_header a {
+    padding: 10px;
+    text-decoration: none;
+    color: black;
+    font-size: 15px;
+    font-family: monospace;
+    font-weight: 700;
+    position: relative;
+    z-index: 1;
+}
+
+.nav_header a.selected::after {
+    position: absolute;
+    content: "";
+    height: 8px;
+    background-color: #C4A2FC;
+    width: 89%;
+    top: 18px;
+    left: 16px;
+    z-index: -1;
+}
+
+.icon_hamburger_menu{
+    z-index: 9999;
 }
 
 /* GESTION PETIT ECRAN  */
@@ -155,5 +168,44 @@ header a {
 
     .div_nav_header {
         margin-left: 0px;
+    }
+}
+
+@media (max-width: 980px) {
+    .btn_hamburger_menu {
+        display: block;
+    }
+
+    .nav_header {
+        display: none;
+    }
+
+    .nav_header.ouvert {
+        display: flex;
+    }
+
+    .div_nav {
+        display: flex;
+        flex-direction: column;
+        margin: 10px 0;
+    }
+
+    .btn_hamburger_menu {
+        position: absolute;
+        right: 10px;
+        top: 10px;
+        z-index: 9999;
+        border: 1px solid;
+        border-radius: 12px;
+    }
+
+    .btn_notif, .btn_deco {
+        margin-top: 30px;
+    }
+}
+
+@media (max-width: 740px) {
+    .h1_titre_site::after {
+        display: none;
     }
 }

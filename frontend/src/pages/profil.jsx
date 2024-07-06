@@ -1,5 +1,5 @@
 
-import { useEffect, useState } from "react";import Footer from "../components/Footer";
+import { useEffect, useState } from "react"; import Footer from "../components/Footer";
 import Header from "../components/Header";
 
 import "../styles/profil.css";

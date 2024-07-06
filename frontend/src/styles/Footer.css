@@ -1,17 +1,8 @@
 /* Footer.css */
-body, html {
-    /* height: 100%; */
-    margin: 0;
-}
 
 .content-wrap {
     display: flex;
     flex-direction: column;
-    /* min-height: 100vh; */
-}
-
-.main-container {
-    flex: 1;
 }
 
 .footer {
@@ -22,8 +13,8 @@ body, html {
     align-items: center;
     justify-content: center;
     margin-top: 30px;
-    /* position: fixed;
-    bottom: 5px; */
+    /* position: absolute;
+    bottom: 15px; */
 }
 
 .div_container_footer {
@@ -112,4 +103,16 @@ body, html {
 
 .div_pub img {
     margin-right: 50px;
+}
+
+
+
+
+@media (max-width: 980px) {
+    .div_pub {
+        display: none;
+    }
+    .div_nav_footer{
+        display: none;
+    }
 }

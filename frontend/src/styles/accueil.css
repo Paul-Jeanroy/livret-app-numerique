@@ -9,6 +9,7 @@
 
 .main_accueil {
     flex: 1;
+    flex-wrap: wrap;
 }
 
 #section_home_1 {
@@ -72,6 +73,7 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
+    flex-wrap: wrap;
 }
 
 #section_home_2 img {
@@ -135,4 +137,30 @@
 #section_home_3 .div_partie_droite{
     width: 36%;
     height: 500px;
+}
+
+
+@media (max-width: 1530px) {
+    #section_home_1,
+    #section_home_2,
+    #section_home_3
+    {
+        max-width: 1000px;
+    }
+}
+
+@media (max-width: 1350px) {
+    #section_home_1,
+    #section_home_2,
+    #section_home_3
+    {
+        max-width: 800px;
+    }
+}
+
+@media (max-width: 770px) {
+    #section_home_2{
+        justify-content: center;
+        align-items: center;
+    }
 }

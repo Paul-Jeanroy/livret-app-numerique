@@ -32,19 +32,19 @@ export default function Footer() {
                         {roleUser == "coordinateur" && (
                             <>
                                 <div className="div_nav_profil">
-                                    <a href={"/gestionUtilisateur"} onClick={() => setMenuSelect("gestionUtilisateur")} className={menuSelect == "gestionUtilisateur" ? "selected" : ""}>Gestion Utilisateur</a>
+                                    <a href={"/gestionUtilisateur"} onClick={() => setMenuSelect("gestionUtilisateur")}>Gestion Utilisateur</a>
                                 </div>
 
                                 <div className="div_nav_profil">
-                                    <a href={"/gestionLivret"} onClick={() => setMenuSelect("gestionLivret")} className={menuSelect == "gestionLivret" ? "selected" : ""}>Gestion Livret</a>
+                                    <a href={"/gestionLivret"} onClick={() => setMenuSelect("gestionLivret")} >Gestion Livret</a>
                                 </div>
 
                                 <div className="div_nav_profil">
-                                    <a href={"/gestionFormation"} onClick={() => setMenuSelect("gestionFormation")} className={menuSelect == "gestionFormation" ? "selected" : ""}>Gestion Formation</a>
+                                    <a href={"/gestionFormation"} onClick={() => setMenuSelect("gestionFormation")}>Gestion Formation</a>
                                 </div>
 
                                 <div className="div_nav_profil">
-                                    <a href={"/creationTitre"} onClick={() => setMenuSelect("creationTitre")} className={menuSelect == "gestionLivret" ? "selected" : ""}>Créér un Titre</a>
+                                    <a href={"/creationTitre"} onClick={() => setMenuSelect("creationTitre")}>Créér un Titre</a>
                                 </div>
 
                             </>
@@ -52,7 +52,7 @@ export default function Footer() {
 
                         {(roleUser == "apprenti" || roleUser == "maître d'apprentissage") && (
                             <div className="div_nav_livret_footer">
-                                <a href={"/livret"} onClick={() => setMenuSelect("livret")} className={menuSelect == "livret" ? "selected" : ""}>Livret</a>
+                                <a href={"/livret"} onClick={() => setMenuSelect("livret")}>Livret</a>
                             </div>
                         )}
 
