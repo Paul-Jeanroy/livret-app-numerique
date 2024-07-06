@@ -41,9 +41,7 @@ def setUser():
 
     try:
         data = request.get_json()
-        print("data", data)
         nom = data.get('w_nom')
-        print("nom", nom)
         prenom = data.get('w_prenom')
         role = data.get('w_role')
         email = data.get('w_email')

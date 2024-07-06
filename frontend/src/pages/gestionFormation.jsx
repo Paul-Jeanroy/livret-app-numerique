@@ -60,12 +60,14 @@ export default function GestionFormation() {
         }
     };
 
+
     const sp_ouvrir_opoup_modification = (w_type, o_tt_donnee) => {
         setTypeDonnee(w_type);
         setInitialDonnee(o_tt_donnee);
         setOpenPopup(true);
     };
 
+    
     const sp_valider_modification = async (o_donnee_modif) => {
         try {
             const w_fonction_modif = w_type_donnee === 'bloc' ? 'updateBloc' : 'updateCompetence';

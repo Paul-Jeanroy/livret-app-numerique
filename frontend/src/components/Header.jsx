@@ -80,9 +80,9 @@ export default function Header() {
                                 <img src="/icon-add-titre.svg"></img>
                             </button>
                         )}
-                        <button className="btn_notif" onClick={() => setOpenNotif(true)}>
+                        {/* <button className="btn_notif" onClick={() => setOpenNotif(true)}>
                             <img src="/icon-notif.png"></img>
-                        </button>
+                        </button> */}
                         <button className="btn_deco">
                             <a href={"/Connexion"} onClick={() => sp_deconnexion()}>Se déconnecter</a>
                         </button>

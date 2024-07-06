@@ -335,14 +335,14 @@ def update_bloc():
         description = data.get('bloc').get('description')
 
         if not bloc_id:
-            return jsonify({'error': "Bloc ID is required"}), 400
+            return jsonify({'error': "Id du bloc manquant"}), 400
 
         cur = mysql.connection.cursor()
         cur.execute("UPDATE bloc_de_competences SET nom = %s, description = %s WHERE id_bloc = %s", (nom, description, bloc_id))
         mysql.connection.commit()
         cur.close()
 
-        return jsonify({'message': 'Bloc updated successfully'}), 200
+        return jsonify({'message': 'Le bloc à été modifié avec succès !'}), 200
 
     except Exception as e:
         return jsonify({'error': str(e)}), 500
@@ -363,8 +363,7 @@ def update_competence():
         mysql.connection.commit()
         cur.close()
 
-        return jsonify({'message': 'Competence updated successfully'}), 200
+        return jsonify({'message': 'La compétence à été modifiée avec succès !'}), 200
 
     except Exception as e:
-        print("Error updating competence:", str(e))
         return jsonify({'error': str(e)}), 500

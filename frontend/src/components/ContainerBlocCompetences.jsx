@@ -51,7 +51,6 @@ export default function ContainerBlocCompetences({ o_data_bloc_comp }) {
 
     const sp_extract_text_bloc = (w_texte_bloc) => {
         if (!w_texte_bloc) {
-            console.error("sp_extract_text_bloc: w_texte_bloc is undefined or null");
             return '';
         }
         let w_tt_match = w_texte_bloc.match(/(BLOC|Bloc) \d+ [\-–] ([^-–]*?)(A\d+)/);
@@ -69,7 +68,6 @@ export default function ContainerBlocCompetences({ o_data_bloc_comp }) {
 
     const sp_extract_titre_bloc = (w_texte_bloc) => {
         if (!w_texte_bloc) {
-            console.error("sp_extract_titre_bloc: w_texte_bloc is undefined or null");
             return '';
         }
         const w_tt_match = w_texte_bloc.match(/(BLOC|Bloc) \d+/);
@@ -81,7 +79,6 @@ export default function ContainerBlocCompetences({ o_data_bloc_comp }) {
 
     const sp_extract_num_comp = (w_competence) => {
         if (!w_competence) {
-            console.error("sp_extract_num_comp: w_competence is undefined or null");
             return '';
         }
         const w_tt_match = w_competence.match(/C(\d+([a-d]|\.\d+)?)/);

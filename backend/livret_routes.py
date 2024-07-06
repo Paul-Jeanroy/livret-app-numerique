@@ -17,6 +17,8 @@ CORS(app)
 
 livret_bp = Blueprint('livret', __name__)
 
+
+
 @livret_bp.route('/getInfoFormation', methods=['GET'])
 def get_info_formation():
     try:
@@ -68,6 +70,7 @@ def get_info_formation():
 
     except Exception as e:
         return jsonify({'error': str(e), 'details': repr(e)}), 500
+
 
 
 @livret_bp.route('/getBlocCompetencesFromPDF', methods=['GET'])
@@ -145,7 +148,7 @@ def get_bloc_competence_from_pdf():
 
 
 
-@livret_bp.route('/saveEvaluation', methods=['POST'])
+@livret_bp.route('/setEvaluation', methods=['POST'])
 def save_evaluation():
     try:
         data = request.get_json()
@@ -170,7 +173,7 @@ def save_evaluation():
 
         mysql.connection.commit()
         cur.close()
-        return jsonify({'message': 'Evaluations saved successfully'}), 200
+        return jsonify({'message': 'Livret complété avec succès²'}), 200
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 
@@ -202,7 +205,7 @@ def get_formation_info():
 
 
 
-@livret_bp.route('/updateEvaluation/<int:id>', methods=['PUT'])
+@livret_bp.route('/setUpdateEvaluation/<int:id>', methods=['PUT'])
 def update_evaluation(id):
     try:
         data = request.json

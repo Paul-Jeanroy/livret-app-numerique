@@ -1,3 +1,17 @@
+/* Fichier de style de la page de gestion des livret et composant d'affichage des utilisateurs */
+
+
+.section_gestion_livret{
+    position: relative;
+    width: 100%;
+    max-width: 1800px;
+    margin: 30px auto;
+    border-radius: 20px;
+    overflow: hidden;
+    font-family: monospace; 
+    height: 100%;
+}
+
 .main_container_suivi_livret {
     display: flex;
     flex-direction: row;
@@ -9,20 +23,11 @@
     border-radius: 20px;
     border: 1px solid black;
     position: relative;
+    flex-wrap: nowrap;
 }
 
 .main_container_suivi_livret:not(:last-child) {
     margin-right: -50px;
-}
-
-.section-gestion-livret{
-    position: relative;
-    width: 100%;
-    max-width: 1800px;
-    margin: 30px auto;
-    border-radius: 20px;
-    overflow: hidden;
-    font-family: monospace; 
 }
 
 .div_header_suivi_livret {
@@ -50,7 +55,7 @@
     cursor: pointer;
 }
 
-.container-suivi-livret{
+.div_body_suivi_livret{
     margin-top: 45px;
     width: 100%;
 }
@@ -88,11 +93,11 @@
     z-index: -1;
 }
 
-.div_nom_livret{
+.div_nom{
     display: flex;
     margin-left: 15px;
 }
 
-.div_nom_livret p:not(:last-child){
+.div_nom p:not(:last-child){
     margin-right: 20px;
 }

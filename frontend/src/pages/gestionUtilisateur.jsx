@@ -36,6 +36,7 @@ export default function GestionUtilisateur() {
     const [f_openAddPopup, setAddPopup] = useState(false);
     const [f_openAddAnnee, setAddAnneePopup] = useState(false)
     const [o_userToDelete, setUserToDelete] = useState(null);
+    const [w_tt_utilisateurs, setUtilisateurs] = useState([]);
     const [allYears, setAllYears] = useState([]);
     const [file, setFile] = useState(null);
 
@@ -94,18 +95,16 @@ export default function GestionUtilisateur() {
             });
             if (response.ok) {
                 alert('Importation réussie');
-                fetchUsers(); // Met à jour les utilisateurs après l'importation
+                fetchUsers();
             } else {
-                alert('Erreur lors de l\'importation');
+                alert("Erreur lors de l\'importation");
             }
         } catch (error) {
             console.error('Erreur lors de l\'importation', error);
             alert('Erreur lors de l\'importation');
         }
     };
-   
-    if (loading) return <Loader />;
-    if (error) return <div>Error: {error}</div>;
+
 
     return (
         <>

@@ -10,3 +10,4 @@
 2024-06-28 16:31:16,131 ERROR: Erreur SMTP: (534, b'5.7.9 Application-specific password required. For more information, go to\n5.7.9  https://support.google.com/mail/?p=InvalidSecondFactor ffacd0b85a97d-3675a103d0dsm2488945f8f.104 - gsmtp') [in C:\Users\Heuss\livret-app-numerique\backend\auth_routes.py:109]
 2024-07-01 12:20:12,074 ERROR: Error during login: (2002, "Can't connect to server on '193.203.168.56' (138)") [in C:\Users\paulj\Documents\Projets-web-ecole\livret-app-numerique\backend\auth_routes.py:43]
 2024-07-01 12:20:15,738 ERROR: Error during login: (2002, "Can't connect to server on '193.203.168.56' (138)") [in C:\Users\paulj\Documents\Projets-web-ecole\livret-app-numerique\backend\auth_routes.py:43]
+2024-07-05 20:18:56,924 ERROR: Error during login: name 'pas' is not defined [in C:\Users\paulj\Documents\Projets-web-ecole\livret-app-numerique\backend\auth_routes.py:47]

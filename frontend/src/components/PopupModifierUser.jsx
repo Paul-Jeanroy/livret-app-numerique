@@ -23,7 +23,7 @@ import 'react-toastify/dist/ReactToastify.css';
 export default function PopupModifierUser({ setModifUser, user, onUpdateUser, fetchUsers }) {
     const [w_nom, setNom] = useState(user.nom);
     const [w_prenom, setPrenom] = useState(user.prenom);
-    const [w_role, setRole] = useState(user.role);
+    const [w_role, setRole] = useState("apprenti");
     const [w_email, setEmail] = useState(user.email);
     const [w_password, setPassword] = useState(user.password);
 
@@ -79,7 +79,7 @@ export default function PopupModifierUser({ setModifUser, user, onUpdateUser, fe
                     </div>
                     <div className="div_input_ajout_user">
                         <label htmlFor="role">Rôle</label>
-                        <input type="text" id="role" value={w_role} onChange={(e) => setRole(e.target.value)} />
+                        <input type="text" id="role" value={w_role} disabled/>
                     </div>
                     <div className="div_input_ajout_user">
                         <label htmlFor="email">Email</label>

@@ -3,7 +3,8 @@
     Fait par Paul Jeanroy et Hossame Laib
 
     Fonctionnalités :
-    - ...
+    - valider_formulaire : Permet de valider le formulaire de connexion.
+    - sp_renistialiser_mdp : Permet de réinitialiser le mot de passe.
 
 */
 
@@ -28,8 +29,8 @@ export default function Connexion() {
     const navigate = useNavigate();
     const location = useLocation();
     const [f_getPassword, setGetPassword] = useState(false);
-    const [email, setEmail] = useState('');
-    const [password, setPassword] = useState('');
+    const [w_email, setEmail] = useState('');
+    const [w_password, setPassword] = useState('');
     const [w_resetEmail, setResetEmail] = useState('');
     const [newPassword, setNewPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
@@ -48,7 +49,7 @@ export default function Connexion() {
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({ email, password }),
+                body: JSON.stringify({ email: w_email, password: w_password }),
             });
 
             if (!response.ok) {
@@ -89,9 +90,9 @@ export default function Connexion() {
                 throw new Error('Erreur HTTP, statut : ' + response.status + ' - ' + errorData.error)
             }
 
-            setResetMessage('Un email de rénitialisation a été envoyé.');
+            setResetMessage('Un email de réinitialisation a été envoyé.');
         } catch (error) {
-            toast.error("Erreur lors de la demande de rénistialisation de mot de passe.");
+            toast.error("Erreur lors de la demande de réinitialisation de mot de passe.");
         }
     };
 
@@ -173,17 +174,17 @@ export default function Connexion() {
                                         type="text"
                                         name="email"
                                         placeholder="email@domain.com"
-                                        value={email}
+                                        value={w_email}
                                         onChange={(e) => setEmail(e.target.value)}
                                     />
                                     <input
                                         type="password"
                                         name="password"
                                         placeholder="Mot de passe"
-                                        value={password}
+                                        value={w_password}
                                         onChange={(e) => setPassword(e.target.value)}
                                     />
-    
+
                                     <span onClick={() => setGetPassword(true)}>Mot de passe oublié ?</span>
                                     <button type="submit">Se connecter</button>
                                 </form>

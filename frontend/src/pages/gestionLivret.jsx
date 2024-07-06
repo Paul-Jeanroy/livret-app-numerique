@@ -30,7 +30,6 @@ export default function GestionLivret() {
     }, [users]);
 
     const sp_grouper_user_by_annee = w_tt_utilisateurs.reduce((o_tt_utilisateur, w_annee) => {
-        console.log("o_tt_utilisateur", o_tt_utilisateur);
         o_tt_utilisateur[w_annee] = users.filter(user => user.annee === w_annee);
         if (o_tt_utilisateur[w_annee].length === 0 || (o_tt_utilisateur[w_annee].length === 1 && o_tt_utilisateur[w_annee][0].id_user === null)) {
             o_tt_utilisateur[w_annee] = [{ id_user: null, nom: 'Aucun utilisateur', prenom: '', annee: w_annee }];
@@ -41,9 +40,9 @@ export default function GestionLivret() {
     return (
         <>
             <Header />
-            <section className="section-gestion-livret">
+            <section className="section_gestion_livret">
                 <h1 className="titre_page">Suivi des livrets</h1>
-                <main className="main-gestion-livret" style={{ display: 'flex' }}>
+                <main style={{ display: 'flex' }}>
                     {Object.keys(sp_grouper_user_by_annee).map((annee) => (
                         <ContainerGestionLivret
                             key={annee}

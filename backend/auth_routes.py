@@ -40,12 +40,10 @@ def login():
                 'est_valide': user['est_valide']
             }), 200
         else:
-            return jsonify({'error': 'Invalid credentials'}), 401
+            return jsonify({'error': "Erreur lors de l'authentification"}), 401
 
     except Exception as e:
-        current_app.logger.error(f'Error during login: {str(e)}')
         return jsonify({'error': str(e)}), 500
-
 
 
 @auth_bp.route('/verify-user', methods=['GET'])
@@ -164,7 +162,6 @@ def reset_password(token):
             data = request.get_json()
             new_password = data.get('new_password')
             if not new_password:
-                current_app.logger.debug('Nouveau mot de passe requis non fourni')
                 return jsonify({'error': 'Nouveau mot de passe requis'}), 400
 
             hashed_password = bcrypt.generate_password_hash(new_password).decode('utf-8')
@@ -174,9 +171,7 @@ def reset_password(token):
             mysql.connection.commit()
             cur.close()
 
-            current_app.logger.debug('Mot de passe réinitialisé avec succès')
             return jsonify({"message": "Mot de passe réinitialisé avec succès"}), 200
 
         except Exception as e:
-            current_app.logger.error(f'Erreur lors de la réinitialisation du mot de passe: {str(e)}')
             return jsonify({'error': str(e)}), 500
