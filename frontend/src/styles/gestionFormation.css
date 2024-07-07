@@ -41,17 +41,6 @@
     z-index: 1;
 }
 
-.div_info_formation h2::after {
-    content: '';
-    width: 98%;
-    position: absolute;
-    background-color: #C4A2FC;
-    left: 10px;
-    top: 12px;
-    height: 10px;
-    z-index: -1;
-}
-
 .div_container_bloc_comp {
     display: flex;
     flex-wrap: wrap;
@@ -99,4 +88,16 @@
 
 .div_texte_competence p {
     margin: 0;
+}
+
+
+@media (max-width: 576px) {
+    .div_info_formation h2{
+        font-size: 14px;
+    }
+
+    .img_manage_bloc_info_formation{
+        top: 20px;
+        right: 10px;
+    }
 }

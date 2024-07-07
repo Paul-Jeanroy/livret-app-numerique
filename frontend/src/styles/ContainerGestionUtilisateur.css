@@ -1,4 +1,3 @@
-
 /* Fichier de style de la page de gestion des utilisateur et composant d'affichage */
 
 
@@ -170,4 +169,34 @@
     border: 1px solid;
     border-radius: 12px;
     padding: 10px;
+}
+
+@media (max-width: 992px) {
+    .main-gestion-utilisateur {
+        flex-direction: column;
+    }
+
+    .main-container-suivi-utilisateur {
+        width: calc(100% - 200px);
+    }
+
+    .main-container-suivi-utilisateur:not(:last-child) {
+        margin-right: none;
+    }
+}
+
+
+@media (max-width: 650px) {
+    .div-import-user{
+        flex-direction: column;
+    }
+
+    .btn-ajout-classe{
+        margin-right: 0px;
+        margin-bottom: 20px;
+    }
+
+    .titre_page span{ 
+        font-size: 25px;
+    }
 }

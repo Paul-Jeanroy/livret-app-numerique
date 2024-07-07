@@ -42,7 +42,7 @@ export default function GestionLivret() {
             <Header />
             <section className="section_gestion_livret">
                 <h1 className="titre_page">Suivi des livrets</h1>
-                <main style={{ display: 'flex' }}>
+                <main className="main_gestion_livret" style={{ display: 'flex' }}>
                     {Object.keys(sp_grouper_user_by_annee).map((annee) => (
                         <ContainerGestionLivret
                             key={annee}

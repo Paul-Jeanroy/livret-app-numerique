@@ -31,7 +31,7 @@ export const UserRoleProvider = ({ children }) => {
                     }
                 } catch (error) {
                     console.error("Erreur lors de la vérification de l'utilisateur:", error);
-                    localStorage.removeItem('token'); // Retirer le token invalide
+                    localStorage.removeItem('token');
                 } finally {
                     setIsLoading(false);
                 }

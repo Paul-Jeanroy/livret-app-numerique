@@ -101,3 +101,24 @@
 .div_nom p:not(:last-child){
     margin-right: 20px;
 }
+
+@media (max-width: 992px) {
+    .main_gestion_livret {
+        flex-direction: column;
+    }
+
+    .main_container_suivi_livret {
+        width: calc(100% - 200px);
+    }
+
+    .main_container_suivi_livret:not(:last-child) {
+        margin-right: none;
+    }
+}
+
+
+@media (max-width: 650px) {
+    .titre_page span{ 
+        font-size: 25px;
+    }
+}

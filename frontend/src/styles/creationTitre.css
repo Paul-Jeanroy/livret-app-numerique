@@ -75,3 +75,10 @@
     box-shadow: 4px 4px 4px rgb(200, 200, 200);
     font-size: 13px;
 }
+
+
+@media (max-width: 650px) {
+    .container-search-titre input{
+        width: 150px !important;
+    }
+}

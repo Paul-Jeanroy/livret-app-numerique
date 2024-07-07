@@ -79,7 +79,7 @@ export default function Header() {
 
                             {(roleUser == "apprenti" || roleUser == "maître d'apprentissage") && (
                                 <>
-                                    <div className="div_nav_livret">
+                                    <div className="div_nav">
                                         <a href={"/livret"} onClick={() => setMenuSelect("livret")} className={menuSelect == "livret" ? "selected" : ""}>Livret</a>
                                     </div>
                                 </>
